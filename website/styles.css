@@ -1,0 +1,160 @@
+:root {
+  color-scheme: dark;
+  --background: #101311;
+  --paper: #181e19;
+  --ink: #f0f5eb;
+  --muted: #aab7aa;
+  --line: #39463a;
+  --green: #a6ed90;
+  --mono: ui-monospace, "DejaVu Sans Mono", monospace;
+  background: var(--background);
+  color: var(--ink);
+  font: 100%/1.55 system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  border-top: 4px solid var(--green);
+}
+
+main {
+  width: min(72rem, 100%);
+  margin-inline: auto;
+  padding: 0 clamp(1.25rem, 5vw, 4rem);
+}
+
+.hero {
+  padding-block: clamp(2.75rem, 8vw, 6.25rem) clamp(2.25rem, 6vw, 4.5rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.event {
+  margin: 0 0 0.75rem;
+  color: var(--green);
+  font: 0.875rem/1.5 var(--mono);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(3rem, 13vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.075em;
+}
+
+.cursor {
+  color: var(--green);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+  }
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+h2 {
+  margin: 0 0 1rem;
+  font-size: 1.375rem;
+  letter-spacing: -0.025em;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.roster,
+.contacts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  padding-block: 0.875rem;
+  border-top: 1px solid var(--line);
+}
+
+.contacts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font: 0.8125rem/1.4 var(--mono);
+}
+
+.contacts a,
+.contacts span {
+  display: inline-grid;
+  align-content: start;
+  min-height: 2.5rem;
+  padding-block: 0.25rem;
+}
+
+.contacts span,
+small {
+  color: var(--muted);
+}
+
+small {
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+a {
+  color: var(--green);
+  text-underline-offset: 0.22em;
+}
+
+a:hover {
+  color: var(--ink);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+.project {
+  padding-inline: 1.25rem;
+  border-left: 2px solid var(--line);
+  background: var(--paper);
+}
+
+.project section {
+  min-height: 7.5rem;
+  padding-block: 1rem;
+}
+
+.project section + section {
+  min-height: 11rem;
+  border-top: 1px solid var(--line);
+}
+
+footer {
+  padding-block: 1.25rem 2rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 44rem) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
