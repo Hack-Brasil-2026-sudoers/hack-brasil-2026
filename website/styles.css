@@ -60,11 +60,62 @@ h1 {
   }
 }
 
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: clamp(2rem, 5vw, 5rem);
+.intro {
+  max-width: 42rem;
+  margin: 1.75rem 0 1rem;
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.status,
+.section-note {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.status {
+  margin-bottom: 0;
+}
+
+.participants {
   padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+.roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.content-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 1rem clamp(2rem, 5vw, 4rem);
+  padding-block: clamp(1.75rem, 4vw, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.copy {
+  max-width: 68ch;
+  min-width: 0;
+}
+
+.copy p {
+  margin: 0 0 1rem;
+}
+
+.copy p:last-child {
+  margin-bottom: 0;
+}
+
+.scope {
+  margin: 0 0 1.25rem;
+  padding-left: 1.25rem;
+}
+
+.scope li + li {
+  margin-top: 0.875rem;
 }
 
 h2 {
@@ -87,6 +138,7 @@ h3 {
 }
 
 .member {
+  min-width: 0;
   padding-block: 0.875rem;
   border-top: 1px solid var(--line);
 }
@@ -131,22 +183,6 @@ a:focus-visible {
   outline-offset: 3px;
 }
 
-.project {
-  padding-inline: 1.25rem;
-  border-left: 2px solid var(--line);
-  background: var(--paper);
-}
-
-.project section {
-  min-height: 7.5rem;
-  padding-block: 1rem;
-}
-
-.project section + section {
-  min-height: 11rem;
-  border-top: 1px solid var(--line);
-}
-
 footer {
   padding-block: 1.25rem 2rem;
   border-top: 1px solid var(--line);
@@ -154,7 +190,8 @@ footer {
 }
 
 @media (max-width: 44rem) {
-  .layout {
+  .roster,
+  .content-section {
     grid-template-columns: 1fr;
   }
 }
