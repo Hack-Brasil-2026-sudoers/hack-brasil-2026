@@ -3,20 +3,22 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sudoers · Hack Brasil 2026</title>
-    <meta name="description" content="Conheça a equipe Sudoers no Hack Brasil 2026.">
+    <title>CyberCheck · Sudoers · Hack Brasil 2026</title>
+    <meta name="description" content="CyberCheck: uma proposta para ajudar desenvolvedores autônomos e pequenas equipes a encontrar problemas de segurança e entender o que corrigir primeiro.">
     <link rel="stylesheet" href="./styles.css">
   </head>
   <body>
     <main>
       <header class="hero">
-        <p class="event">Equipe · Hack Brasil 2026</p>
-        <h1>Sudoers<span class="cursor" aria-hidden="true">_</span></h1>
+        <p class="event">Sudoers · Hack Brasil 2026 · Cibersegurança</p>
+        <h1>CyberCheck<span class="cursor" aria-hidden="true">_</span></h1>
+        <p class="intro">Ajuda desenvolvedores autônomos e pequenas equipes a encontrar problemas de segurança nos seus projetos e entender o que corrigir primeiro.</p>
+        <p class="status">Proposta em desenvolvimento</p>
       </header>
 
-      <div class="layout">
-        <section aria-labelledby="integrantes">
-          <h2 id="integrantes">Integrantes</h2>
+      <section class="participants" aria-labelledby="integrantes">
+          <h2 id="integrantes">Participantes</h2>
+          <p class="section-note">Equipe Sudoers. Dados dos participantes a completar.</p>
           <ul class="roster">
             <li class="member">
               <h3>Pedro Lemos</h3>
@@ -51,17 +53,64 @@
               </ul>
             </li>
           </ul>
+      </section>
+
+      <div class="proposal">
+        <section class="content-section" aria-labelledby="problema">
+          <h2 id="problema">Problema a ser resolvido</h2>
+          <div class="copy">
+            <p>Desenvolvedores autônomos e pequenas equipes precisam cuidar da segurança dos sistemas que constroem, mesmo sem contar com especialistas dedicados. Além de encontrar possíveis falhas no código, precisam verificar bibliotecas utilizadas, credenciais expostas e configurações que podem colocar o projeto em risco.</p>
+            <p>O desafio que queremos resolver é transformar essas verificações em decisões práticas: onde está o problema, qual pode ser seu impacto, o que merece atenção primeiro e como começar a corrigir. Um alerta técnico isolado pode exigir investigação e conhecimento de segurança que o desenvolvedor ainda não possui.</p>
+            <p>Há também o risco de depender de uma biblioteca descontinuada ou cujo repositório foi arquivado. Nesses casos, atualizar a versão pode não ser suficiente: o desenvolvedor precisa avaliar possíveis substituições e entender as mudanças necessárias.</p>
+          </div>
         </section>
 
-        <section aria-labelledby="projeto">
-          <h2 id="projeto">Projeto</h2>
-          <div class="project">
-            <section id="trilha" aria-labelledby="trilha-titulo">
-              <h3 id="trilha-titulo">Trilha escolhida</h3>
-            </section>
-            <section id="ideia" aria-labelledby="ideia-titulo">
-              <h3 id="ideia-titulo">Ideia central</h3>
-            </section>
+        <section class="content-section" aria-labelledby="publico">
+          <h2 id="publico">Público-alvo</h2>
+          <div class="copy">
+            <p>Desenvolvedores autônomos e pequenas equipes que mantêm projetos próprios ou de clientes e querem incorporar verificações de segurança ao desenvolvimento. O foco inicial será em projetos Python, sem limitar a proposta a sites ou aplicações web.</p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="objetivo">
+          <h2 id="objetivo">Objetivo e solução proposta</h2>
+          <div class="copy">
+            <p>O CyberCheck pretende reunir problemas de segurança em uma apresentação clara, agrupada por tipo e organizada por prioridade, com evidências e ações sugeridas. O objetivo é ajudar o desenvolvedor a entender os riscos identificados e tomar decisões de correção com mais autonomia.</p>
+            <p>O usuário poderá conectar o GitHub, autorizar os repositórios que deseja avaliar e iniciar uma análise. Cada problema será apresentado com sua localização, quando aplicável, possível impacto e orientação de correção. Os resultados indicarão a versão do código e a data da análise, permitindo acompanhar novas avaliações após as mudanças.</p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="mvp">
+          <h2 id="mvp">Primeira versão</h2>
+          <div class="copy">
+            <p>O MVP terá três frentes:</p>
+            <ul class="scope">
+              <li><strong>Código:</strong> procurar possíveis falhas, como injeções de SQL e comandos, execução insegura de código e carregamento inseguro de dados.</li>
+              <li><strong>Dependências:</strong> identificar versões com vulnerabilidades conhecidas, avisos de descontinuação e repositórios arquivados, sugerindo atualizações ou possíveis alternativas quando necessário.</li>
+              <li><strong>Segredos e configurações:</strong> procurar credenciais expostas e configurações potencialmente inseguras.</li>
+            </ul>
+            <p>O foco da entrega será expor os problemas e orientar ações. Cada achado terá evidências e incertezas explícitas, para distinguir uma suspeita de uma falha confirmada. A ausência de alertas não será apresentada como garantia de segurança.</p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="impacto">
+          <h2 id="impacto">Impacto esperado</h2>
+          <div class="copy">
+            <p>Queremos reduzir a dificuldade de interpretar alertas e decidir por onde começar, aproximando as verificações de segurança do cotidiano de quem desenvolve com uma equipe pequena. A utilidade da proposta será avaliada pela clareza dos resultados, pela pertinência das orientações e pela capacidade de apoiar correções nos projetos analisados.</p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="futuro">
+          <h2 id="futuro">Evolução futura</h2>
+          <div class="copy">
+            <p>Após validar o diagnóstico inicial, pretendemos avaliar o monitoramento de novos avisos de segurança e a notificação dos responsáveis por projetos potencialmente afetados. Essa etapa ficará fora da primeira versão.</p>
+          </div>
+        </section>
+
+        <section class="content-section" aria-labelledby="responsabilidade">
+          <h2 id="responsabilidade">Uso responsável</h2>
+          <div class="copy">
+            <p>A proposta tem finalidade defensiva. As análises e demonstrações serão realizadas em projetos próprios ou com autorização por escrito, sem expor dados pessoais reais de terceiros. O acesso será limitado aos repositórios autorizados pelo usuário.</p>
           </div>
         </section>
       </div>
