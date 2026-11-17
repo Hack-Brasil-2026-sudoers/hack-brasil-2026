@@ -1,23 +1,24 @@
 # hack-brasil-2026
 
-CyberCheck, projeto da equipe Sudoers para o Hack Brasil 2026.
+CyberCheck, the Sudoers team's project for Hack Brasil 2026.
 
-## Documentação
+CyberCheck helps independent developers and small teams assess Python repositories through GitHub. It presents potential code vulnerabilities, dependency issues, and exposed secrets or unsafe configuration, with evidence and prioritized remediation guidance, without security scores. The current proposal is documented in [PROJETO.md](markdown/PROJETO.md).
 
-- [Apresentação para o rascunho](markdown/RASCUNHO.md)
-- [Proposta e decisões do projeto](markdown/PROJETO.md)
-- [Guia de implementação](markdown/IMPLEMENTACAO.md)
-- [Próximos passos](markdown/PROXIMOS-PASSOS.md)
-- [Frentes de trabalho e divisão de arquivos](markdown/FRENTES-DE-TRABALHO.md)
-- [Configuração da GitHub App](markdown/GITHUB.md)
-- [Regulamento atual](markdown/regulamento-atual.md)
-- [Comparação das versões do regulamento](markdown/REGULAMENTO-COMPARACAO.md)
+## Documentation
 
-O site de apresentação está em [website/](website/).
+- [Submission draft](markdown/RASCUNHO.md)
+- [Project proposal and decisions](markdown/PROJETO.md)
+- [Developer and LLM guide: workflow, English, and project standards](markdown/IMPLEMENTACAO.md)
+- [Next steps](markdown/PROXIMOS-PASSOS.md)
+- [Workstreams and file ownership](markdown/FRENTES-DE-TRABALHO.md)
+- [GitHub App setup](markdown/GITHUB.md)
+- [Event rules — English translation](markdown/regulamento-atual.md)
 
-## Executar o backend
+The project presentation website is in [website/](website/).
 
-Requer Python 3.11+ e Linux nesta primeira versão do worker.
+## Run the backend
+
+Requires Python 3.11+ and Linux for this initial worker implementation.
 
 ```bash
 python3 -m venv .venv
@@ -25,9 +26,9 @@ python3 -m venv .venv
 .venv/bin/python scripts/install_scanners.py
 ```
 
-Prepare um `.env` a partir de `.env.example`, gere um token aleatório para a API e siga o [guia da GitHub App](markdown/GITHUB.md). O instalador dos scanners suporta Linux x86_64 e verifica os hashes dos binários.
+Create a `.env` from `.env.example`, generate a random API token, and follow the [GitHub App guide](markdown/GITHUB.md). The scanner installer supports Linux x86_64 and verifies binary hashes.
 
-Inicie a API e o worker em terminais separados, na raiz do projeto:
+Start the API and worker in separate terminals from the repository root:
 
 ```bash
 .venv/bin/python -m cybercheck api
@@ -37,10 +38,10 @@ Inicie a API e o worker em terminais separados, na raiz do projeto:
 .venv/bin/python -m cybercheck worker
 ```
 
-A documentação interativa fica em `http://127.0.0.1:8000/docs`. Use **Authorize** com o token local, liste os repositórios e solicite a análise com o ID retornado. A consulta externa de dependências precisa ser autorizada no campo `dependency_lookup`.
+Interactive API documentation is available at `http://127.0.0.1:8000/docs`. Select **Authorize**, enter the local token, list repositories, and request an analysis using the returned repository ID. External dependency lookup requires authorization through the `dependency_lookup` field.
 
 ```bash
 .venv/bin/python -m pytest -q
 ```
 
-Esta base usa um token de operador único e ainda não oferece isolamento multiusuário. Não exponha o backend como serviço público. Resultados parciais indicam verificações sem cobertura ou com falha; ausência de alertas não garante segurança. A interface operacional da demo será feita por outro integrante.
+This foundation uses a single-operator token and does not yet provide multiuser isolation. Do not expose the backend as a public service. Partial results indicate missing coverage or failed checks; the absence of alerts does not guarantee security. Another team member will build the operational demo UI.

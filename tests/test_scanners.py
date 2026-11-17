@@ -25,11 +25,11 @@ def test_osv_missing_sources_is_distinct_from_other_errors(tmp_path, monkeypatch
             return 128, b""
         if "bandit" in args:
             return (0, b"bandit 1.9.4") if "--version" in args else (0, json.dumps({"results": []}).encode())
-        raise ScannerError("Ferramenta ausente no teste")
+        raise ScannerError("Tool missing in test")
 
     monkeypatch.setattr("cybercheck.scanners.run_command", command)
     _, checks = run_scanners(source, working, Settings(api_token="x" * 40, osv_bin="test-osv"), True)
     check = next(c for c in checks if c["tool"] == "osv-scanner")
     assert check["status"] == expected
     if expected == "skipped":
-        assert "dependências não foram avaliadas" in check["error"]
+        assert "dependencies were not assessed" in check["error"]

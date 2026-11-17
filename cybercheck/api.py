@@ -27,13 +27,13 @@ def create_app(settings=None, github=None):
     store = Store(settings.data_dir)
     github = github or GitHub(settings)
     app = FastAPI(title="CyberCheck API", version="0.1.0",
-                  description="Backend inicial de operador único. Analisa revisões autorizadas, sem scores.")
+                  description="Initial single-operator backend. Analyzes authorized revisions without scores.")
     app.state.store = store
     security = HTTPBearer(auto_error=False)
 
     def authenticate(credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)]):
         if not credentials or not secrets.compare_digest(credentials.credentials, settings.api_token):
-            raise HTTPException(401, "Token de API inválido ou ausente.", headers={"WWW-Authenticate": "Bearer"})
+            raise HTTPException(401, "Invalid or missing API token.", headers={"WWW-Authenticate": "Bearer"})
 
     protected = [Depends(authenticate)]
     if settings.cors_origins:
@@ -56,21 +56,21 @@ def create_app(settings=None, github=None):
         try:
             return github.repositories(page)
         except (GitHubError, httpx.HTTPError) as exc:
-            detail = str(exc) if isinstance(exc, GitHubError) else "Falha na conexão com GitHub."
+            detail = str(exc) if isinstance(exc, GitHubError) else "Failed to connect to GitHub."
             raise HTTPException(502, detail) from exc
 
     @app.post("/api/analyses", status_code=202, dependencies=protected)
     def start(payload: AnalysisRequest, response: Response):
         if not payload.authorization_confirmed:
-            raise HTTPException(422, "Confirme que é responsável pelo projeto ou possui autorização por escrito.")
+            raise HTTPException(422, "Confirm that you own the project or have written authorization.")
         try:
             name, sha, reference = github.resolve(payload.repository_id, payload.reference)
             analysis, created = store.create(payload.repository_id, name, sha, reference, payload.dependency_lookup)
         except (GitHubError, httpx.HTTPError) as exc:
-            detail = str(exc) if isinstance(exc, GitHubError) else "Falha na conexão com GitHub."
+            detail = str(exc) if isinstance(exc, GitHubError) else "Failed to connect to GitHub."
             raise HTTPException(502, detail) from exc
         except QueueFull as exc:
-            raise HTTPException(429, "Fila cheia. Aguarde as análises pendentes.") from exc
+            raise HTTPException(429, "The queue is full. Wait for pending analyses to finish.") from exc
         response.headers["Location"] = f"/api/analyses/{analysis['id']}"
         return {"analysis": analysis, "created": created}
 
@@ -82,7 +82,7 @@ def create_app(settings=None, github=None):
     def report(identity: UUID):
         analysis = store.get(str(identity))
         if not analysis:
-            raise HTTPException(404, "Análise não encontrada.")
+            raise HTTPException(404, "Analysis not found.")
         groups = {}
         for item in analysis["findings"]:
             groups.setdefault(item["category"], []).append(item)
@@ -94,9 +94,9 @@ def create_app(settings=None, github=None):
     def delete(identity: UUID):
         analysis = store.get(str(identity))
         if not analysis:
-            raise HTTPException(404, "Análise não encontrada.")
+            raise HTTPException(404, "Analysis not found.")
         if not store.delete(str(identity)):
-            raise HTTPException(409, "Aguarde o término da análise antes de excluir.")
+            raise HTTPException(409, "Wait for the analysis to finish before deleting it.")
         return Response(status_code=204)
 
     return app

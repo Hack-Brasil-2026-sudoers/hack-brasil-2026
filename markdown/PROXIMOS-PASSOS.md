@@ -1,88 +1,90 @@
-# Próximos passos do CyberCheck
+# CyberCheck next steps
 
-Estado atualizado em 17/11/2026. A base inicial já existe e o fluxo com GitHub real foi validado. O MVP completo ainda não está pronto. Hospedagem pública e provedor/modelo de IA continuam adiados; a interface da demo será feita por outro integrante.
+Before taking a task, read the [developer and LLM guide](IMPLEMENTACAO.md) for English-language requirements, code and security standards, verification, and handoff rules. Confirm your workstream and file ownership in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md), then select an agreed item below. Keep this file as the task checklist; maintain implementation standards in the guide.
 
-## Resumo por frente
+Status updated on November 17, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred; another team member will implement the demo UI.
 
-| Frente | Já feito | Falta fazer |
+## Workstream summary
+
+| Workstream | Completed | Remaining |
 | --- | --- | --- |
-| 1. Backend e dados | API FastAPI, Bearer token local, SQLite, fila, histórico e exclusão | Estabilizar schemas para o frontend, ampliar validação de concorrência e implementar autorização por usuário |
-| 2. Análises e executor | Adaptadores dos três scanners, worker, normalização, limites iniciais e limpeza temporária | Ampliar cobertura e formatos de dependências, calibrar falsos positivos e completar isolamento/limites de recursos |
-| 3. GitHub e manutenção | App da organização instalada com leitura, repositório selecionado, commit e download reais validados | Testar repositório privado/revogação, coletar sinais de descontinuação/arquivamento e avaliar alternativas |
-| 4. Interface da demo | Site de apresentação existente; interface operacional ainda não iniciada | Criar telas e integrar com a API real, incluindo estados parciais, histórico e exclusão |
+| 1. Backend and data | FastAPI API, local Bearer token, SQLite, queue, history, and deletion | Stabilize frontend schemas, expand concurrency validation, and implement per-user authorization |
+| 2. Analysis and worker | Three scanner adapters, worker, normalization, initial limits, and temporary cleanup | Expand coverage and dependency formats, calibrate false positives, and complete isolation/resource limits |
+| 3. GitHub and maintenance | Organization App installed read-only, selected repository, real commit resolution and download validated | Test private access/revocation, collect discontinuation/archival signals, and evaluate alternatives |
+| 4. Demo UI | Existing presentation website; operational UI not started | Build screens and integrate the real API, including partial states, history, and deletion |
 
-A propriedade dos arquivos e os contratos estão em [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). Cada participante deve trabalhar na sua frente; alterações em arquivos compartilhados passam pelo integrador.
+File ownership and contracts are in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). Each participant should work within their workstream; shared-file changes go through the integrator.
 
-## Evidências do que já foi validado
+## Validation evidence
 
-- 24 testes automatizados passaram: autenticação, validação, fila, recuperação, exclusão, extração de arquivos, normalização, timeout, proteção do ambiente e checksums.
-- Bandit 1.9.4, OSV-Scanner 2.7.1 e Betterleaks 1.10.1 foram executados com exemplos controlados.
-- A GitHub App real foi instalada na organização com Contents/Metadata somente leitura e seleção explícita de repositório.
-- O fluxo API → fila → worker → GitHub → scanners → relatório foi executado na branch `pedro`, commit `156862f5d413c74bd2888f4e45c594883511cc88`.
-- Bandit e Betterleaks concluíram nessa revisão. O OSV não encontrou fonte de dependências suportada; o relatório indica que elas não foram avaliadas e mantém o resultado parcial.
-- Commit e datas ficaram registrados e os arquivos temporários foram descartados. O histórico de teste está em `.data/`, fora do Git.
-- A verificação pré-push não detectou segredos nos arquivos versionáveis ou no histórico Git local. `.env` e chave privada têm permissão 600 e não estão rastreados.
+- 24 automated tests passed: authentication, validation, queue, recovery, deletion, archive extraction, normalization, timeouts, environment protection, and checksums.
+- Bandit 1.9.4, OSV-Scanner 2.7.1, and Betterleaks 1.10.1 were run against controlled examples.
+- The real GitHub App was installed on the organization with read-only Contents/Metadata permissions and explicit repository selection.
+- The API → queue → worker → GitHub → scanners → report flow ran against branch `pedro`, commit `156862f5d413c74bd2888f4e45c594883511cc88`.
+- Bandit and Betterleaks completed on that revision. OSV found no supported dependency source; the report states that dependencies were not assessed and retains partial status.
+- The commit and timestamps were recorded and temporary files discarded. Test history is in `.data/`, outside Git.
+- The pre-push check detected no secrets in versionable files or local Git history. The `.env` and private key have permission 600 and are not tracked.
 
-Esses testes não garantem ausência de vulnerabilidades nem validam todas as versões, ambientes ou formas de entrada.
+These tests do not guarantee the absence of vulnerabilities or validate every version, environment, or input format.
 
-## Frente 1 — Próximas tarefas
+## Workstream 1 — Next tasks
 
-- [ ] Definir schemas de resposta e erros estáveis, combinados com a frente 4.
-- [ ] Completar a documentação OpenAPI e exemplos de integração.
-- [ ] Ampliar testes de concorrência, persistência e exclusão.
-- [ ] Definir login e autorização por usuário com a frente 3; a base atual é de operador único.
-- [ ] Integrar templates/arquivos estáticos quando entregues pela frente 4.
+- [ ] Define stable response and error schemas with workstream 4.
+- [ ] Complete OpenAPI documentation and integration examples.
+- [ ] Expand concurrency, persistence, and deletion tests.
+- [ ] Define per-user login and authorization with workstream 3; the current foundation is single-operator.
+- [ ] Integrate templates/static files when delivered by workstream 4.
 
-**Pronto quando:** o contrato atende à interface e o acesso aos dados segue o modelo de usuários efetivamente implementado.
+**Done when:** the contract supports the UI and data access follows the user model actually implemented.
 
-## Frente 2 — Próximas tarefas
+## Workstream 2 — Next tasks
 
-- [ ] Validar todas as categorias planejadas com casos vulneráveis, corrigidos e falsos positivos.
-- [ ] Documentar os formatos e versões de dependências cobertos; adicionar exemplos com versões resolvidas.
-- [ ] Ampliar testes de saída inválida, falhas de rede, interrupções e limpeza de recursos.
-- [ ] Completar isolamento e limites de recursos. Separação de processos, timeout e limites de tamanho não são um sandbox completo.
-- [ ] Integrar os sinais de manutenção fornecidos pela frente 3.
+- [ ] Validate all planned categories with vulnerable, corrected, and false-positive cases.
+- [ ] Document covered dependency formats and versions; add examples with resolved versions.
+- [ ] Expand invalid-output, network-failure, interruption, and resource-cleanup tests.
+- [ ] Complete isolation and resource limits. Separate processes, timeouts, and size limits are not a complete sandbox.
+- [ ] Integrate maintenance signals supplied by workstream 3.
 
-**Pronto quando:** cobertura e limites estão demonstrados e os problemas são apresentados com evidências, prioridades e incertezas corretas.
+**Done when:** coverage and limits are demonstrated, and issues include evidence, priorities, and appropriate uncertainty.
 
-## Frente 3 — Próximas tarefas
+## Workstream 3 — Next tasks
 
-- [ ] Testar repositório privado próprio autorizado, paginação e revogação da instalação.
-- [ ] Apoiar o login/autorização individual sem editar simultaneamente arquivos da frente 1.
-- [ ] Associar cada dependência ao repositório e aos canais oficiais corretos.
-- [ ] Coletar avisos explícitos dos mantenedores e status de arquivamento, com fonte e data.
-- [ ] Verificar sucessores e mudanças de endereço antes de recomendar substituições.
-- [ ] Avaliar alternativas por adequação, manutenção, licença e esforço de migração; informar quando não houver candidata verificada.
+- [ ] Test an authorized private repository we own, pagination, and installation revocation.
+- [ ] Support per-user login/authorization without editing workstream 1 files concurrently.
+- [ ] Associate each dependency with the correct repository and official channels.
+- [ ] Collect explicit maintainer notices and archival status, with sources and dates.
+- [ ] Check successors and repository moves before recommending replacements.
+- [ ] Evaluate alternatives for suitability, maintenance, license, and migration effort; state when no verified candidate exists.
 
-**Pronto quando:** o acesso é autorizado e os sinais de manutenção têm evidências verificáveis. Inatividade isolada não deve gerar diagnóstico de abandono.
+**Done when:** access is authorized and maintenance signals have verifiable evidence. Inactivity alone must not trigger an abandonment diagnosis.
 
-## Frente 4 — Próximas tarefas
+## Workstream 4 — Next tasks
 
-- [ ] Seleção de repositório, confirmação da autorização e início manual.
-- [ ] Acompanhamento de execução e mensagens para falhas/verificações não realizadas.
-- [ ] Achados por tipo e prioridade, com evidências, confiança e ações sugeridas, sem notas ou scores.
-- [ ] Exibição do commit e da data/hora.
-- [ ] Histórico e exclusão com confirmação.
-- [ ] Revisão em desktop e celular e integração com API real.
+- [ ] Repository selection, authorization confirmation, and manual start.
+- [ ] Execution progress and messages for failures/checks not performed.
+- [ ] Findings by type and priority, with evidence, confidence, and suggested actions, without scores.
+- [ ] Commit and timestamp display.
+- [ ] History and deletion with confirmation.
+- [ ] Desktop/mobile review and real API integration.
 
-**Pronto quando:** o usuário consegue percorrer o fluxo completo sem que dados simulados sejam apresentados como resultados reais. Credenciais reais não devem ser embutidas no frontend.
+**Done when:** users can complete the flow without simulated data being presented as real results. Do not embed real credentials in the frontend.
 
-## Decisões adiadas e entrega
+## Deferred decisions and delivery
 
-- Provedor/modelo de IA, custos e autorização de envio dos dados mínimos.
-- Publicação e acesso dos jurados por link, a resolver antes da submissão conforme o regulamento.
-- Vídeo, links e revisão final dos requisitos do evento.
-- Validação da matriz de Python: declarado 3.11+, testado até aqui em 3.14.10 no Linux.
-- Avisos/licenças das dependências e estratégia de reprodutibilidade da instalação Python.
-- Aviso de depreciação do TestClient/httpx: não bloqueia os testes atuais, mas deve ser acompanhado.
+- AI provider/model, costs, and authorization to send the minimum required data.
+- Publication and judge access through a link, to be resolved before submission according to the rules.
+- Video, links, and final review of event requirements.
+- Python version matrix validation: declared 3.11+, tested so far on 3.14.10 on Linux.
+- Dependency notices/licenses and a reproducible Python installation strategy.
+- TestClient/httpx deprecation warning: non-blocking for current tests, but should be tracked.
 
-Monitoramento contínuo, análise externa, disparo por GitHub Actions ou outras automações e planos comerciais continuam fora desta primeira entrega.
+Continuous monitoring, external analysis, GitHub Actions or other automatic triggers, and commercial plans remain outside this first delivery.
 
-## Referências
+## References
 
-- [Proposta e decisões](PROJETO.md)
-- [Guia de implementação](IMPLEMENTACAO.md)
-- [Configuração e testes do GitHub](GITHUB.md)
-- [Divisão das frentes](FRENTES-DE-TRABALHO.md)
-- [Rascunho do evento](RASCUNHO.md)
-- [Regulamento consultado](regulamento-atual.md)
+- [Proposal and decisions](PROJETO.md)
+- [Implementation guide](IMPLEMENTACAO.md)
+- [GitHub setup and tests](GITHUB.md)
+- [Workstream ownership](FRENTES-DE-TRABALHO.md)
+- [Event submission draft](RASCUNHO.md)
+- [Consulted event rules](regulamento-atual.md)

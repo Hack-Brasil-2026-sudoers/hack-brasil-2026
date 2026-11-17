@@ -1,55 +1,55 @@
-# Rascunho do projeto — Hack Brasil 2026
+# Project draft — Hack Brasil 2026
 
-## Nome do projeto
+## Project name
 
 CyberCheck
 
-## Frase de apresentação / resumo
+## Tagline / summary
 
-Ajuda desenvolvedores autônomos e pequenas equipes a encontrar problemas de segurança nos seus projetos e entender o que corrigir primeiro.
+Helps independent developers and small teams find security issues in their projects and understand what to fix first.
 
-## Trilha
+## Track
 
-Cibersegurança
+Cybersecurity
 
-## Descrição do projeto
+## Project description
 
-### Problema a ser resolvido
+### Problem to solve
 
-Desenvolvedores autônomos e pequenas equipes precisam cuidar da segurança dos sistemas que constroem, mesmo sem contar com especialistas dedicados. Além de encontrar possíveis falhas no código, precisam verificar bibliotecas utilizadas, credenciais expostas e configurações que podem colocar o projeto em risco.
+Independent developers and small teams need to secure the systems they build, even without dedicated security specialists. Beyond finding potential code vulnerabilities, they need to check the libraries they use, exposed credentials, and configurations that could put their projects at risk.
 
-O desafio que queremos resolver é transformar essas verificações em decisões práticas: onde está o problema, qual pode ser seu impacto, o que merece atenção primeiro e como começar a corrigir. Um alerta técnico isolado pode exigir investigação e conhecimento de segurança que o desenvolvedor ainda não possui.
+The challenge we want to address is turning these checks into practical decisions: where the problem is, what impact it could have, what needs attention first, and how to start fixing it. An isolated technical alert can require investigation and security knowledge that a developer may not yet have.
 
-Há também o risco de depender de uma biblioteca descontinuada ou cujo repositório foi arquivado. Nesses casos, atualizar a versão pode não ser suficiente: o desenvolvedor precisa avaliar possíveis substituições e entender as mudanças necessárias.
+There is also the risk of relying on a discontinued library or one whose repository has been archived. In those cases, upgrading the version may not be enough: the developer needs to assess possible replacements and understand the changes required.
 
-### Público-alvo
+### Target audience
 
-Desenvolvedores autônomos e pequenas equipes que mantêm projetos próprios ou de clientes e querem incorporar verificações de segurança ao desenvolvimento. O foco inicial será em projetos Python, sem limitar a proposta a sites ou aplicações web.
+Independent developers and small teams maintaining their own or their clients' projects who want to incorporate security checks into development. The initial focus will be Python projects, without limiting the proposal to websites or web applications.
 
-### Objetivo e solução proposta
+### Objective and proposed solution
 
-O CyberCheck pretende reunir problemas de segurança em uma apresentação clara, agrupada por tipo e organizada por prioridade, com evidências e ações sugeridas. O objetivo é ajudar o desenvolvedor a entender os riscos identificados e tomar decisões de correção com mais autonomia.
+CyberCheck aims to present security issues clearly, grouped by type and ordered by priority, with evidence and suggested actions. Its objective is to help developers understand identified risks and make remediation decisions more independently.
 
-O usuário poderá conectar o GitHub, autorizar os repositórios que deseja avaliar e iniciar uma análise. Cada problema será apresentado com sua localização, quando aplicável, possível impacto e orientação de correção. Os resultados indicarão a versão do código e a data da análise, permitindo acompanhar novas avaliações após as mudanças.
+Users will be able to connect GitHub, authorize the repositories they want assessed, and start an analysis. Each issue will include its location where applicable, potential impact, and remediation guidance. Results will identify the code revision and analysis date, allowing users to follow up with new assessments after making changes.
 
-### Primeira versão
+### Initial version
 
-O MVP terá três frentes:
+The MVP will cover three areas:
 
-- **Código:** procurar possíveis falhas, como injeções de SQL e comandos, execução insegura de código e carregamento inseguro de dados.
-- **Dependências:** identificar versões com vulnerabilidades conhecidas, avisos de descontinuação e repositórios arquivados, sugerindo atualizações ou possíveis alternativas quando necessário.
-- **Segredos e configurações:** procurar credenciais expostas e configurações potencialmente inseguras.
+- **Code:** look for potential vulnerabilities such as SQL and command injection, unsafe code execution, and unsafe data loading.
+- **Dependencies:** identify versions with known vulnerabilities, discontinuation notices, and archived repositories, suggesting upgrades or possible alternatives when needed.
+- **Secrets and configuration:** look for exposed credentials and potentially insecure settings.
 
-O foco da entrega será expor os problemas e orientar ações. Cada achado terá evidências e incertezas explícitas, para distinguir uma suspeita de uma falha confirmada. A ausência de alertas não será apresentada como garantia de segurança.
+The deliverable will focus on exposing issues and guiding action. Each finding will include evidence and explicit uncertainty to distinguish a suspected issue from a confirmed vulnerability. The absence of alerts will not be presented as a security guarantee.
 
-### Impacto esperado
+### Expected impact
 
-Queremos reduzir a dificuldade de interpretar alertas e decidir por onde começar, aproximando as verificações de segurança do cotidiano de quem desenvolve com uma equipe pequena. A utilidade da proposta será avaliada pela clareza dos resultados, pela pertinência das orientações e pela capacidade de apoiar correções nos projetos analisados.
+We want to make alerts easier to interpret and help developers decide where to start, bringing security checks into the everyday work of small development teams. The proposal's usefulness will be assessed through the clarity of results, the relevance of guidance, and its ability to support fixes in analyzed projects.
 
-### Evolução futura
+### Future development
 
-Após validar o diagnóstico inicial, pretendemos avaliar o monitoramento de novos avisos de segurança e a notificação dos responsáveis por projetos potencialmente afetados. Essa etapa ficará fora da primeira versão.
+After validating the initial assessment, we intend to explore monitoring new security advisories and notifying the owners of potentially affected projects. This is outside the first version.
 
-### Uso responsável
+### Responsible use
 
-A proposta tem finalidade defensiva. As análises e demonstrações serão realizadas em projetos próprios ou com autorização por escrito, sem expor dados pessoais reais de terceiros. O acesso será limitado aos repositórios autorizados pelo usuário.
+The proposal has a defensive purpose. Analyses and demonstrations will use projects we own or have written authorization to assess, without exposing real third-party personal data. Access will be limited to repositories authorized by the user.

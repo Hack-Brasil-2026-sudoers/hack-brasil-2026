@@ -32,7 +32,7 @@ class FakeGitHub:
 
     def resolve(self, repository_id, reference):
         if repository_id != 10:
-            raise GitHubError("Acesso não autorizado.")
+            raise GitHubError("Unauthorized access.")
         return "team/project", SHA, reference or "main"
 
     def download(self, analysis, destination):
@@ -173,7 +173,7 @@ def test_worker_partial_and_cleanup(settings):
 def test_worker_revoked_access_and_failure_cleanup(settings):
     class Revoked(FakeGitHub):
         def download(self, analysis, destination):
-            raise GitHubError("Acesso revogado.")
+            raise GitHubError("Access revoked.")
     store = Store(settings.data_dir)
     job, _ = store.create(10, "team/project", SHA, "main", False)
     process(store.claim(), store, Revoked(), settings)
@@ -202,7 +202,7 @@ def test_download_does_not_forward_token_or_follow_untrusted_redirect(settings, 
             return httpx.Response(200, json={"full_name": "team/project"})
         if request.url.host == "api.github.com":
             return httpx.Response(302, headers={"location": "https://evil.invalid/repo.zip"})
-        raise AssertionError("Não deve acessar o destino externo")
+        raise AssertionError("Must not access the external destination")
     github = GitHub(settings, transport=httpx.MockTransport(respond))
     monkeypatch.setattr(github, "installation_token", lambda repository_id: "never-leak-this-token")
     with pytest.raises(GitHubError):

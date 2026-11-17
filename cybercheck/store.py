@@ -112,7 +112,7 @@ class Store:
         with self.connect() as db:
             db.execute(
                 "UPDATE analyses SET status='failed',finished_at=?,error=? WHERE status='running'",
-                (now(), "Worker interrompido. Solicite uma nova análise."),
+                (now(), "Worker interrupted. Request a new analysis."),
             )
 
     def delete(self, identity):
