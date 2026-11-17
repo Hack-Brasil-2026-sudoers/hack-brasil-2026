@@ -5,16 +5,22 @@ import platform
 import tarfile
 import tempfile
 from pathlib import Path
+from urllib.parse import urlsplit
 from urllib.request import urlopen
 
 
 def install(tool, directory):
+    source = urlsplit(tool["url"])
+    if (source.scheme != "https" or source.hostname != "github.com"
+            or source.port not in (None, 443) or source.username or source.password):
+        raise ValueError("Scanner downloads must use an HTTPS GitHub release URL.")
     directory.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=directory) as tmp:
         download = Path(tmp) / "download"
         checksum = hashlib.sha256()
         total = 0
-        with urlopen(tool["url"], timeout=30) as response, download.open("wb") as output:
+        # The initial URL is restricted above; downloaded bytes must also match the pinned hash.
+        with urlopen(tool["url"], timeout=30) as response, download.open("wb") as output:  # nosec B310
             while chunk := response.read(65536):
                 total += len(chunk)
                 if total > 150 * 1024 * 1024:

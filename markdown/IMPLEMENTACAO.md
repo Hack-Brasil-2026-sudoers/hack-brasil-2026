@@ -43,6 +43,17 @@ Use the next-step checklist for the backlog and the workstream document for owne
 - Preserve API schemas and status values agreed with the frontend. Negotiate breaking changes and update affected callers and tests together. Do not invent missing endpoints or present development mocks as real integrations.
 - Keep UI work within the confirmed HTML/CSS/Jinja2 direction, with minimal JavaScript. The static site in `website/` is the project presentation; the operational analysis interface is separate work.
 
+### Commit scope and pull requests
+
+- Keep each commit focused on one coherent topic with a clear purpose. A reviewer should be able to understand and, when practical, revert that change independently.
+- Include the implementation and its directly related tests in the same commit. Include documentation required to understand that specific behavior; do not split a fix from the tests that establish it.
+- Separate unrelated changes, such as a scanner bug fix, a Pages deployment change, dependency automation, and contributor guidance, into distinct commits. Do not bundle everything done during a session into one oversized commit.
+- Let the pull request assemble the related commits that deliver the overall task. Explain the complete outcome in the PR description, while each commit message explains its own change.
+- This is separation by purpose, not a rule to create one commit per file. Avoid artificial fragments that leave the code broken or are not useful to review on their own.
+- Before committing, inspect the staged diff and stage only the intended topic. Keep unrelated formatting, refactoring, generated files, and another contributor's work out of the commit.
+- Write concise, specific English subjects, such as `fix: reject unsafe scanner download URLs`, `ci: add Python security checks`, or `docs: define contribution standards`. Avoid vague messages such as `update everything`.
+- If an unpublished commit mixes topics, split it before pushing while preserving the working changes. Do not rewrite published history or force-push merely to tidy commits without explicit agreement.
+
 ### Security and reporting boundaries
 
 - Analyze only owned projects or projects with written authorization, using read access limited to authorized repositories.
@@ -91,6 +102,7 @@ git diff --check
 ```
 
 - For changed behavior, add or update focused tests that demonstrate the expected result and relevant failure cases. Security-sensitive changes must preserve authorization, masking, cleanup, and failure handling. Documentation-only changes require link and content checks rather than new application tests.
+- Never remove an existing test without the user's explicit permission. If a test appears obsolete or conflicts with a change, explain why and obtain permission before deleting it. Do not disable, skip, or weaken tests merely to make a check pass; preserve the coverage when updating expected behavior.
 - Use mocked GitHub/network responses for automated tests; do not embed real credentials or require another contributor's local installation. Run live checks only against authorized systems and identify them separately in the handoff.
 - For UI changes, check desktop and mobile layouts, empty/error/partial states when applicable, accessibility labels, and the actual API contract. Report browser interactions that were not tested.
 - Before handoff, inspect the complete diff and, if committing, the staged diff for unrelated changes and secrets. Confirm new repository text is English and local documentation links resolve.
@@ -98,6 +110,28 @@ git diff --check
 - In a pull request, state the problem and resulting behavior, summarize validation with actual commands/results, and mention material limitations or contract changes. Do not claim unrun checks passed.
 
 ## Implemented and validated
+
+### Repository security and merge checks
+
+The repository's CI protects CyberCheck's own code. It is separate from the product's scanner executor and does not implement automatic analysis of customers' repositories.
+
+- `.github/workflows/ci.yml` runs tests on Python 3.11 and 3.14, Bandit, pip-audit, and a redacted Betterleaks Git-history scan on PRs to `main` and pushes to `main`.
+- Bandit checks `cybercheck/` and `scripts/`, failing on findings with at least medium severity and confidence. Any targeted suppression requires a documented justification and appropriate validation/tests; do not hide findings just to pass CI.
+- pip-audit checks the installed environment, skipping the editable CyberCheck package. It queries public vulnerability metadata and fails on known vulnerabilities or audit errors. These checks apply to this repository's CI; they do not authorize installing an untrusted project in the product's analysis pipeline.
+- `.github/workflows/codeql.yml` runs Python CodeQL with security-extended queries on PRs, `main`, and weekly schedules. The merge rules also require CodeQL results and block high/critical security alerts and error-level alerts.
+- `.github/workflows/scorecard.yml` assesses repository supply-chain practices on `main` and weekly. It publishes repository results to OpenSSF and uploads SARIF to GitHub code scanning. This repository assessment is separate from the product: CyberCheck findings still have no security score. Scorecard is not a required PR check because it assesses the default branch.
+- All workflow Actions are pinned to full commit SHAs, checkout credentials are not persisted, and write permissions are limited to jobs that upload security reports or deploy Pages. Do not use `pull_request_target` to execute PR code with elevated permissions.
+- `.github/dependabot.yml` requests weekly Python and GitHub Actions updates. Review update PRs and let the same checks run; do not auto-merge security-tool or workflow changes without review.
+
+`.github/main-ruleset.json` records the intended `main` protection: PRs with resolved review threads, an up-to-date branch, required checks, no force pushes or deletion, and no bypass actors. Human approval is optional: the PR author or latest pusher may merge once the other requirements pass. No separate approval of the latest push is required; stale approvals are still dismissed when new commits are pushed. Required check names are `Tests (Python 3.11)`, `Tests (Python 3.14)`, `Bandit`, `Dependency audit`, `Secret scan`, and `CodeQL (Python)`. Coordinate renames with the ruleset; otherwise PRs can wait indefinitely for a nonexistent check.
+
+The JSON file is a record of the repository settings, not an automatically applied policy. Repository administrators apply and verify it through GitHub Settings or the API. Editing the file alone does not change protection. Do not weaken the rules or bypass a failing check to land a change; investigate and fix it. Peer review is encouraged, but an approval from another person is not a merge requirement.
+
+For a failed check, inspect its Actions log or Security alert, reproduce the issue when possible, and add a focused fix with a regression test where appropriate. Do not add real tokens to make checks pass. Scanner downloads are checksum-verified; found credentials are never validated against providers.
+
+References: [OpenSSF Scorecard Action](https://github.com/ossf/scorecard-action), [CodeQL merge protection](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/set-merge-protection), and [pip-audit](https://github.com/pypa/pip-audit).
+
+### Application baseline
 
 - API with a single-operator Bearer token, input validation, history, and deletion; tests for missing tokens and conflicts.
 - SQLite with a persistent queue, active duplicate prevention, queue limits, and recovery of interrupted runs.
