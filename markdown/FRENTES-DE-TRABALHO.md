@@ -1,164 +1,166 @@
-# Frentes de trabalho do CyberCheck
+# CyberCheck workstreams
 
-Organização para os quatro integrantes trabalharem em paralelo. Os nomes dos responsáveis ainda serão combinados pelo time. A interface da demo ficará com outro integrante, conforme definido pelo usuário.
+All contributors and coding assistants should first read the [implementation guide](IMPLEMENTACAO.md), including the English-language requirement and shared development standards. Use this document for file ownership and contracts, and [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md) for the task checklist.
 
-Após organizar as frentes, o usuário retomou o trabalho na conexão GitHub e na validação do fluxo. O estado abaixo foi atualizado em 17/11/2026; cada participante deve continuar apenas nos arquivos e contratos combinados.
+Organization for the four team members to work in parallel. The team still needs to agree on owners. Another member will build the demo interface, as decided by the user.
 
-## Estado atual
+After organizing the workstreams, the user resumed work on the GitHub connection and flow validation. The status below was updated on November 17, 2026; each participant should continue only within agreed files and contracts.
 
-- Há uma primeira base de API, SQLite, integração GitHub App, worker e adaptadores dos três scanners no diretório de trabalho.
-- O commit que inclui este documento compartilha a base inicial para o time. Cada frente deve partir desse mesmo commit e revisar os contratos antes de alterar os módulos.
-- Os 24 testes atuais passaram na verificação de 17/11/2026. Os três scanners também foram executados com exemplos controlados. A conexão e o fluxo real pelo repositório selecionado também foram verificados, com resultado parcial documentado; isso não valida o produto completo. Há um aviso de depreciação do TestClient sobre o uso de httpx, sem falha nos testes.
-- Não há frontend da aplicação, login multiusuário ou coleta de sinais de descontinuação implementados.
-- A GitHub App do time foi configurada e teve acesso real validado em 17/11/2026: autenticação, repositório selecionado, resolução do commit, download temporário e listagem pela API. Os testes automatizados continuam usando respostas simuladas; o fluxo pela fila e relatório também foi validado com código real, com dependências explicitamente não avaliadas por falta de arquivo suportado. Repositório privado adicional e revogação ainda precisam de validação real.
-- O site em `website/` é a apresentação do projeto, não a interface operacional da demo.
+## Current status
 
-## Divisão de propriedade dos arquivos
+- An initial API, SQLite store, GitHub App integration, worker, and adapters for the three scanners exist in the working directory.
+- The commit containing this document shares the initial foundation with the team. Each workstream should start from that same commit and review contracts before modifying modules.
+- All 24 current tests passed on November 17, 2026. The three scanners were also run against controlled examples. The connection and real flow through the selected repository were verified, with a documented partial result; this does not validate the complete product. TestClient emits a deprecation warning about httpx usage, without test failures.
+- No application frontend, multiuser login, or discontinuation-signal collection has been implemented.
+- The team's GitHub App was configured and real access validated on November 17, 2026: authentication, selected repository, commit resolution, temporary download, and API listing. Automated tests still use mocked responses; the queue and report flow was also validated with real code, with dependencies explicitly unassessed due to a missing supported file. An additional private repository and revocation still require real validation.
+- The site in `website/` presents the project; it is not the operational demo interface.
 
-Cada arquivo deve ter uma frente responsável. As pastas futuras abaixo são sugestões de localização; não foram criadas nesta etapa.
+## File ownership
 
-| Frente | Responsabilidade | Arquivos de propriedade exclusiva | Branch sugerida |
+Each file should have one responsible workstream. Future directories below are suggested locations; they were not created at this stage.
+
+| Workstream | Responsibility | Exclusively owned files | Suggested branch |
 | --- | --- | --- | --- |
-| 1. Backend e dados | API, autenticação do CyberCheck, fila e histórico | `cybercheck/api.py`, `cybercheck/store.py`, `cybercheck/config.py`, `cybercheck/__main__.py`; novos testes em `tests/test_api.py` e `tests/test_store.py` | `feat/backend` |
-| 2. Análises e executor | Rodar scanners, normalizar achados e gerenciar execução | `cybercheck/scanners.py`, `cybercheck/worker.py`, `tools.lock.json`, `scripts/install_scanners.py`; novos testes em `tests/test_scanners.py` e `tests/test_worker.py` | `feat/analyses` |
-| 3. GitHub e manutenção de dependências | Acesso aos repositórios e evidências de descontinuação/arquivamento | `cybercheck/github.py`; novo `cybercheck/maintenance.py`; novos testes em `tests/test_github.py` e `tests/test_maintenance.py` | `feat/github` |
-| 4. Interface da demo | Telas e interação com a API | Novos `templates/` e `static/`; ajustes em `website/` somente se necessários e combinados | `feat/demo-ui` |
+| 1. Backend and data | API, CyberCheck authentication, queue, and history | `cybercheck/api.py`, `cybercheck/store.py`, `cybercheck/config.py`, `cybercheck/__main__.py`; new tests in `tests/test_api.py` and `tests/test_store.py` | `feat/backend` |
+| 2. Analysis and executor | Run scanners, normalize findings, and manage execution | `cybercheck/scanners.py`, `cybercheck/worker.py`, `tools.lock.json`, `scripts/install_scanners.py`; new tests in `tests/test_scanners.py` and `tests/test_worker.py` | `feat/analyses` |
+| 3. GitHub and dependency maintenance | Repository access and discontinuation/archive evidence | `cybercheck/github.py`; new `cybercheck/maintenance.py`; new tests in `tests/test_github.py` and `tests/test_maintenance.py` | `feat/github` |
+| 4. Demo interface | Screens and API interaction | New `templates/` and `static/`; changes in `website/` only when necessary and agreed | `feat/demo-ui` |
 
-## Frente 1 — Backend e dados
+## Workstream 1 — Backend and data
 
-### Já feito
+### Done
 
-- API, Bearer token local, validação de entrada, SQLite, fila, histórico e rota de exclusão.
-- Testes de autenticação, duplicatas, recuperação da fila e exclusão; fluxo real de solicitação e consulta do relatório.
+- API, local Bearer token, input validation, SQLite, queue, history, and deletion route.
+- Authentication, duplicate, queue recovery, and deletion tests; real request and report retrieval flow.
 
-### Falta fazer
+### Remaining
 
-- Revisar e estabilizar as rotas, os formatos JSON e os códigos de erro para o frontend.
-- Completar os modelos de resposta e a documentação OpenAPI.
-- Ampliar validação de concorrência e conectar histórico/exclusão à futura autorização por usuário; as operações iniciais já possuem testes.
-- Definir a evolução da autenticação: o código inicial usa um token de operador único, não contas de usuários independentes.
-- Garantir que a autorização acompanhe essa evolução; não apresentar a base atual como um serviço multiusuário pronto.
-- Fazer os ajustes mínimos para servir os templates e arquivos estáticos entregues pela frente 4, quando necessário.
+- Review and stabilize routes, JSON formats, and error codes for the frontend.
+- Complete response models and OpenAPI documentation.
+- Expand concurrency validation and connect history/deletion to future per-user authorization; initial operations already have tests.
+- Define authentication's evolution: the initial code uses a single-operator token, rather than independent user accounts.
+- Ensure authorization evolves accordingly; do not present the current foundation as a ready multiuser service.
+- Make minimal changes to serve templates and static files delivered by workstream 4, when needed.
 
-**Entrega:** API testada e contrato estável para as outras frentes, com persistência e regras de acesso claras.
+**Deliverable:** tested API and a stable contract for other workstreams, with clear persistence and access rules.
 
-**Não alterar:** scanners, download do GitHub ou implementação visual das telas.
+**Do not modify:** scanners, GitHub downloads, or screen styling/implementation.
 
-## Frente 2 — Análises e executor
+## Workstream 2 — Analysis and executor
 
-### Já feito
+### Done
 
-- Adaptadores dos três scanners, instalador com hashes, worker separado e normalização dos resultados.
-- Timeout, extração defensiva, descarte temporário e representação de análises parciais.
-- Três scanners executados em exemplos controlados; Bandit e Betterleaks executados também no repositório real.
-- Falta de fonte de dependências identificada no fluxo real e tratada explicitamente como verificação não realizada, com testes de regressão.
+- Three scanner adapters, installer with hashes, separate worker, and result normalization.
+- Timeouts, defensive extraction, temporary cleanup, and representation of partial analyses.
+- Three scanners run against controlled examples; Bandit and Betterleaks also run against the real repository.
+- Missing dependency sources identified in the real flow and explicitly handled as an unperformed check, with regression tests.
 
-### Falta fazer
+### Remaining
 
-- Revisar os adaptadores e fixar as configurações e versões efetivamente suportadas.
-- Validar exemplos vulneráveis e corrigidos das categorias aprovadas, incluindo falsos positivos.
-- Ampliar a matriz de falhas de ferramentas e rede. Já há testes de ferramenta ausente, falta de fonte de dependências, timeout e recuperação de trabalhos interrompidos.
-- Ampliar os testes de descarte e proteção de evidências; o descarte e o resultado parcial já foram observados no fluxo real.
-- Completar os limites de recursos e o isolamento necessário ao executor. Processo separado não equivale a isolamento de segurança.
-- Integrar os sinais de manutenção produzidos pela frente 3 sem alterar seus critérios.
+- Review adapters and pin the configuration and versions actually supported.
+- Validate vulnerable and fixed examples for approved categories, including false positives.
+- Expand the tool/network failure matrix. Tests already cover missing tools, missing dependency sources, timeouts, and recovery of interrupted jobs.
+- Expand cleanup and evidence-protection tests; cleanup and partial results have already been observed in the real flow.
+- Complete resource limits and necessary executor isolation. A separate process does not provide security isolation.
+- Integrate maintenance signals produced by workstream 3 without changing their criteria.
 
-**Entrega:** worker executa as verificações e devolve achados e cobertura reais, sem executar o projeto analisado nem testar credenciais contra provedores.
+**Deliverable:** a worker that runs checks and returns actual findings and coverage, without executing the analyzed project or testing credentials against providers.
 
-**Não alterar:** endpoints, schema do banco, login ou telas.
+**Do not modify:** endpoints, database schema, login, or screens.
 
-## Frente 3 — GitHub e manutenção de dependências
+## Workstream 3 — GitHub and dependency maintenance
 
-### Já feito
+### Done
 
-- App da organização cadastrada e instalada com leitura de Contents/Metadata, somente no repositório escolhido.
-- Configuração local protegida; autenticação real, listagem, resolução de SHA e download temporário validados.
-- Fluxo integrado com API, fila e worker validado sem colocar credenciais ou relatórios no Git. Ver [GITHUB.md](GITHUB.md).
+- Organization App registered and installed with read-only Contents/Metadata access, limited to the selected repository.
+- Protected local configuration; real authentication, listing, SHA resolution, and temporary download validated.
+- Integrated API, queue, and worker flow validated without putting credentials or reports in Git. See [GITHUB.md](GITHUB.md).
 
-### Falta fazer
+### Remaining
 
-- Testar o acesso real a um repositório privado próprio autorizado; a instalação inicial e o acesso ao repositório selecionado já funcionam.
-- Ampliar testes reais de paginação e revogação. Resolução de commit e download da revisão já foram testados com GitHub real.
-- Apoiar a frente 1 no fluxo de autorização do usuário, sem editar a API ou as configurações em paralelo.
-- Associar corretamente o pacote Python ao projeto de origem.
-- Coletar apenas os dois sinais aprovados: aviso explícito dos mantenedores e repositório arquivado, com fonte e data.
-- Verificar sucessores ou mudança de endereço e sugerir alternativas somente quando houver evidências de adequação; caso contrário, informar que não foi identificada uma alternativa.
-- Combinar com a frente 2 como fornecer o inventário de dependências e como retornar essas evidências.
+- Test real access to an authorized private repository owned by the team; the initial installation and selected-repository access already work.
+- Expand real pagination and revocation tests. Commit resolution and revision download have already been tested against real GitHub.
+- Support workstream 1's user authorization flow without editing the API or configuration in parallel.
+- Correctly map each Python package to its upstream project.
+- Collect only the two approved signals: explicit maintainer notices and archived repositories, with source and date.
+- Check for successors or a new location and suggest alternatives only with evidence of suitability; otherwise report that no alternative was identified.
+- Agree with workstream 2 on how to provide the dependency inventory and return this evidence.
 
-**Entrega:** acesso autorizado a commits e evidências verificáveis sobre manutenção, sem classificar uma biblioteca como abandonada apenas por inatividade.
+**Deliverable:** authorized commit access and verifiable maintenance evidence, without classifying a library as abandoned solely because of inactivity.
 
-**Não alterar:** schemas do SQLite, execução dos scanners ou interface.
+**Do not modify:** SQLite schemas, scanner execution, or the interface.
 
-## Frente 4 — Interface da demo
+## Workstream 4 — Demo interface
 
-### Falta fazer
+### Remaining
 
-- Criar as telas de seleção de repositório, confirmação da autorização e início manual da análise.
-- Mostrar andamento, falhas e verificações incompletas.
-- Exibir os problemas por tipo e prioridade, sem nota ou score.
-- Apresentar evidências, confiança, impacto e ação sugerida, além de commit e data/hora.
-- Implementar histórico e exclusão com confirmação.
-- Validar uso em desktop e celular e tratar estados vazios e erros.
+- Create repository-selection, authorization-confirmation, and manual analysis-start screens.
+- Show progress, failures, and incomplete checks.
+- Display issues by type and priority, without grades or scores.
+- Present evidence, confidence, impact, and suggested actions, as well as commit and timestamp.
+- Implement history and deletion with confirmation.
+- Validate desktop and mobile use and handle empty states and errors.
 
-**Entrega:** interface que consome a API real. Enquanto houver mocks de desenvolvimento, identificá-los como dados simulados.
+**Deliverable:** an interface consuming the real API. While development mocks exist, identify them as simulated data.
 
-**Não alterar:** Python do backend, banco, autenticação ou scanners. Solicitar à frente 1 qualquer rota, ajuste de CORS ou configuração para servir arquivos. Não colocar tokens reais, chave da GitHub App ou outros segredos no HTML/JavaScript ou no repositório.
+**Do not modify:** backend Python, database, authentication, or scanners. Ask workstream 1 for any routes, CORS adjustments, or file-serving configuration. Do not put real tokens, the GitHub App key, or other secrets in HTML/JavaScript or the repository.
 
-## Contratos que precisam ser combinados antes do trabalho paralelo
+## Contracts to agree on before parallel work
 
 ### API ↔ interface
 
-As rotas iniciais existentes são:
+Existing initial routes:
 
-| Método e rota | Função |
+| Method and route | Purpose |
 | --- | --- |
-| `GET /health` | Estado da API |
-| `GET /api/repositories` | Repositórios acessíveis à instalação configurada |
-| `POST /api/analyses` | Solicitar análise manual de uma referência |
-| `GET /api/analyses` | Consultar histórico |
-| `GET /api/analyses/{id}` | Consultar relatório e problemas agrupados |
-| `DELETE /api/analyses/{id}` | Excluir análise; execução em andamento retorna conflito |
+| `GET /health` | API status |
+| `GET /api/repositories` | Repositories accessible to the configured installation |
+| `POST /api/analyses` | Request manual analysis of a reference |
+| `GET /api/analyses` | Retrieve history |
+| `GET /api/analyses/{id}` | Retrieve the report and grouped issues |
+| `DELETE /api/analyses/{id}` | Delete an analysis; a running analysis returns a conflict |
 
-O corpo inicial da solicitação contém `repository_id`, `reference` opcional, `authorization_confirmed` e `dependency_lookup`. Esta última opção autoriza a consulta externa de metadados de dependências. As rotas de dados exigem Bearer token na base atual.
+The initial request body contains `repository_id`, optional `reference`, `authorization_confirmed`, and `dependency_lookup`. The last option authorizes external dependency metadata queries. Data routes require a Bearer token in the current foundation.
 
-As frentes 1 e 4 devem confirmar esse contrato antes de implementar a integração visual. O login GitHub por usuário ainda não existe: não montar telas pressupondo que esse fluxo esteja pronto.
+Workstreams 1 and 4 must confirm this contract before implementing the visual integration. Per-user GitHub login does not yet exist: do not build screens assuming this flow is ready.
 
-### Executor ↔ API e banco
+### Executor ↔ API and database
 
-Estados iniciais: `queued`, `running`, `completed`, `partial` e `failed`.
+Initial states: `queued`, `running`, `completed`, `partial`, and `failed`.
 
-O relatório registra repositório, SHA, datas, achados e estado/versão de cada ferramenta. O estado `completed` significa que as verificações configuradas terminaram, não que o projeto está seguro. Regras de escopo e casos não cobertos precisam ficar explícitos.
+The report records the repository, SHA, timestamps, findings, and each tool's status/version. The `completed` state means configured checks finished, rather than that the project is secure. Scope rules and uncovered cases must be explicit.
 
-Prioridades: `critical`, `high`, `medium`, `low` e `review`. A interface pode traduzir os rótulos, mantendo os valores do contrato. Confiança e prioridade são campos distintos.
+Priorities: `critical`, `high`, `medium`, `low`, and `review`. The interface may translate labels while retaining contract values. Confidence and priority are distinct fields.
 
-O formato inicial de um achado está em `cybercheck/scanners.py`, na função `finding`. Alterações nos campos devem ser combinadas entre as frentes 1, 2 e 4 antes de serem aplicadas.
+The initial finding format is in the `finding` function in `cybercheck/scanners.py`. Field changes must be agreed upon by workstreams 1, 2, and 4 before implementation.
 
 ### Executor ↔ GitHub
 
-Preservar ou negociar explicitamente as interfaces existentes:
+Preserve or explicitly negotiate existing interfaces:
 
-- `repositories(page)`: lista os repositórios autorizados.
-- `resolve(repository_id, reference)`: retorna nome completo, SHA e referência.
-- `download(analysis, destination)`: baixa o arquivo da revisão registrada para o destino indicado.
+- `repositories(page)`: lists authorized repositories.
+- `resolve(repository_id, reference)`: returns full name, SHA, and reference.
+- `download(analysis, destination)`: downloads the recorded revision's archive to the specified destination.
 
-A coleta de manutenção deve ficar em módulo separado do adaptador de scanners. As frentes 2 e 3 precisam acordar seu formato de entrada e saída antes de integrar essa funcionalidade.
+Maintenance collection should live in a module separate from the scanner adapter. Workstreams 2 and 3 must agree on its input and output format before integrating this feature.
 
-## Arquivos compartilhados: um integrador responsável
+## Shared files: one responsible integrator
 
-Até o time escolher uma pessoa, considerar a frente 1 responsável pela integração destes arquivos:
+Until the team chooses a person, consider workstream 1 responsible for integrating these files:
 
-- `pyproject.toml`, eventual lockfile Python, `.env.example` e `.gitignore`.
-- `README.md`, planejamento em `markdown/` e este documento.
-- `tests/test_backend.py` e `tests/test_security.py`, que já abrangem múltiplas frentes. As frentes devem criar seus novos testes nos arquivos exclusivos indicados na tabela, evitando editar esses dois simultaneamente.
-- Workflows em `.github/` e futuras alterações de estrutura do repositório.
+- `pyproject.toml`, any future Python lockfile, `.env.example`, and `.gitignore`.
+- `README.md`, planning in `markdown/`, and this document.
+- `tests/test_backend.py` and `tests/test_security.py`, which already cover multiple workstreams. Workstreams should create new tests in the exclusive files listed in the table, avoiding simultaneous edits to these two.
+- Workflows in `.github/` and future repository structure changes.
 
-Quem precisar adicionar uma dependência ou variável de ambiente comunica a necessidade ao integrador, em vez de editar o arquivo compartilhado em paralelo. Não mover arquivos ou renomear funções de outra frente sem combinar.
+Anyone needing a dependency or environment variable should notify the integrator rather than editing the shared file in parallel. Do not move files or rename another workstream's functions without agreement.
 
-## Ordem de integração sugerida
+## Suggested integration order
 
-1. Revisar e compartilhar a base atual em um commit comum; definir os responsáveis e confirmar os contratos.
-2. Cada participante cria sua branch a partir dessa base e trabalha nos arquivos da própria frente.
-3. Frente 1 estabiliza a API enquanto frentes 2 e 3 validam seus módulos; frente 4 pode construir as telas com dados de exemplo identificados.
-4. Integrar as mudanças em partes pequenas, atualizando a branch antes de abrir cada PR.
-5. Integrador executa o conjunto de testes e verifica o fluxo GitHub → fila → análise → relatório → exclusão.
+1. Review and share the current foundation in a common commit; assign owners and confirm contracts.
+2. Each participant creates a branch from that base and works within their workstream's files.
+3. Workstream 1 stabilizes the API while workstreams 2 and 3 validate their modules; workstream 4 can build screens with clearly identified example data.
+4. Integrate changes in small pieces, updating the branch before opening each PR.
+5. The integrator runs the test suite and checks the GitHub → queue → analysis → report → deletion flow.
 
-Hospedagem, provedor/modelo de IA, monitoramento contínuo, GitHub Actions para análise automática e planos comerciais não precisam ser resolvidos por essas frentes agora.
+Hosting, AI provider/model, continuous monitoring, GitHub Actions for automatic analysis, and commercial plans do not need to be resolved by these workstreams now.

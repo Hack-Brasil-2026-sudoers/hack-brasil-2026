@@ -17,9 +17,9 @@ class Settings:
 
     def __post_init__(self):
         if len(self.api_token) < 32:
-            raise ValueError("CYBERCHECK_API_TOKEN deve ter pelo menos 32 caracteres aleatórios.")
+            raise ValueError("CYBERCHECK_API_TOKEN must contain at least 32 random characters.")
         if not 5 <= self.scanner_timeout <= 600:
-            raise ValueError("CYBERCHECK_SCANNER_TIMEOUT deve estar entre 5 e 600 segundos.")
+            raise ValueError("CYBERCHECK_SCANNER_TIMEOUT must be between 5 and 600 seconds.")
 
     @classmethod
     def from_env(cls):

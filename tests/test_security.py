@@ -27,7 +27,7 @@ def test_scanner_does_not_inherit_credentials(tmp_path, monkeypatch):
 
 
 def test_scanner_timeout(tmp_path):
-    with pytest.raises(ScannerError, match="Tempo limite"):
+    with pytest.raises(ScannerError, match="Time limit"):
         run_command([sys.executable, "-c", "import time; time.sleep(10)"], tmp_path, 0.1)
 
 

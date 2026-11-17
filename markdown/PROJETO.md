@@ -1,193 +1,193 @@
 # CyberCheck
 
-Documento vivo da proposta. Atualizado em 17/11/2026. O escopo abaixo descreve o produto pretendido; o estado efetivamente implementado está separado a seguir.
+Living proposal document. Updated on November 17, 2026. The scope below describes the intended product; the actual implementation status is reported separately.
 
-## Proposta
+## Proposal
 
-O CyberCheck ajuda desenvolvedores autônomos e pequenas equipes a identificar possíveis problemas de segurança nos seus projetos e entender o que corrigir primeiro.
+CyberCheck helps independent developers and small teams identify potential security issues in their projects and understand what to fix first.
 
-A primeira versão terá foco na análise interna de repositórios. A entrega reúne achados, evidências, localização, possível impacto e ações de correção priorizadas.
+The first version will focus on internal repository analysis. Reports bring together findings, evidence, locations, potential impact, and prioritized remediation actions.
 
-O produto pode atender diferentes tipos de software, sem ficar restrito a aplicações web. A cobertura efetiva depende das linguagens, ferramentas e verificações implementadas.
+The product can support different types of software, beyond web applications. Actual coverage depends on the languages, tools, and checks implemented.
 
-## Estado de implementação em 17/11/2026
+## Implementation status on November 17, 2026
 
-Já existe backend FastAPI com autenticação por token de operador único, fila e histórico em SQLite, worker separado e adaptadores dos três scanners. A interface operacional da demo ficará com outro integrante e ainda não foi implementada.
+A FastAPI backend already exists, with single-operator token authentication, a SQLite queue and history, a separate worker, and adapters for all three scanners. Another team member will build the operational demo interface, which has not been implemented yet.
 
-A GitHub App da organização está instalada com leitura de Contents e Metadata, limitada ao repositório escolhido. Foram validados acesso real, resolução do commit, download, solicitação pela API, processamento pela fila e consulta do relatório. A cópia temporária foi descartada e o relatório registra SHA e datas.
+The organization's GitHub App is installed with read-only Contents and Metadata permissions, limited to the selected repository. Real access, commit resolution, download, API requests, queue processing, and report retrieval have been validated. The temporary copy was discarded, and the report records the SHA and timestamps.
 
-Bandit 1.9.4, OSV-Scanner 2.7.1 e Betterleaks 1.10.1 foram executados em exemplos controlados. Na análise real da branch `pedro`, Bandit e Betterleaks concluíram; as dependências não foram avaliadas por falta de arquivo suportado nessa revisão. O resultado ficou explicitamente parcial. A suíte atual passou com 24 testes.
+Bandit 1.9.4, OSV-Scanner 2.7.1, and Betterleaks 1.10.1 have been run against controlled examples. In the real analysis of the `pedro` branch, Bandit and Betterleaks completed; dependencies were not assessed because that revision contained no supported file. The result was explicitly partial. The current suite passed with 24 tests.
 
-Ainda faltam login e autorização por usuário, testes reais em repositório privado e de revogação, ampliação da validação de cobertura, isolamento mais forte do executor, coleta de sinais de descontinuação/arquivamento, avaliação de substituições e interface. IA externa e hospedagem permanecem adiadas.
+Remaining work includes user login and authorization, real tests with a private repository and revoked access, broader coverage validation, stronger worker isolation, collection of discontinuation/archive signals, evaluation of replacements, and the interface. External AI and hosting remain deferred.
 
-Detalhes e responsabilidades: [frentes de trabalho](FRENTES-DE-TRABALHO.md), [próximos passos](PROXIMOS-PASSOS.md) e [configuração do GitHub](GITHUB.md).
+Details and responsibilities: [workstreams](FRENTES-DE-TRABALHO.md), [next steps](PROXIMOS-PASSOS.md), and [GitHub configuration](GITHUB.md).
 
-## Decisões tomadas
+## Decisions made
 
-- Público inicial: desenvolvedores autônomos e pequenas equipes.
-- Modalidade inicial: análise interna do repositório.
-- Primeira linguagem analisada no MVP: Python.
-- Entrada inicial dos projetos: integração com GitHub.
-- Integração via GitHub App, atendendo repositórios públicos e privados, com acesso de leitura limitado aos repositórios escolhidos pelo usuário.
-- Código obtido em cópia temporária para análise e apagado ao terminar; guardar o relatório com evidências necessárias e segredos mascarados.
-- Cada análise deve registrar o repositório, o SHA completo do commit efetivamente analisado e a data/hora da análise, exibidos no relatório.
-- Disparo no MVP: manual, com o usuário selecionando o repositório e acionando “Iniciar análise”. Para o futuro, fica aberta a integração com GitHub Actions ou outros mecanismos de automação, como eventos do GitHub, pipelines de CI/CD ou agendamentos. Nenhum mecanismo futuro está escolhido ou incluído no MVP.
-- Foco: problemas de segurança com ações sugeridas.
-- Frentes confirmadas do MVP: código, dependências e segredos/configurações.
-- Análise externa de sites e APIs: modalidade independente, prevista como evolução.
-- Monitoramento de novos riscos: evolução futura.
-- Planos comerciais e cobrança: decidir posteriormente.
+- Initial audience: independent developers and small teams.
+- Initial mode: internal repository analysis.
+- First language analyzed in the MVP: Python.
+- Initial project input: GitHub integration.
+- Integration through a GitHub App, supporting public and private repositories, with read access limited to repositories selected by the user.
+- Code is obtained as a temporary copy for analysis and deleted afterward; retain the report with necessary evidence and masked secrets.
+- Each analysis must record the repository, the full SHA of the commit actually analyzed, and the analysis timestamp, displayed in the report.
+- MVP trigger: manual, with the user selecting a repository and clicking “Start analysis.” Future options remain open for GitHub Actions or other automation, such as GitHub events, CI/CD pipelines, or schedules. No future mechanism has been selected or included in the MVP.
+- Focus: security issues with suggested actions.
+- Confirmed MVP areas: code, dependencies, and secrets/configuration.
+- External website and API analysis: a separate mode planned for future development.
+- Monitoring for new risks: future development.
+- Commercial plans and billing: decide later.
 
-## Frentes de análise confirmadas para o MVP
+## Confirmed MVP analysis areas
 
-O MVP terá as três frentes abaixo. As regras e verificações específicas ainda serão escolhidas; a aprovação das frentes não implica cobertura completa de cada categoria.
+The MVP will include the three areas below. Specific rules and checks remain to be chosen; approval of these areas does not imply complete coverage of every category.
 
-| Categoria | Exemplos |
+| Category | Examples |
 | --- | --- |
-| Código potencialmente vulnerável | SQL injection, injeção de comandos de shell e outros padrões inseguros |
-| Dependências | Versões afetadas por vulnerabilidades conhecidas |
-| Segredos e configurações | Possíveis senhas, tokens e chaves expostos; configurações inseguras presentes no repositório |
+| Potentially vulnerable code | SQL injection, shell command injection, and other unsafe patterns |
+| Dependencies | Versions affected by known vulnerabilities |
+| Secrets and configuration | Potentially exposed passwords, tokens, and keys; unsafe configuration in the repository |
 
-Cada achado deve distinguir observação, suspeita e problema confirmado. A ausência de alertas não garante segurança. A presença de uma URL como `/admin`, isoladamente, não comprova vulnerabilidade.
+Each finding must distinguish observations, suspicions, and confirmed issues. The absence of alerts does not guarantee security. A URL such as `/admin`, by itself, does not prove a vulnerability.
 
-### Cobertura inicial de código Python confirmada
+### Confirmed initial Python code coverage
 
-- Possíveis SQL injections.
-- Possíveis injeções de comandos de shell.
-- Uso perigoso de `eval` e `exec` com dados externos.
-- Desserialização insegura de dados não confiáveis.
+- Potential SQL injection.
+- Potential shell command injection.
+- Dangerous use of `eval` and `exec` with external input.
+- Unsafe deserialization of untrusted data.
 
-As verificações devem considerar a origem dos dados e o contexto de uso. A simples presença de uma função não confirma uma vulnerabilidade. A ferramenta inicial é Bandit; regras específicas e limites de detecção ainda serão validados.
+Checks must consider data origin and usage context. The presence of a function alone does not confirm a vulnerability. The initial tool is Bandit; specific rules and detection limits still require validation.
 
-### Cobertura inicial de dependências confirmada
+### Confirmed initial dependency coverage
 
-- Identificar bibliotecas e versões utilizadas, indicando onde foram encontradas.
-- Consultar vulnerabilidades conhecidas e apresentar o problema, a gravidade e a versão corrigida, quando disponível.
-- Avaliar sinais de abandono ou descontinuação da dependência.
-- Sugerir possíveis substituições quando houver abandono, descontinuação ou ausência de uma correção viável.
+- Identify libraries and versions used, indicating where they were found.
+- Query known vulnerabilities and show the issue, severity, and fixed version when available.
+- Assess signs of dependency abandonment or discontinuation.
+- Suggest possible replacements when a dependency is abandoned, discontinued, or has no viable fix.
 
-Uma versão afetada não comprova que a falha é explorável naquele projeto. Da mesma forma, tempo sem releases ou commits, isoladamente, não comprova abandono: uma biblioteca pode estar estável.
+An affected version does not prove that the issue is exploitable in that project. Likewise, time without releases or commits alone does not prove abandonment: a library may be stable.
 
-No MVP, a avaliação de manutenção fica limitada a dois sinais: aviso explícito dos mantenedores sobre abandono/descontinuação ou repositório de origem arquivado. Registrar fonte, data da consulta e evidência. Não usar tempo sem commits/releases, frequência de atividade ou ausência de resposta como critérios nesta etapa. Apresentar o fato observado: um repositório arquivado pode ter um sucessor ou mudança de endereço, portanto não afirmar abandono definitivo sem contexto. A ausência desses sinais não comprova manutenção ativa. Os mecanismos de coleta e os critérios de escolha de alternativas ainda serão definidos.
+In the MVP, maintenance assessment is limited to two signals: an explicit maintainer notice of abandonment/discontinuation or an archived upstream repository. Record the source, consultation date, and evidence. Do not use time since commits/releases, activity frequency, or lack of responses as criteria at this stage. Present the observed fact: an archived repository may have a successor or a new location, so do not assert definitive abandonment without context. The absence of these signals does not prove active maintenance. Collection mechanisms and criteria for selecting alternatives remain to be defined.
 
-As alternativas devem ser verificadas quanto à manutenção, adequação ao uso no projeto, licença e esforço de migração. Explicar por que cada candidata pode servir, diferenças relevantes e incertezas. Não prometer substituição automática ou compatibilidade direta; quando não houver alternativa adequada identificada, informar isso.
+Alternatives must be checked for maintenance, suitability for the project's use case, license, and migration effort. Explain why each candidate may fit, relevant differences, and uncertainties. Do not promise automatic replacement or drop-in compatibility; report when no suitable alternative has been identified.
 
-### Cobertura inicial de segredos e configurações confirmada
+### Confirmed initial secrets and configuration coverage
 
-- Possíveis credenciais expostas no repositório, como senhas, tokens e chaves.
-- Modo de depuração habilitado em configurações potencialmente destinadas à produção.
-- Validação de certificados TLS desativada.
+- Potentially exposed repository credentials, such as passwords, tokens, and keys.
+- Debug mode enabled in configuration potentially intended for production.
+- Disabled TLS certificate validation.
 
-Considerar o contexto: exemplos fictícios, configurações de desenvolvimento e testes não devem ser tratados automaticamente como exposição real em produção. Apresentar evidências e incertezas, mascarar segredos nos resultados e não testar credenciais contra serviços externos. Regras específicas e frameworks cobertos ainda serão definidos.
+Consider context: fictional examples, development configuration, and tests must not automatically be treated as actual production exposure. Show evidence and uncertainties, mask secrets in results, and do not test credentials against external services. Specific rules and covered frameworks remain to be defined.
 
-## Experiência proposta
+## Proposed experience
 
-1. O desenvolvedor autoriza a GitHub App nos repositórios escolhidos e seleciona um deles para análise. O MVP atenderá repositórios públicos e privados, com as permissões de leitura necessárias. Contents e Metadata somente leitura já foram configurados na instalação da organização. O código atual usa um operador único; o fluxo de login e autorização individual ainda será implementado.
-2. O desenvolvedor aciona “Iniciar análise”; o sistema identifica as tecnologias e executa as verificações disponíveis.
-3. O resultado apresenta os achados com evidências e ações sugeridas.
-4. O desenvolvedor corrige e pode realizar uma nova análise para comparar os resultados.
+1. The developer authorizes the GitHub App for selected repositories and chooses one for analysis. The MVP will support public and private repositories with the necessary read permissions. Read-only Contents and Metadata permissions have already been configured in the organization's installation. The current code uses a single operator; individual login and authorization remain to be implemented.
+2. The developer clicks “Start analysis”; the system identifies technologies and runs the available checks.
+3. The result presents findings with evidence and suggested actions.
+4. The developer applies fixes and can run another analysis to compare results.
 
-Esse fluxo orienta o produto; os detalhes de implementação ainda estão em definição.
+This flow guides the product; implementation details are still being defined.
 
-### Histórico das análises
+### Analysis history
 
-Os resultados devem ficar vinculados à revisão exata do código: repositório, SHA completo do commit e data/hora da análise. O relatório representa essa revisão naquele momento, sem presumir que descreve o estado atual do projeto. Registrar o horário com fuso explícito.
+Results must be linked to the exact code revision: repository, full commit SHA, and analysis timestamp. The report represents that revision at that time, without assuming it describes the project's current state. Record timestamps with an explicit time zone.
 
-A cópia do código é temporária e deve ser descartada ao encerrar a execução, inclusive em caso de falha. O relatório pode conter os trechos necessários como evidência, com segredos mascarados. Os relatórios e seus metadados permanecem no histórico até o usuário excluí-los. O usuário deve poder excluir os próprios relatórios e suas evidências associadas. O fluxo concreto de exclusão ainda será definido.
+The code copy is temporary and must be discarded when execution ends, including on failure. The report may contain necessary evidence snippets with secrets masked. Reports and their metadata remain in history until the user deletes them. Users must be able to delete their own reports and associated evidence. The concrete deletion flow remains to be defined.
 
-## Ferramentas escolhidas para o MVP
+## Tools selected for the MVP
 
-- **Bandit (Apache-2.0):** padrões inseguros no código Python e algumas configurações.
-- **OSV-Scanner (Apache-2.0):** vulnerabilidades conhecidas nas dependências identificadas em arquivos suportados, preferindo versões resolvidas.
-- **Betterleaks (MIT):** possíveis credenciais e segredos expostos.
+- **Bandit (Apache-2.0):** unsafe Python code patterns and some configuration checks.
+- **OSV-Scanner (Apache-2.0):** known vulnerabilities in dependencies identified in supported files, preferring resolved versions.
+- **Betterleaks (MIT):** potentially exposed credentials and secrets.
 
-Seleção confirmada pelo usuário. Versões, regras, configuração e cobertura prática ainda serão validadas. A avaliação de abandono no MVP usará avisos explícitos dos mantenedores e arquivamento do repositório de origem. A coleta dessas evidências e a sugestão de substituições ainda exigem definição técnica. OpenSSF Scorecard não é necessário para esses dois sinais e permanece uma referência para possível evolução, sem adoção confirmada.
+Selection confirmed by the user. Versions, rules, configuration, and practical coverage still require validation. The MVP's abandonment assessment will use explicit maintainer notices and upstream repository archival. Collecting this evidence and suggesting replacements still require technical definition. OpenSSF Scorecard is not necessary for these two signals and remains a reference for possible future development, without confirmed adoption.
 
-## Apresentação dos resultados
+## Presenting results
 
-Expor os problemas encontrados, agrupados por tipo e organizados por prioridade. Não atribuir nota geral, pontuação por categoria ou score de segurança ao projeto.
+Expose the issues found, grouped by type and organized by priority. Do not assign an overall grade, category score, or security score to the project.
 
-Cada achado apresenta evidência, localização quando aplicável, possível impacto e ação sugerida, vinculado ao commit e à data/hora da análise. Distinguir confiança de prioridade: uma suspeita de alto impacto continua sendo uma suspeita.
+Each finding presents evidence, a location when applicable, potential impact, and a suggested action, linked to the commit and analysis timestamp. Distinguish confidence from priority: a high-impact suspicion remains a suspicion.
 
-As prioridades serão crítica, alta, média e baixa, considerando a gravidade indicada pela ferramenta e o contexto disponível, sempre com justificativa por achado. Quando faltar informação para classificar, apresentar “prioridade a revisar”. A confiança permanece separada da prioridade. Os nomes finais das categorias e as regras detalhadas de classificação ainda serão definidos. A referência ao Scorecard inspira a organização das verificações, não uma pontuação.
+Priorities will be critical, high, medium, and low, considering tool-reported severity and available context, always with a rationale for each finding. When information is insufficient to classify a finding, show “priority to review.” Confidence remains separate from priority. Final category names and detailed classification rules remain to be defined. The Scorecard reference inspires the organization of checks, rather than a scoring system.
 
-## Stack confirmada para o MVP
+## Confirmed MVP stack
 
-- Backend em Python com FastAPI.
-- Interface em HTML/CSS e templates Jinja2, com pouco JavaScript.
-- SQLite para persistir usuários, projetos, análises e achados.
-- Processo separado em Python para executar Bandit, OSV-Scanner e Betterleaks sem bloquear o atendimento do site.
+- Python backend with FastAPI.
+- HTML/CSS interface and Jinja2 templates, with little JavaScript.
+- SQLite persistence for users, projects, analyses, and findings.
+- A separate Python process to run Bandit, OSV-Scanner, and Betterleaks without blocking website requests.
 
-A prioridade é implementar o programa. Decisão atualizada em 17/11/2026: executar a demo localmente, no computador usado na apresentação. Hospedagem pública, AWS e outros provedores ficam fora do escopo desta etapa. Isolamento do executor e mecanismo de coordenação das análises precisam ser tratados na implementação. Um processo separado não constitui, por si só, isolamento de segurança. O SQLite exige armazenamento persistente no ambiente escolhido.
+The priority is to implement the program. Decision updated on November 17, 2026: run the demo locally on the presentation computer. Public hosting, AWS, and other providers are outside this stage's scope. Worker isolation and analysis coordination must be addressed during implementation. A separate process does not itself provide security isolation. SQLite requires persistent storage in the chosen environment.
 
-Antes da submissão, definir a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. A execução local está confirmada; o acesso dos jurados por link permanece uma pendência para a submissão, sem bloquear a implementação.
+Before submission, define how the demo will be made available under rules 7.2 and 7.3. Local execution is confirmed; judge access through a link remains a submission requirement to resolve, without blocking implementation.
 
-## Papel da IA no MVP
+## AI's role in the MVP
 
-Ferramentas especializadas geram os achados; a IA ajuda a explicá-los, contextualizá-los e sugerir correções com base nas evidências. A IA não será a única responsável pela detecção nem confirmará automaticamente vulnerabilidades.
+Specialized tools generate findings; AI helps explain them, add context, and suggest fixes based on evidence. AI will neither be solely responsible for detection nor automatically confirm vulnerabilities.
 
-Enviar à IA o achado estruturado e apenas o trecho mínimo de código necessário, com segredos mascarados, em vez do repositório inteiro. O conteúdo extraído do projeto continua sendo dado não confiável, mesmo em formato estruturado.
+Send AI the structured finding and only the minimum necessary code snippet, with secrets masked, rather than the entire repository. Content extracted from the project remains untrusted data, even in a structured format.
 
-A IA produzirá explicações e sugestões, sem acesso ao GitHub nem permissão para executar comandos ou alterar arquivos. As sugestões devem permanecer vinculadas às evidências e indicar incertezas.
+AI will produce explanations and suggestions without GitHub access or permission to execute commands or modify files. Suggestions must remain linked to evidence and state uncertainties.
 
-Decisão do usuário: manter provedor e modelo de IA em aberto neste momento, inclusive enquanto os benefícios do hackathon são avaliados. Essa escolha não deve bloquear a implementação das análises e da apresentação das evidências. Até configurar e autorizar a integração, não enviar dados para IA externa nem apresentar explicações como geradas por IA. Custos e tratamento dos dados ainda serão definidos. Antes de usar um serviço externo, informar ao usuário quais dados serão enviados e definir a autorização correspondente; a integração com GitHub não autoriza esse compartilhamento por si só.
+User decision: leave the AI provider and model open for now, including while hackathon benefits are evaluated. This choice must not block implementation of analysis and evidence presentation. Until the integration is configured and authorized, do not send data to external AI or present explanations as AI-generated. Costs and data handling remain to be defined. Before using an external service, tell the user which data will be sent and establish the corresponding authorization; GitHub integration does not itself authorize this sharing.
 
-## Evolução: monitoramento
+## Future development: monitoring
 
-Acompanhar novos avisos de segurança, cruzá-los com o inventário dos projetos e reavaliar possíveis exposições. Notificar os responsáveis com evidências, urgência e orientação de correção, deixando explícito quando a exposição ainda não foi confirmada.
+Track new security advisories, compare them with project inventories, and reassess potential exposure. Notify responsible parties with evidence, urgency, and remediation guidance, explicitly stating when exposure has not yet been confirmed.
 
-Fontes, periodicidade, canais de contato e planos comerciais permanecem em aberto.
+Sources, frequency, contact channels, and commercial plans remain open.
 
-## Pesquisa para escolher as linguagens
+## Research for choosing languages
 
-Consulta realizada em 15/11/2026. A prioridade é escolher linguagens relevantes para o público, sem confundir a linguagem analisada com a linguagem usada para construir o CyberCheck.
+Research conducted on November 15, 2026. The priority is to select languages relevant to the audience, without confusing the language analyzed with the language used to build CyberCheck.
 
-### Uso declarado por desenvolvedores
+### Developer-reported usage
 
-O Stack Overflow Developer Survey 2026 apresenta os seguintes resultados na pergunta de linguagens, com 14.099 respondentes:
+The Stack Overflow Developer Survey 2026 reports the following language-question results, with 14,099 respondents:
 
-| Linguagem | Uso declarado |
+| Language | Reported usage |
 | --- | ---: |
-| JavaScript | 62,0% |
-| Python | 58,0% |
-| TypeScript | 43,8% |
-| Java | 27,6% |
-| C# | 27,1% |
-| C++ | 24,3% |
-| C | 21,8% |
-| PHP | 17,7% |
-| Go | 16,5% |
+| JavaScript | 62.0% |
+| Python | 58.0% |
+| TypeScript | 43.8% |
+| Java | 27.6% |
+| C# | 27.1% |
+| C++ | 24.3% |
+| C | 21.8% |
+| PHP | 17.7% |
+| Go | 16.5% |
 
-A pergunta permite múltiplas respostas: os percentuais não são fatias exclusivas de mercado e não devem ser somados. A tabela seleciona linguagens candidatas; não reproduz o ranking completo, que também inclui SQL, HTML/CSS e shells.
+The question allows multiple answers: percentages are not mutually exclusive market shares and must not be added together. This table selects candidate languages; it does not reproduce the full ranking, which also includes SQL, HTML/CSS, and shells.
 
-Fonte: [Stack Exchange Inc., Stack Overflow Developer Survey 2026 — linguagens](https://survey.stackoverflow.co/2026/technology/data/languages), dados sob ODbL 1.0. A [metodologia](https://survey.stackoverflow.co/2026/methodology) descreve o recrutamento pela comunidade e canais do Stack Overflow; a amostra não representa automaticamente todos os desenvolvedores.
+Source: [Stack Exchange Inc., Stack Overflow Developer Survey 2026 — languages](https://survey.stackoverflow.co/2026/technology/data/languages), data under ODbL 1.0. The [methodology](https://survey.stackoverflow.co/2026/methodology) describes recruitment through the Stack Overflow community and channels; the sample does not automatically represent all developers.
 
-### Atividade no GitHub
+### GitHub activity
 
-O Octoverse 2026 informa que TypeScript, Python e JavaScript tiveram os maiores aumentos de contribuidores mensais entre as dez principais linguagens, de setembro de 2025 a setembro de 2026. Também registra que TypeScript havia assumido a liderança por contribuidores em 2025.
+Octoverse 2026 reports that TypeScript, Python, and JavaScript had the largest increases in monthly contributors among the ten leading languages, from September 2025 to September 2026. It also notes that TypeScript had taken the lead by contributors in 2025.
 
-A métrica atribui contribuidores à linguagem principal do repositório e inclui diferentes formas de participação. Ela não mede diretamente quantidade de projetos pequenos, clientes potenciais ou demanda por análise de segurança.
+This metric attributes contributors to a repository's primary language and includes different forms of participation. It does not directly measure the number of small projects, potential customers, or demand for security analysis.
 
-Fonte: [GitHub Octoverse 2026](https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/).
+Source: [GitHub Octoverse 2026](https://github.blog/news-insights/octoverse/octoverse-commits-pushes-reach-new-highs-in-2026-as-developers-build-with-agents/).
 
-### Interpretação e decisão
+### Interpretation and decision
 
-Não foi identificado, nesta pesquisa, um ranking diretamente comparável de linguagens usadas especificamente em pequenos projetos de desenvolvedores autônomos ou pequenas equipes brasileiras. As duas fontes acima são indicadores gerais, não uma medição desse público.
+This research did not identify a directly comparable ranking of languages used specifically in small projects by independent developers or small Brazilian teams. The two sources above are general indicators, rather than measurements of this audience.
 
-**Decisão confirmada pelo usuário:** começar pela análise de projetos Python no MVP. JavaScript/TypeScript são candidatos a expansão futura, ainda sem compromisso de implementação. A escolha de começar por Python é uma decisão de escopo apoiada pelos indicadores gerais, não uma conclusão estatística de que Python lidera entre pequenos projetos.
+**User-confirmed decision:** start by analyzing Python projects in the MVP. JavaScript/TypeScript are candidates for future expansion, without an implementation commitment. Starting with Python is a scope decision supported by general indicators, rather than a statistical conclusion that Python leads among small projects.
 
-C e C++ continuam sendo opções, especialmente pela experiência do proponente. Os dados gerais não justificam escolhê-las como prioridade de alcance por si só; familiaridade da equipe, ferramentas disponíveis e qualidade da análise também devem pesar.
+C and C++ remain options, particularly given the proposer's experience. General data alone does not justify prioritizing them for reach; team familiarity, available tools, and analysis quality must also be considered.
 
-Antes de prometer suporte, avaliar a cobertura real das ferramentas para cada linguagem e validar as tecnologias usadas por potenciais usuários.
+Before promising support, assess actual tool coverage for each language and validate the technologies used by potential users.
 
-## Próximas decisões, uma por vez
+## Next decisions, one at a time
 
-1. Implementar o programa e preparar execução local para a demo, tratando execução e isolamento das análises. Não provisionar hospedagem pública nesta etapa.
-2. Definir as versões de Python e os frameworks cobertos.
-3. Detalhar regras e critérios das três frentes de análise confirmadas.
-4. Retomar provedor/modelo de IA e tratamento dos dados enviados posteriormente; decisão adiada, sem bloquear a implementação.
-5. Definir critérios de demonstração e fluxo de exclusão dos relatórios; retenção até exclusão pelo usuário está confirmada.
+1. Implement the program and prepare local demo execution, addressing analysis execution and isolation. Do not provision public hosting at this stage.
+2. Define supported Python versions and frameworks.
+3. Detail rules and criteria for the three confirmed analysis areas.
+4. Revisit the AI provider/model and handling of submitted data later; this decision is deferred and does not block implementation.
+5. Define demonstration criteria and the report deletion flow; retention until user deletion is confirmed.
 
-## Relação com os arquivos existentes
+## Documentation references
 
-[CyberCheck-Hack-Brasil.md](CyberCheck-Hack-Brasil.md) preserva a conversão do PDF original, cuja proposta era focada em pequenos negócios e segurança web. Este documento registra a proposta atual discutida, que evoluiu para pequenos desenvolvedores e análise interna de repositórios.
+This document is the reference for the current product idea: independent developers and small teams, internal Python repository analysis through GitHub, and prioritized findings with evidence and suggested actions, without security scores. [RASCUNHO.md](RASCUNHO.md) provides the submission summary, [IMPLEMENTACAO.md](IMPLEMENTACAO.md) guides technical work, and [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md) tracks remaining tasks.

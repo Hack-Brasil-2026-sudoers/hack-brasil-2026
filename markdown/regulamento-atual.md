@@ -1,311 +1,279 @@
-# Regulamento do Hack Brasil 2026 — versão atual
+# Hack Brasil 2026 rules — current version
 
-Última atualização informada no site: 9 de novembro de 2026.
+Last update stated on the website: November 9, 2026.
 
-Consulta: 15 de novembro de 2026. Fonte: [Regulamento oficial](https://hackbrasil.com/regulamento).
+Consulted on November 15, 2026. Source: [Official rules](https://hackbrasil.com/regulamento).
 
-Transcrição do conteúdo do artigo, com formatação adaptada para Markdown. A cópia anterior permanece em [regulamento.md](regulamento.md).
+Unofficial English translation of the saved article, with formatting adapted to Markdown. The official Portuguese text remains authoritative.
 
-Este Regulamento define as regras para participar do Hack Brasil 2026, enviar projetos, chegar à final e receber prêmios. Os horários estão no horário de Brasília (UTC-3).
+These Rules define participation in Hack Brasil 2026, project submission, qualification for the final, and receipt of prizes. All times are Brasília time (UTC-3).
 
-  - [O evento](https://hackbrasil.com/regulamento#evento)
+- [The event](https://hackbrasil.com/regulamento#evento)
+- [Schedule](https://hackbrasil.com/regulamento#cronograma)
+- [Eligibility](https://hackbrasil.com/regulamento#elegibilidade)
+- [Registration and teams](https://hackbrasil.com/regulamento#times)
+- [Tracks](https://hackbrasil.com/regulamento#trilhas)
+- [The project](https://hackbrasil.com/regulamento#projeto)
+- [Submission](https://hackbrasil.com/regulamento#submissao)
+- [In-person final](https://hackbrasil.com/regulamento#final)
+- [Evaluation](https://hackbrasil.com/regulamento#avaliacao)
+- [Prizes](https://hackbrasil.com/regulamento#premios)
+- [Intellectual property](https://hackbrasil.com/regulamento#propriedade-intelectual)
+- [Conduct and disqualification](https://hackbrasil.com/regulamento#conduta)
+- [Data, likeness, and responsibilities](https://hackbrasil.com/regulamento#dados-imagem)
+- [General provisions](https://hackbrasil.com/regulamento#disposicoes-gerais)
 
-  - [Cronograma](https://hackbrasil.com/regulamento#cronograma)
+## 1. The event
 
-  - [Quem pode participar](https://hackbrasil.com/regulamento#elegibilidade)
+- **1.1.** Hack Brasil 2026 ("Hack Brasil" or the "Event") is a free national hackathon with an online phase and an in-person final, held by AI TECH SPACE LLC, a company incorporated in the State of Delaware, USA (the "Organizer").
 
-  - [Inscrição e times](https://hackbrasil.com/regulamento#times)
+- **1.2.** The Organizing Committee consists of Nicolas Silberstein Camara, Nicole Grossmann, and Matheus Pagani. It is responsible for interpreting these Rules, deciding matters not covered by them, and judging complaints and requests for disqualification.
 
-  - [Trilhas](https://hackbrasil.com/regulamento#trilhas)
+- **1.3.** Hack Brasil has a cultural, educational, and technological purpose: encouraging software that addresses Brazil's challenges. Participation is free, does not depend on chance, purchases, or payment, and results depend solely on the jury's evaluation of projects. The Event is held as an exclusively cultural competition under Article 3, item II, of Law No. 5,768/1971, Article 30 of Decree No. 70,951/1972, and Articles 25–29 of SEAE/MF Ordinance No. 7,638/2022. Participant data is neither sold nor transferred to third parties for commercial purposes.
 
-  - [O projeto](https://hackbrasil.com/regulamento#projeto)
+- **1.4.** Sponsors and partners support the Event, and their names appear in Event materials solely to identify them as supporters. They are not jointly responsible for these Rules and are responsible only for prizes they offer, under section 10.
 
-  - [Submissão](https://hackbrasil.com/regulamento#submissao)
+- **1.5.** Registration and submission take place exclusively through hackbrasil.com. Discord, social media, meetups, and livestreams are optional communication and learning channels and are not part of the competition mechanics.
 
-  - [Final presencial](https://hackbrasil.com/regulamento#final)
+- **1.6.** These Rules supplement the [Terms of Use](https://hackbrasil.com/termos) and [Privacy Policy](https://hackbrasil.com/privacidade). In any conflict between these Rules, the Terms of Use, the FAQ, or other Event communications, these Rules prevail.
 
-  - [Avaliação](https://hackbrasil.com/regulamento#avaliacao)
+## 2. Schedule
 
-  - [Prêmios](https://hackbrasil.com/regulamento#premios)
+- **Opening session (online):** November 4, 7:00–9:00 p.m.
+- **Launch meetup (FIAP Paulista, São Paulo):** November 5.
+- **Livestreams (optional):** November 9, 16, 23, and 27.
+- **Jury announcement:** by November 30.
+- **Registration and submission deadline:** November 30, 11:59 p.m.
+- **Finalist announcement:** December 2.
+- **Finalist attendance confirmation deadline:** December 4, 11:59 p.m.
+- **In-person final (São Paulo, with Google for Startups):** December 12.
+- **Winner announcement:** December 12.
 
-  - [Propriedade intelectual](https://hackbrasil.com/regulamento#propriedade-intelectual)
+The Organizing Committee may change dates, times, locations, and stage formats, notifying teams through their registered email addresses and the website. The submission deadline may be extended, but not brought forward.
 
-  - [Conduta e desclassificação](https://hackbrasil.com/regulamento#conduta)
+## 3. Eligibility
 
-  - [Dados, imagem e responsabilidades](https://hackbrasil.com/regulamento#dados-imagem)
+- **3.1.** Individuals aged 18 or over may participate if they are Brazilian, living in Brazil or abroad, or foreign nationals who reside in Brazil or hold a valid Brazilian visa.
 
-  - [Disposições gerais](https://hackbrasil.com/regulamento#disposicoes-gerais)
+- **3.2.** Organizing Committee members, judges, mentors, Event support staff, and employees and representatives of sponsors and partners may not compete.
 
-## 1. O evento
+- **3.3.** Only individuals participate. Companies, startups, and other legal entities do not register as teams; people associated with a company may still participate as individuals.
 
-  - **1.1.** O Hack Brasil 2026 ("Hack Brasil" ou "Evento") é um hackathon nacional e gratuito, com uma fase online e uma final presencial, realizado pela AI TECH SPACE LLC, sociedade constituída no Estado de Delaware, EUA ("Realizadora").
+- **3.4.** Participation is free at every stage, and no purchase is required to participate or win.
 
-  - **1.2.** A Comissão Organizadora é formada por Nicolas Silberstein Camara, Nicole Grossmann e Matheus Pagani. Cabe a ela interpretar este Regulamento, decidir os casos omissos e julgar denúncias e pedidos de desclassificação.
+## 4. Registration and teams
 
-  - **1.3.** O Hack Brasil tem finalidade cultural, educativa e tecnológica: estimular a criação de software que responda a desafios do Brasil. A participação é gratuita, não depende de sorte, de compra nem de pagamento, e o resultado depende só da avaliação dos projetos pelo júri. O Evento é realizado como concurso exclusivamente cultural, nos termos do art. 3º, inciso II, da Lei nº 5.768/1971, do art. 30 do Decreto nº 70.951/1972 e dos arts. 25 a 29 da Portaria SEAE/MF nº 7.638/2022. Os dados dos participantes não são vendidos nem cedidos a terceiros para fins comerciais.
+- **4.1.** Teams have 1–4 members. Each person participates in only one team, and each team makes only one submission.
 
-  - **1.4.** Os patrocinadores e parceiros apoiam o Evento, e seus nomes aparecem nos materiais do Evento só para identificá-los como apoiadores. Eles não são corresponsáveis por este Regulamento e respondem apenas pelos prêmios que oferecem, nas condições do item 10.
+- **4.2.** Registration takes place at [hackbrasil.com/inscricao](https://hackbrasil.com/inscricao) through the team's designated representative, who supplies the other members' details and declares their agreement.
 
-  - **1.5.** A inscrição e a submissão acontecem só pelo site hackbrasil.com. Discord, redes sociais, encontros e livestreams são canais opcionais de comunicação e aprendizado e não fazem parte da mecânica do concurso.
+- **4.3.** Team membership may change until submissions close, through the [team dashboard](https://hackbrasil.com/painel) or [oi@hackbrasil.com](mailto:oi@hackbrasil.com). Afterward, no new members may join; members may leave only at their own request or by decision of the Organizing Committee.
 
-  - **1.6.** Este Regulamento complementa os [Termos de Uso](https://hackbrasil.com/termos) e a [Política de Privacidade](https://hackbrasil.com/privacidade). Se houver conflito entre este Regulamento, os Termos de Uso, o FAQ ou qualquer outra comunicação sobre o Evento, vale este Regulamento.
+- **4.4.** Registrations with false or incomplete information, or involving people who do not meet section 3, may be rejected or canceled at any time.
 
-## 2. Cronograma
+## 5. Tracks
 
-  - **Sessão de abertura (online):** 4 de novembro, das 19h às 21h.
+- **5.1.** The Event has 7 thematic tracks, described in section 5.2. Each track's examples are not exhaustive. Projects excluded from a track cannot compete in it (section 5.5). Projects involving prohibited purposes under section 6.8 are rejected in every track, and the real-data rules in section 6.9 apply to all tracks.
 
-  - **Encontro de lançamento (FIAP Paulista, São Paulo):** 5 de novembro.
+- **5.2. The tracks.**
 
-  - **Livestreams (opcionais):** 9, 16, 23 e 27 de novembro.
+  - **Environment & green economy.** Projects whose main function is reducing environmental impact, conserving natural resources, or enabling green-economy markets. Examples: carbon-credit, recycling, and renewable-energy marketplaces; environmental and climate monitoring; energy and water efficiency; environmental research tools. Projects where the environmental theme is merely a label or accessory feature, such as an ordinary store with a green badge, are excluded.
 
-  - **Anúncio do júri:** até 30 de novembro.
+  - **Culture & creative economy.** Projects for creating, distributing, or consuming culture. Examples: music, visual and performing arts, audiovisual media, literature, social networks and creative communities, tools for artists and creators, and ways to compensate creators. General advertising and marketing tools, profile automation and artificial engagement (bots, fake followers and likes), and projects reproducing third-party works without authorization are excluded.
 
-  - **Encerramento das inscrições e das submissões:** 30 de novembro, às 23h59.
+  - **Access to education.** Projects helping people learn or teach. Examples: learning and teaching tools, personal study assistants, content translation and adaptation, including accessibility, and support for teachers and schools. General-purpose assistants without a learning focus and tools for cheating on exams or bypassing plagiarism detectors are excluded.
 
-  - **Anúncio dos finalistas:** 2 de dezembro.
+  - **Health & well-being.** Projects supporting physical and mental health. Examples: service and triage chatbots, tools for finding health services and information, health and wellness service marketplaces, mental health, physical activity, sleep, and nutrition. Automatic diagnosis or prescriptions presented as replacements for health professionals, medicine sales without required prescriptions, and use of real patient data are excluded.
 
-  - **Prazo para os finalistas confirmarem presença:** 4 de dezembro, às 23h59.
+  - **Payments & finance.** Projects addressing how people and businesses pay, receive, save, and invest money. Examples: payment infrastructure, trading bots, financial agents, personal and small-business financial management, and access to credit. Betting, casinos and games of chance; guaranteed-return promises and pyramid schemes; market manipulation; and issuing tokens or cryptoassets to raise money from the public are excluded.
 
-  - **Final presencial (São Paulo, com o Google for Startups):** 12 de dezembro.
+  - **Cybersecurity.** Projects protecting people, data, and systems. Examples: protection tools, monitoring agents, fraud and phishing detection, privacy, and identity and access management. Penetration-testing tools qualify only with a defensive purpose and testing on owned systems or with written authorization. Malware, exploits, and tools designed to intrude, spy, or evade detection are excluded.
 
-  - **Anúncio dos vencedores:** 12 de dezembro.
+  - **Logistics & automation.** Projects moving goods, information, or work more efficiently. Examples: system connectors and integrations, workflow automation, robotics, routing, inventory, and supply chains. Spam automation, fake-account creation, bypassing CAPTCHAs and platform limits, and data collection that violates the source site's terms or exposes personal data are excluded.
 
-A Comissão Organizadora pode alterar datas, horários, locais e o formato das etapas e avisará os times pelo e-mail cadastrado e pelo site. O prazo de submissão pode ser prorrogado, mas não antecipado.
+- **5.3.** Each team selects one track when submitting its project, and each project competes in only one track. A project covering multiple themes competes in the track corresponding to its main focus.
 
-## 3. Quem pode participar
+- **5.4. Track fit.** To compete in a track, the problem the project solves and the audience it serves must fit within it. Mentioning the theme or adding a related secondary feature is insufficient.
 
-  - **3.1.** Podem participar pessoas físicas com 18 anos ou mais que sejam brasileiras, morando no Brasil ou no exterior, ou estrangeiras que residam no Brasil ou tenham visto brasileiro válido.
+- **5.5.** The jury assesses whether each project sufficiently fits its chosen track. If not, the jury may evaluate it in a more suitable track or, if it fits none adequately, deem it ineligible for the final and prizes. Track fit is an eligibility condition, not a scoring criterion.
 
-  - **3.2.** Não podem participar como competidores os integrantes da Comissão Organizadora, jurados, mentores e equipe de apoio do Evento, nem funcionários e representantes dos patrocinadores e parceiros.
+- **5.6.** The same evaluation criteria (section 9) and rules apply to all tracks.
 
-  - **3.3.** Só pessoas físicas participam. Empresas, startups e outras pessoas jurídicas não se inscrevem como time, o que não impede que pessoas ligadas a uma empresa participem como pessoas físicas.
+## 6. The project
 
-  - **3.4.** A participação é gratuita em todas as etapas, e nenhuma compra é exigida para participar ou ganhar.
+- **6.1. New repository.** All submitted code must be in one or more public GitHub repositories created after the opening session ends (November 4, 9:00 p.m.), with all commits made from that time onward. All code developed during the Event must be in these repositories. Repositories created earlier, forks of other repositories, or repositories with imported history predating that time disqualify the project.
 
-## 4. Inscrição e times
+- **6.2. Prior work.** A project may continue a pre-existing idea or product, but no non-public code predating the Event, including the team's own private code, may be copied into submitted repositories. The exception is open code that was already public and accessible to all participants before the Event, such as starter kits, boilerplates, libraries, and frameworks. This code may be installed as a dependency or copied into the new repository without its original history and in a commit whose message identifies the source (for example, the copied repository's URL).
 
-  - **4.1.** Times têm de 1 a 4 integrantes. Cada pessoa participa de um único time, e cada time faz uma única submissão.
+- **6.3. Tools.** Technology choice is unrestricted. No sponsor, partner, or third-party tool, product, or service is required to participate, be evaluated, or receive any prize. Chosen technologies count only within the technical implementation criterion (section 9.1), with the same weight for any tool.
 
-  - **4.2.** A inscrição é feita em [hackbrasil.com/inscricao](https://hackbrasil.com/inscricao) pela pessoa responsável do time, que informa os dados dos demais integrantes e declara que eles estão de acordo.
+- **6.4. Artificial intelligence.** AI tools, such as agents, copilots, language models, and image generation, are allowed and recommended.
 
-  - **4.3.** A composição do time pode mudar até o encerramento das submissões, pelo [painel do time](https://hackbrasil.com/painel) ou pelo e-mail [oi@hackbrasil.com](mailto:oi@hackbrasil.com). Depois disso, novos integrantes não entram; um integrante só sai a pedido próprio ou por decisão da Comissão Organizadora.
+- **6.5. Third-party code and content.** Libraries, frameworks, APIs, and open-source code may be used subject to their licenses. The team declares that it has the right to use everything it submits.
 
-  - **4.4.** Inscrições com dados falsos ou incompletos, ou de pessoas que não cumpram o item 3, podem ser recusadas ou canceladas a qualquer momento.
+- **6.6. License.** An open-source license is recommended but not required. A license or restriction preventing judges from reading, running, and testing the code disqualifies the project because it cannot be evaluated.
 
-## 5. Trilhas
+- **6.7. Public repository.** Repositories must remain public and accessible until at least December 15. If made private or deleted before then, the project forfeits its evaluation and prizes.
 
-  - **5.1.** O Evento tem 7 trilhas temáticas, descritas no item 5.2. Os exemplos de cada trilha não formam uma lista fechada. O que fica de fora de uma trilha não concorre nela (item 5.5). Projetos nos temas proibidos do item 6.8 são recusados em qualquer trilha, e as regras de dados reais do item 6.9 valem para todas.
+- **6.8. Prohibited purposes.** Projects whose main purpose or foreseeable use involves the following are rejected or removed from any track:
 
-  - **5.2. As trilhas.**
+  - **adult content:** pornography or sexually explicit material; adult dating or casual-encounter apps; tools that generate NSFW content or bypass filters for it;
 
-    - **Meio ambiente & economia verde.** Projetos cuja função principal é reduzir impacto ambiental, conservar recursos naturais ou viabilizar mercados da economia verde. Exemplos: mercados de créditos de carbono, de reciclagem e de energia renovável; monitoramento ambiental e climático; eficiência energética e hídrica; ferramentas de apoio à pesquisa ambiental. Ficam de fora projetos em que o tema ambiental é só um rótulo ou um recurso acessório, como uma loja comum com selo verde.
+  - **regulated and illegal substances:** buying, selling, or manufacturing illicit drugs; apps promoting abusive consumption of alcohol, tobacco, or vaping; paraphernalia marketplaces;
 
-    - **Cultura & economia criativa.** Projetos de criação, circulação ou consumo de cultura. Exemplos: música, artes visuais e cênicas, audiovisual, literatura, redes sociais e comunidades criativas, ferramentas para artistas e criadores e formas de remunerar quem cria. Ficam de fora ferramentas de publicidade e marketing em geral, automação de perfis e de engajamento artificial (bots, seguidores e curtidas falsos) e projetos que reproduzam obras de terceiros sem autorização.
+  - **violence, weapons, and harm:** weapons-related software, such as printable firearm designs, ammunition, or weapons marketplaces; apps encouraging or facilitating self-harm or suicide; games or aggregators of graphic violence and gore;
 
-    - **Acesso à educação.** Projetos que ajudam pessoas a aprender ou a ensinar. Exemplos: ferramentas de aprendizado e ensino, assistentes pessoais de estudo, tradução e adaptação de conteúdo, inclusive para acessibilidade, e apoio a professores e escolas. Ficam de fora assistentes de uso geral sem foco em aprendizado e ferramentas para colar em provas ou burlar detectores de plágio.
+  - **harassment and hate speech:** cyberbullying, spam, or anonymous attacks against people; projects promoting discrimination, racism, sexism, or xenophobia; doxxing tools, such as scraping to expose personal data;
 
-    - **Saúde & bem-estar.** Projetos de cuidado com a saúde física e mental. Exemplos: chatbots de atendimento e triagem, ferramentas de busca de serviços e informações de saúde, marketplaces de serviços de saúde e bem-estar, saúde mental, atividade física, sono e nutrição. Ficam de fora diagnóstico ou prescrição automáticos apresentados como substitutos de profissional de saúde, venda de medicamentos sem a prescrição exigida e o uso de dados reais de pacientes.
+  - **malicious software and academic fraud:** malware, ransomware, spyware, or tools for damaging infrastructure; tools for cheating on exams or bypassing plagiarism detectors;
 
-    - **Pagamentos & finanças.** Projetos sobre como pessoas e empresas pagam, recebem, guardam e investem dinheiro. Exemplos: infraestrutura de pagamentos, trading bots, agentes financeiros, gestão financeira pessoal e de pequenas empresas e acesso a crédito. Ficam de fora apostas, cassinos e jogos de azar; promessas de rendimento garantido e esquemas de pirâmide; manipulação de mercado; e emissão de tokens ou criptoativos para captar dinheiro do público.
+  - **gambling and financial schemes:** betting, casinos, and games of chance; pyramid schemes; guaranteed-return promises; issuing tokens or cryptoassets to raise money from the public.
 
-    - **Cibersegurança.** Projetos que protegem pessoas, dados e sistemas. Exemplos: ferramentas de proteção, agentes de monitoramento, detecção de fraude e de phishing, privacidade e gestão de identidade e acesso. Ferramentas de teste de invasão só entram com finalidade defensiva e testadas em sistemas próprios ou com autorização por escrito. Ficam de fora malware, exploits e ferramentas feitas para invadir, espionar ou escapar de detecção.
+A project addressing these subjects to protect people, such as malware detection, combating hate speech, suicide prevention, or support for people who want to stop gambling, is not prohibited. The criterion is what the project does and the use it facilitates, rather than the subject it mentions. In case of doubt, the Organizing Committee decides, and teams may consult it before submitting at [oi@hackbrasil.com](mailto:oi@hackbrasil.com).
 
-    - **Logística & automação.** Projetos que movem bens, informação ou trabalho de forma mais eficiente. Exemplos: conectores e integrações entre sistemas, automação de fluxos de trabalho, robótica, roteirização, estoque e cadeia de suprimentos. Ficam de fora automações de spam, de criação de contas falsas ou de burla de captchas e limites de plataformas, e coleta de dados que viole os termos do site de origem ou exponha dados pessoais.
+- **6.9. Real data.** Demos must not expose real third-party personal data. Health projects use synthetic data; finance projects may demonstrate in test or simulation environments instead of making real transactions; security tools are tested only on owned systems or with written authorization.
 
-  - **5.3.** Cada time escolhe uma trilha ao submeter o projeto, e cada projeto concorre em uma só trilha. Um projeto que toca mais de um tema concorre na trilha do seu foco principal.
+## 7. Submission
 
-  - **5.4. Enquadramento.** Para concorrer em uma trilha, o problema que o projeto resolve e o público que ele atende precisam estar dentro dela. Citar o tema ou acrescentar uma funcionalidade secundária ligada a ele não basta.
+- **7.1.** Submission takes place through the [team dashboard](https://hackbrasil.com/painel) by November 30, 11:59 p.m. The last version submitted within the deadline applies. During the online phase, the jury evaluates each repository as of its last commit pushed to GitHub by that time; later commits are not considered.
 
-  - **5.5.** O júri avalia se cada projeto se enquadra o suficiente na trilha escolhida. Se não se enquadrar, o júri pode avaliá-lo na trilha em que ele se encaixa melhor ou, se ele não se enquadrar bem em nenhuma, considerá-lo inelegível para a final e para os prêmios. O enquadramento é uma condição para concorrer, não um critério de nota.
+- **7.2.** Submission must include:
 
-  - **5.6.** Os mesmos critérios de avaliação (item 9) e as mesmas regras valem para todas as trilhas.
+  - project name, tagline, and description;
+  - selected track;
+  - a link to each GitHub repository;
+  - a link to a working demo;
+  - a link to a video of up to 3 minutes, accessible without login, showing the product working. The team may choose Portuguese or English (section 9.8); and
+  - acceptance of these Rules by the submitter on behalf of the team, authorizing the sharing of team and project data described in section 13.1. Without acceptance, the submission is not sent.
 
-## 6. O projeto
+- **7.3.** The demo must remain online during evaluation. If unavailable, the jury may evaluate the project using only the video and code.
 
-  - **6.1. Repositório novo.** Todo o código entregue deve estar em um ou mais repositórios públicos no GitHub, criados depois do fim da sessão de abertura (4 de novembro, às 21h), com todos os commits feitos a partir desse momento. Todo o código desenvolvido durante o Evento precisa estar nesses repositórios. Repositórios criados antes disso, forks de outros repositórios ou repositórios com histórico importado de antes disso desclassificam o projeto.
+- **7.4.** Judges are not required to install or run the project and may evaluate it based on the code, demo, and video.
 
-  - **6.2. Trabalho anterior.** O projeto pode dar continuidade a uma ideia ou a um produto que já existia, mas nenhum código anterior ao Evento que não seja público, inclusive código privado do próprio time, pode ser copiado para os repositórios entregues. A exceção é código aberto que já era público e acessível a todos os participantes antes do Evento, como starter kits, boilerplates, bibliotecas e frameworks. Esse código pode ser instalado como dependência ou copiado para o repositório novo, sem o histórico original e em um commit cuja mensagem indique a origem (por exemplo, o link do repositório copiado).
+## 8. In-person final
 
-  - **6.3. Ferramentas.** A escolha das tecnologias é livre. Nenhuma ferramenta, produto ou serviço de patrocinador, parceiro ou terceiro é exigido para participar, ser avaliado ou receber qualquer prêmio. As tecnologias escolhidas contam só dentro do critério de implementação técnica (item 9.1), com o mesmo peso para qualquer ferramenta.
+- **8.1.** Finalists are announced on December 2. The 5 highest-rated eligible projects in each track advance to the final, provided they reach the minimum score of 20 points (section 9.4). Unfilled places in one track may go to the highest-rated teams from other tracks.
 
-  - **6.4. Inteligência artificial.** Ferramentas de IA, como agentes, copilotos, modelos de linguagem e geração de imagem, são permitidas e recomendadas.
+- **8.2.** Finalist teams confirm attendance by December 4, 11:59 p.m. Without confirmation, the Organizing Committee may invite the next highest-rated team from the same track.
 
-  - **6.5. Código e conteúdo de terceiros.** Bibliotecas, frameworks, APIs e código aberto podem ser usados, respeitadas as suas licenças. O time declara que tem o direito de usar tudo o que submete.
+- **8.3.** At the December 12 final in São Paulo, with Google for Startups, teams finish their projects in person and present them to the jury. The format, schedule, and specific final rules are emailed to finalists along with the finalist announcement, before the attendance confirmation deadline.
 
-  - **6.6. Licença.** Uma licença open source não é exigida, mas é recomendada. Uma licença ou restrição que impeça os jurados de ler, executar e testar o código desclassifica o projeto, porque ele não pode ser avaliado.
+- **8.4. Preparation for the final.** Between the submission deadline (November 30, 11:59 p.m.) and the start of the final, submitted repositories are frozen: finalist teams may neither commit to them nor change their code. During this period, teams may prepare their presentations, including slides, scripts, and rehearsals, and keep demos online without changing code. Development resumes at the final venue on December 12, in the same repositories. Commits during the freeze may lead to disqualification.
 
-  - **6.7. Repositório público.** Os repositórios precisam ficar públicos e acessíveis pelo menos até 15 de dezembro. Se ficarem privados ou forem apagados antes disso, o projeto perde a avaliação e os prêmios.
+- **8.5.** All team members must attend. A member may be absent for a justified and documented reason, such as a health issue or another unavoidable commitment accepted by the Organizing Committee, without leaving the team. A team that does not attend the final does not compete for final prizes.
 
-  - **6.8. Temas proibidos.** São recusados ou removidos, em qualquer trilha, os projetos cuja finalidade principal ou uso previsível seja:
+- **8.6.** Each participant covers travel, accommodation, and meals. Entry requires official photo identification and compliance with building rules.
 
-    - **conteúdo adulto:** pornografia ou material sexualmente explícito; apps de namoro ou encontros casuais para adultos; ferramentas que gerem conteúdo NSFW ou burlem filtros desse conteúdo;
+## 9. Evaluation
 
-    - **substâncias reguladas e ilegais:** compra, venda ou fabricação de drogas ilícitas; apps que promovam o consumo abusivo de álcool, tabaco ou vaping; marketplaces de parafernália;
+- **9.1. Criteria.** In both phases, the jury evaluates four equally weighted criteria: technical execution, meaning whether the product works and is complete; technical implementation, meaning architecture, code quality, and the choice and use of technologies, APIs, and tools; project impact, meaning its effect on the problem and the track's audience (section 5.2); and quality of project communication, expressed through the online-phase video and the final presentation to the jury.
 
-    - **violência, armas e dano:** software ligado a armas, como designs impressos de armas de fogo, munição ou marketplaces de armas; apps que incentivem ou facilitem autolesão ou suicídio; jogos ou agregadores de violência gráfica e gore;
+- **9.2. Scores.** Each judge assigns each criterion a score from 0 to 10. A judge's score is the sum of the four, from 0 to 40 points, and the project's score is the average of the scores from judges who evaluated it.
 
-    - **assédio e discurso de ódio:** ferramentas de cyberbullying, spam ou ataques anônimos a pessoas; projetos que promovam discriminação, racismo, sexismo ou xenofobia; ferramentas de doxxing, como scraping para expor dados pessoais;
+- **9.3. Phases.** In the online phase, scores determine qualification for the final only (section 8.1). At the final, the jury assigns new scores from zero based on the project and presentation delivered that day; online-phase scores do not count toward the final result.
 
-    - **software malicioso e fraude acadêmica:** malware, ransomware, spyware ou ferramentas para danificar infraestrutura; ferramentas para colar em provas ou burlar detectores de plágio;
+- **9.4. Minimum score and jury.** To reach the final, a project needs at least 20 out of 40 points in the online phase, equivalent to an average of 5 per criterion. Judges are announced by November 30. A judge with personal, professional, or ownership ties to a team member does not evaluate that team.
 
-    - **apostas e esquemas financeiros:** apostas, cassinos e jogos de azar; esquemas de pirâmide; promessas de rendimento garantido; emissão de tokens ou criptoativos para captar dinheiro do público.
+- **9.5. Ties.** Within the same phase, ties are resolved by the higher technical execution score, then the higher impact score, and then a majority of the jury.
 
-Um projeto que trata desses temas para proteger pessoas, como detecção de malware, combate ao discurso de ódio, prevenção ao suicídio ou apoio a quem quer parar de apostar, não é proibido. O critério é o que o projeto faz e o uso que ele facilita, não o assunto que menciona. Em caso de dúvida, a Comissão Organizadora decide, e o time pode consultá-la antes de submeter pelo e-mail [oi@hackbrasil.com](mailto:oi@hackbrasil.com).
+- **9.6. Results.** Winners are announced on December 12. Jury scores and decisions are final. Complaints about violations of these Rules may be sent to [oi@hackbrasil.com](mailto:oi@hackbrasil.com) up to 3 days after each announcement and are judged by the Organizing Committee.
 
-  - **6.9. Dados reais.** As demos não podem expor dados pessoais reais de terceiros. Projetos de saúde usam dados sintéticos; projetos de finanças podem fazer a demo em ambientes de teste ou simulação, em vez de transações reais; ferramentas de segurança só são testadas em sistemas próprios ou com autorização por escrito.
+- **9.7. Honorable mentions.** At the final, the jury may award honorable mentions to outstanding finalist teams in addition to the top three places. The jury determines the number of mentions and may award none.
 
-## 7. Submissão
+- **9.8. Language.** The team may choose Portuguese or English for the submission, video, and final presentation. Language does not affect scoring. The Organizer guarantees that each project is evaluated by judges who understand Portuguese.
 
-  - **7.1.** A submissão é feita no [painel do time](https://hackbrasil.com/painel) até 30 de novembro, às 23h59. Vale a última versão enviada dentro do prazo. Na fase online, o júri avalia cada repositório no estado do último commit enviado ao GitHub até esse horário; commits posteriores não são considerados.
+## 10. Prizes
 
-  - **7.2.** A submissão precisa ter:
+- **10.1.** First, second, and third places refer to the final's overall ranking across all tracks. Finalist-team prizes go to finalists attending the final (section 8.5). Prizes follow the jury's ranking, including finalist and honorable-mention selection (section 9.7), and are divided into two categories: cash prizes and opportunities (section 10.2), and product and service prizes (section 10.3).
 
-    - nome, frase de apresentação e descrição do projeto;
+- **10.2. Cash prizes and opportunities.**
 
-    - a trilha escolhida;
+  - US$6,000 in cash from Convex: US$3,000 for first place, US$2,000 for second, and US$1,000 for third;
+  - fast-track to the final stage of the Puentes (By Antigravity) cohort for the first-place team, without a guaranteed place (section 10.10).
 
-    - o link de cada repositório no GitHub;
+- **10.3. Product and service prizes.** Credits, licenses, free services, and reduced commercial rates offered by sponsors and partners for use on their respective platforms:
 
-    - o link da demo funcionando;
+  - US$50,000 in Firecrawl credits: US$25,000 for first place, US$15,000 for second, and US$10,000 for third; in addition, 5,000 Firecrawl credits for each participant, up to 2,000 participants, released to members of teams whose project draft is approved by the organizers in the dashboard, in approval order while codes remain available;
 
-    - o link de um vídeo de até 3 minutos, acessível sem login, que mostre o produto funcionando. O vídeo pode ser em português ou inglês, à escolha do time (item 9.8); e
+  - US$20,000 in Cognition credits: US$10,000 for first place, US$6,000 for second, and US$4,000 for third; and a US$20 coupon in Cognition's Devin credits for each participant, up to 2,000 participants, released to members of teams whose project draft is approved by the organizers in the dashboard, in approval order while codes remain available;
 
-    - o aceite deste Regulamento por quem envia, em nome do time, com a autorização para compartilhar os dados do time e do projeto descrita no item 13.1. Sem esse aceite, a submissão não é enviada.
+  - Nvoip Pro for 12 users for 3 years and a virtual number with a chosen area code for 3 years for each of the top 3 teams, valued at R$35,532 per team, plus general Nvoip platform credits of R$3,000 for first place, R$2,000 for second, and R$1,000 for third, per team rather than per member; and 3 months of Nvoip Pro for 1 user for each participant, up to 2,000 participants, released to members of teams whose project draft is approved by the organizers in the dashboard, in approval order while codes remain available, valid only for new Nvoip accounts created for redemption, rather than existing accounts;
 
-  - **7.3.** A demo deve continuar no ar durante a avaliação. Se ela estiver fora do ar, o júri pode avaliar o projeto só pelo vídeo e pelo código.
+  - US$10,000 in Resend credits for each of the top 3 teams, usable over 12 months, and 3 months of Resend Pro for each team attending the in-person final, per team rather than per member;
 
-  - **7.4.** Os jurados não são obrigados a instalar nem a executar o projeto e podem avaliá-lo com base no código, na demo e no vídeo.
+  - Capivarafy consulting to obtain non-dilutive funding (economic subsidy calls, such as PIPE FAPESP and FINEP) for each of the top 3 teams, without service or success fees, equivalent to up to US$30,000 in waived fees per team; teams may start without a CNPJ and establish one later, and funding remains subject to each call's eligibility rules, per team rather than per member;
 
-## 8. Final presencial
+  - free US company formation through Globalfy's Remote plan (valued at US$998) or Essential plan (valued at US$1,308), selected by Globalfy according to each project's sector and stage, for each of the top 5 teams at the final, per team rather than per member; the prize requires no purchase or later service contract, must be redeemed by December 31, 2026, and Globalfy directly informs winning teams of required registration and excluded costs; and a Globalfy discount coupon for each finalist team, applied to the team's company rather than each member, for accounts created through [globalfy.com?fpr=hackbrasil](https://globalfy.com?fpr=hackbrasil): US$200 on Remote (10 coupons), US$300 on Essential (10 coupons), and US$500 on Scale (5 coupons), distributed in final-ranking order while coupons remain available;
 
-  - **8.1.** Os finalistas são anunciados em 2 de dezembro. Os 5 projetos elegíveis mais bem avaliados de cada trilha vão para a final, desde que atinjam a nota mínima de 20 pontos (item 9.4). As vagas que sobrarem em uma trilha podem ir para os times mais bem avaliados de outras trilhas.
+  - a WorkOS authentication package with a custom domain for 12 months, valued at US$1,188, for each finalist team;
 
-  - **8.2.** O time finalista confirma presença até 4 de dezembro, às 23h59. Sem confirmação, a Comissão Organizadora pode convidar o próximo time mais bem avaliado da mesma trilha.
+  - AbacatePay reduced-fee credits for Pix and card payments: R$300,000 for first place, R$150,000 for second, R$50,000 for third, and R$10,000 for each honorable mention (section 9.7). The credit is the difference between the standard and reduced fee on each sale made by the project after launch and is valid for up to 24 months;
 
-  - **8.3.** Na final, em 12 de dezembro, em São Paulo, com o Google for Startups, os times terminam o projeto presencialmente e o apresentam ao júri. O formato, os horários e as regras específicas da final são enviados aos finalistas por e-mail junto com o anúncio dos finalistas, antes do prazo de confirmação de presença.
+  - services for up to 4 O-1 or J-1 visa processes from Jumpstart, valued at up to US$40,000, for the first-place team.
 
-  - **8.4. Preparação para a final.** Entre o fim do prazo de submissão (30 de novembro, às 23h59) e o início da final, os repositórios entregues ficam congelados: os times finalistas não podem fazer commits neles nem alterar o código. Nesse período, podem preparar a apresentação, como slides, roteiro e ensaios, e manter a demo no ar sem mudar o código. O desenvolvimento recomeça no local da final, em 12 de dezembro, nos mesmos repositórios. Commits feitos no período congelado podem levar à desclassificação.
+Each sponsor defines and directly informs winning teams of delivery or payment deadlines, redemption conditions, account or registration requirements, receiving costs borne by the team, such as banking and exchange fees (section 10.5), and the person responsible for delivery.
 
-  - **8.5.** Todos os integrantes do time precisam estar presentes. Um integrante pode faltar por motivo justificado e comprovado, como problema de saúde ou outro compromisso inadiável, aceito pela Comissão Organizadora, sem deixar de fazer parte do time. O time que não comparecer à final não concorre aos prêmios da final.
+- **10.4.** No prize requires purchases or payment or depends on using, contracting, or being a customer of the provider's product or service. For product and service prizes:
 
-  - **8.6.** Viagem, hospedagem e alimentação são por conta de cada participante. Para entrar no local, é obrigatório apresentar documento oficial com foto e seguir as regras do prédio.
+  - receiving a prize requires no purchase, payment, or prior sponsor account or relationship;
+  - teams may decline a prize without losing any other prize;
+  - using a prize is optional, with no obligation to continue using or contract the service after the prize ends;
+  - reduced commercial rates, such as lower fees, apply only to operations the team chooses to carry out.
 
-## 9. Avaliação
+- **10.5. Cash prize payment.** Cash prizes are paid directly by the offering sponsor to the winning team's designated representative, under sponsor-defined conditions (such as registration, bank details, and tax forms). Distribution among members follows section 10.6. The organizers do not pay, advance, or guarantee these amounts. Taxes, fees, and exchange costs are the recipient's responsibility, including tax due in Brazil and any withholding in the sponsor's country.
 
-  - **9.1. Critérios.** Nas duas fases, o júri avalia quatro critérios, todos com o mesmo peso: execução técnica, ou seja, se o produto funciona e está completo; implementação técnica, ou seja, a arquitetura, a qualidade do código e a escolha e o uso das tecnologias, APIs e ferramentas; impacto do projeto, ou seja, o efeito sobre o problema e o público da trilha (item 5.2); e qualidade da comunicação do projeto, expressa no vídeo da fase online e na apresentação ao júri na final.
+- **10.6.** Each prize relationship is between the team and the offering sponsor, and redemption and use follow that sponsor's terms. The designated team representative in the dashboard on the winner announcement date represents the team before the sponsor and agrees with it, on the team's behalf, on delivery and distribution among members. The team decides its internal prize division. The Organizer and Organizing Committee publicize prizes but are not responsible for delays or failures in delivery by sponsors and partners.
 
-  - **9.2. Notas.** Cada jurado dá a cada critério uma nota de 0 a 10. A nota do jurado é a soma das quatro, de 0 a 40 pontos, e a nota do projeto é a média das notas dos jurados que o avaliaram.
+- **10.7.** Amounts in Brazilian reais stated for dollar-denominated prizes are estimates.
 
-  - **9.3. Fases.** Na fase online, a nota define só a classificação para a final (item 8.1). Na final, o júri dá novas notas, a partir do zero, com base no projeto e na apresentação feitos no dia; as notas da fase online não contam para o resultado final.
+- **10.8.** The same team may win more than one prize.
 
-  - **9.4. Nota mínima e júri.** Para ir à final, o projeto precisa de pelo menos 20 de 40 pontos na fase online, o que equivale a uma média 5 por critério. Os jurados são anunciados até 30 de novembro. O jurado que tiver vínculo pessoal, profissional ou societário com integrante de um time não avalia esse time.
+- **10.9.** Before delivery, the Organizer or sponsor may verify the team's identity, eligibility, and authorship. If a winning team is disqualified or fails to redeem a prize by the sponsor's deadline, the prize may pass to the next-ranked team or remain unawarded.
 
-  - **9.5. Desempate.** Em caso de empate, dentro da mesma fase, decide a maior nota em execução técnica; persistindo o empate, a maior nota em impacto; e, depois disso, a maioria do júri.
+- **10.10.** Prizes dependent on third-party processes, such as Puentes fast-track and visa processes, are opportunities and do not guarantee admission, a visa, or any other result.
 
-  - **9.6. Resultado.** Os vencedores são anunciados em 12 de dezembro. As notas e decisões do júri são finais. Denúncias de descumprimento deste Regulamento podem ser enviadas para [oi@hackbrasil.com](mailto:oi@hackbrasil.com) até 3 dias depois de cada anúncio e são julgadas pela Comissão Organizadora.
+- **10.11.** Winners alone are responsible for declaring prizes and paying any applicable taxes.
 
-  - **9.7. Menções honrosas.** Na final, o júri pode conceder menções honrosas a times finalistas que se destacarem, além dos três primeiros lugares. O número de menções é definido pelo júri, que também pode não conceder nenhuma.
+## 11. Intellectual property
 
-  - **9.8. Idioma.** A submissão, o vídeo e a apresentação na final podem ser em português ou em inglês, à escolha do time. O idioma não influencia a nota. A Realizadora garante que cada projeto seja avaliado por jurados que entendam português.
+- **11.1.** Projects' intellectual property belongs entirely to their respective teams. The Organizer and partners acquire no rights over the projects.
 
-## 10. Prêmios
+- **11.2.** By submitting, the team grants the Organizer and partners a free, non-exclusive, worldwide license to display the project's name, description, images, video, and link in Event promotion.
 
-  - **10.1.** O 1º, o 2º e o 3º lugar são os da classificação geral da final, entre todas as trilhas. Os prêmios para times finalistas vão para os finalistas que participarem da final (item 8.5). Os prêmios seguem a classificação definida pelo júri, inclusive a seleção dos finalistas e das menções honrosas (item 9.7), e se dividem em duas categorias: prêmios em dinheiro e oportunidades (item 10.2) e prêmios em produtos e serviços (item 10.3).
+- **11.3.** The team warrants that the project does not violate third-party rights and is responsible for any claims to that effect.
 
-  - **10.2. Prêmios em dinheiro e oportunidades.**
+- **11.4.** Participation creates no confidentiality duty for the Organizer, judges, or partners, who may independently develop products similar to submitted projects.
 
-    - US$ 6 mil em dinheiro, oferecidos pela Convex: US$ 3 mil para o 1º lugar, US$ 2 mil para o 2º e US$ 1 mil para o 3º;
+## 12. Conduct and disqualification
 
-    - fast-track para a última etapa da coorte da Puentes (By Antigravity) para o time em 1º lugar, sem garantia de vaga (item 10.10).
+- **12.1.** At meetups, the final, Discord, and other Event channels, participants follow the community guidelines in the [Terms of Use](https://hackbrasil.com/termos).
 
-  - **10.3. Prêmios em produtos e serviços.** Créditos, licenças, serviços gratuitos e condições comerciais reduzidas oferecidos pelos patrocinadores e parceiros e usados nas plataformas de cada um:
+- **12.2.** The Organizing Committee may disqualify a team or participant at any time, including after winners are announced, for violating these Rules, the Terms of Use, or the law; supplying false information or failing eligibility requirements; submitting pre-Event code outside the exceptions in section 6.2 or presenting third-party work as their own; attempting to manipulate evaluation, the jury, or other teams; or harassing, discriminating against, or threatening anyone.
 
-    - US$ 50 mil em créditos da Firecrawl: US$ 25 mil para o 1º lugar, US$ 15 mil para o 2º e US$ 10 mil para o 3º; e, além desse valor, 5.000 créditos da Firecrawl para cada participante, até o limite de 2.000 participantes, liberados aos integrantes dos times cujo rascunho de projeto for aprovado pela organização no painel, por ordem de aprovação e enquanto houver códigos;
+- **12.3.** Complaints may be sent to [oi@hackbrasil.com](mailto:oi@hackbrasil.com) or Discord moderators.
 
-    - US$ 20 mil em créditos da Cognition: US$ 10 mil para o 1º lugar, US$ 6 mil para o 2º e US$ 4 mil para o 3º; e um cupom de US$ 20 em créditos do Devin, da Cognition, para cada participante, até o limite de 2.000 participantes, liberado aos integrantes dos times cujo rascunho de projeto for aprovado pela organização no painel, por ordem de aprovação e enquanto houver códigos;
+## 13. Data, likeness, and responsibilities
 
-    - plano Pro da Nvoip para 12 usuários por 3 anos e número virtual com DDD à escolha por 3 anos para cada um dos 3 times mais bem colocados, avaliados em R$ 35.532 por time, mais créditos de uso geral da plataforma Nvoip de R$ 3 mil para o 1º lugar, R$ 2 mil para o 2º e R$ 1 mil para o 3º, por time e não por integrante; e 3 meses do plano Pro da Nvoip para 1 usuário para cada participante, até o limite de 2.000 participantes, liberados aos integrantes dos times cujo rascunho de projeto for aprovado pela organização no painel, por ordem de aprovação e enquanto houver códigos, válidos apenas para contas novas na Nvoip, criadas para o resgate, e não para contas existentes;
+- **13.1.** Personal data is processed under the [Privacy Policy](https://hackbrasil.com/privacidade). By submitting, teams authorize the following sharing solely to run the Event:
 
-    - créditos da Resend de US$ 10 mil para cada um dos 3 times mais bem colocados, para usar ao longo de 12 meses, e 3 meses do plano Pro da Resend para cada time presente na final presencial, por time e não por integrante;
+  - **judges and mentors**, including sponsor nominees, receive the submission and team contact details to evaluate projects and guide teams;
+  - **sponsors and partners** receive project data (team name, city and state, GitHub, description, and repository, demo, and video links) to evaluate and promote the Event and projects;
+  - **a prize's sponsor** receives winning team members' names and email addresses solely to deliver that prize.
 
-    - consultoria da Capivarafy para captação de recursos não diluitivos (editais de subvenção econômica, como PIPE FAPESP e FINEP) para cada um dos 3 times mais bem colocados, sem taxa de serviço nem taxa de sucesso, equivalente a até US$ 30 mil por time em taxas isentas; o time pode iniciar o processo sem CNPJ e constituí-lo depois, e a captação fica sujeita às regras de elegibilidade de cada edital, por time e não por integrante;
+This authorization is a condition of submission. None of these sharing arrangements permits recipients to use the data for advertising or other purposes of their own.
 
-    - constituição gratuita de empresa nos Estados Unidos pela Globalfy, pelo plano Remote (avaliado em US$ 998) ou Essential (avaliado em US$ 1.308), escolhido pela Globalfy conforme o segmento e o estágio de cada projeto, para cada um dos 5 times mais bem colocados na final, por time e não por integrante; o prêmio não exige compra nem contratação posterior, deve ser resgatado até 31 de dezembro de 2026, e a Globalfy informa diretamente aos times premiados o cadastro necessário e os custos não incluídos; e um cupom de desconto da Globalfy para cada time finalista, aplicado à empresa do time e não por integrante, em contas criadas pelo link [globalfy.com?fpr=hackbrasil](https://globalfy.com?fpr=hackbrasil): US$ 200 no plano Remote (10 cupons), US$ 300 no plano Essential (10 cupons) e US$ 500 no plano Scale (5 cupons), distribuídos por ordem de colocação na final, enquanto houver cupons;
+- **13.2.** Registration data serves to identify, locate, and contact participants. Participation does not require answering surveys or accepting advertising. Names and email addresses are shared with sponsors and partners for contact after the hackathon only if individuals authorize it in the dashboard. This authorization is optional, does not affect evaluation, and may be withdrawn at any time.
 
-    - pacote de autenticação com domínio próprio da WorkOS por 12 meses, avaliado em US$ 1.188, para cada time finalista;
+- **13.3.** By participating, participants authorize, free of charge, the use of their name, likeness, and voice recorded at meetups, livestreams, and the final to promote the Event. Anyone preferring not to appear should notify the organizers on site.
 
-    - crédito de taxa reduzida da AbacatePay em pagamentos por Pix e cartão: R$ 300 mil para o 1º lugar, R$ 150 mil para o 2º, R$ 50 mil para o 3º e R$ 10 mil para cada menção honrosa (item 9.7). O crédito é a diferença entre a taxa normal e a taxa reduzida em cada venda feita pelo projeto depois do lançamento e vale por até 24 meses;
+- **13.4.** The Organizer is not responsible for internet, third-party platform, or participant equipment failures; travel and accommodation expenses; or sponsors' and partners' products, credits, services, and benefits.
 
-    - serviços para até 4 processos de visto O-1 ou J-1 da Jumpstart, avaliados em até US$ 40 mil, para o time em 1º lugar.
+## 14. General provisions
 
-Cada patrocinador define e informa diretamente aos times contemplados o prazo de entrega ou de pagamento, as condições de resgate, os requisitos de conta ou cadastro, os custos de recebimento que couberem ao time, como tarifas bancárias e de câmbio (item 10.5), e a pessoa responsável pela entrega.
+- **14.1.** The Organizer may amend these Rules and will notify teams through registered email addresses and the website. After November 4, amendments are limited to correcting errors, complying with the law, or responding to unforeseen events or force majeure, and no amendment reduces prizes or creates new restrictions for projects already sent as final submissions (section 7.1), whose deadline is November 30, 11:59 p.m. The last update date appears at the start of this page.
 
-  - **10.4.** Nenhum prêmio exige compra ou pagamento, nem depende de usar, contratar ou ser cliente de um produto ou serviço de quem o oferece. Nos prêmios em produtos e serviços:
+- **14.2.** These Rules are governed by the laws of the State of Delaware, United States, with jurisdiction in the State of Delaware, as in the [Terms of Use](https://hackbrasil.com/termos).
 
-    - receber o prêmio não exige compra, pagamento nem conta ou relação anterior com o patrocinador;
+- **14.3.** By submitting, the team declares that it has read and accepts these Rules.
 
-    - o time pode recusar o prêmio sem perder nenhum outro;
-
-    - usar o prêmio é opcional, e não há obrigação de continuar usando ou de contratar o serviço depois que o prêmio acabar;
-
-    - condições comerciais reduzidas, como taxas menores, valem só para as operações que o time decidir fazer.
-
-  - **10.5. Pagamento dos prêmios em dinheiro.** Os prêmios em dinheiro são pagos diretamente pelo patrocinador que os oferece à pessoa responsável pelo time contemplado, nas condições definidas pelo patrocinador (como cadastro, dados bancários e formulários fiscais). A divisão entre os integrantes segue o item 10.6. A organização não paga, não adianta e não garante esses valores. Tributos, tarifas e custos de câmbio são de responsabilidade de quem recebe, inclusive o imposto devido no Brasil e eventual retenção feita no país do patrocinador.
-
-  - **10.6.** A relação sobre cada prêmio é entre o time e o patrocinador que o oferece, e o resgate e o uso seguem os termos dele. A pessoa responsável pelo time no painel na data do anúncio dos vencedores representa o time perante o patrocinador e combina com ele, em nome do time, a entrega do prêmio e sua distribuição entre os integrantes. A divisão do prêmio dentro do time é decidida pelo próprio time. A Realizadora e a Comissão Organizadora divulgam os prêmios, mas não respondem por atrasos ou falhas na entrega dos prêmios oferecidos pelos patrocinadores e parceiros.
-
-  - **10.7.** Valores em reais informados para prêmios em dólares são estimativas.
-
-  - **10.8.** Um mesmo time pode ganhar mais de um prêmio.
-
-  - **10.9.** Antes da entrega, a Realizadora ou o patrocinador pode confirmar a identidade, a elegibilidade e a autoria do time. Se um time vencedor for desclassificado ou não resgatar o prêmio no prazo do patrocinador, o prêmio pode passar ao próximo time da classificação ou deixar de ser entregue.
-
-  - **10.10.** Prêmios que dependem de processos de terceiros, como o fast-track da Puentes e os processos de visto, são uma oportunidade e não garantem a vaga, o visto nem outro resultado.
-
-  - **10.11.** Os ganhadores são os únicos responsáveis por declarar os prêmios e recolher os tributos que incidirem sobre eles.
-
-## 11. Propriedade intelectual
-
-  - **11.1.** A propriedade intelectual dos projetos pertence integralmente aos respectivos times. A Realizadora e os parceiros não ficam com nenhum direito sobre os projetos.
-
-  - **11.2.** Ao submeter, o time concede à Realizadora e aos parceiros uma licença gratuita, não exclusiva e mundial para exibir o nome, a descrição, as imagens, o vídeo e o link do projeto na divulgação do Evento.
-
-  - **11.3.** O time garante que o projeto não viola direitos de terceiros e responde por qualquer reclamação nesse sentido.
-
-  - **11.4.** A participação não cria dever de confidencialidade para a Realizadora, os jurados ou os parceiros, que podem desenvolver, de forma independente, produtos parecidos com os projetos submetidos.
-
-## 12. Conduta e desclassificação
-
-  - **12.1.** Nos encontros, na final, no Discord e nos demais canais do Evento, os participantes seguem as diretrizes da comunidade dos [Termos de Uso](https://hackbrasil.com/termos).
-
-  - **12.2.** A Comissão Organizadora pode desclassificar, a qualquer momento, inclusive depois do anúncio dos vencedores, o time ou participante que: descumprir este Regulamento, os Termos de Uso ou a lei; fornecer dados falsos ou não cumprir os requisitos de elegibilidade; entregar código anterior ao Evento fora das exceções do item 6.2, ou trabalho de terceiros como se fosse seu; tentar manipular a avaliação, o júri ou outros times; ou assediar, discriminar ou ameaçar qualquer pessoa.
-
-  - **12.3.** Denúncias podem ser enviadas para [oi@hackbrasil.com](mailto:oi@hackbrasil.com) ou para a moderação do Discord.
-
-## 13. Dados, imagem e responsabilidades
-
-  - **13.1.** Os dados pessoais são tratados conforme a [Política de Privacidade](https://hackbrasil.com/privacidade). Ao enviar a submissão, o time autoriza estes compartilhamentos, feitos só para realizar o Evento:
-
-    - **jurados e mentores**, inclusive os indicados por patrocinadores, recebem a submissão e os contatos do time, para avaliar os projetos e orientar os times;
-
-    - **patrocinadores e parceiros** recebem os dados do projeto (nome do time, cidade e UF, GitHub, descrição e links do repositório, da demo e do vídeo), para avaliar e divulgar o Evento e os projetos;
-
-    - **o patrocinador de um prêmio** recebe o nome e o e-mail dos integrantes do time contemplado, só para entregar esse prêmio.
-
-Essa autorização é condição para enviar a submissão. Nenhum desses compartilhamentos permite que o destinatário use os dados para publicidade ou para outros fins próprios.
-
-  - **13.2.** Os dados pedidos na inscrição servem para identificar, localizar e contatar os participantes. Participar não exige responder a pesquisas nem aceitar receber publicidade. Nomes e e-mails só são compartilhados com patrocinadores e parceiros, para contato depois do hackathon, se a própria pessoa autorizar no painel. Essa autorização é opcional, não influencia a avaliação e pode ser retirada a qualquer momento.
-
-  - **13.3.** Ao participar, o participante autoriza, sem custo, o uso do seu nome, imagem e voz captados nos encontros, nas livestreams e na final para divulgar o Evento. Quem preferir não aparecer deve avisar a organização no local.
-
-  - **13.4.** A Realizadora não responde por falhas de internet, de plataformas de terceiros ou dos equipamentos dos participantes, por despesas de viagem e hospedagem, nem pelos produtos, créditos, serviços e benefícios dos patrocinadores e parceiros.
-
-## 14. Disposições gerais
-
-  - **14.1.** A Realizadora pode alterar este Regulamento e avisará os times pelo e-mail cadastrado e pelo site. Depois de 4 de novembro, as alterações se limitam a corrigir erros, cumprir a lei ou responder a caso fortuito ou força maior, e nenhuma alteração reduz prêmios nem cria restrição nova para projetos já enviados na submissão final (item 7.1), cujo prazo termina em 30 de novembro, às 23h59. A data da última atualização aparece no início desta página.
-
-  - **14.2.** Este Regulamento é regido pelas leis do Estado de Delaware, Estados Unidos, e fica eleito o foro do Estado de Delaware, como nos [Termos de Uso](https://hackbrasil.com/termos).
-
-  - **14.3.** Ao enviar a submissão, o time declara que leu e aceita este Regulamento.
-
-  - **14.4.** Dúvidas: [oi@hackbrasil.com](mailto:oi@hackbrasil.com).
+- **14.4.** Questions: [oi@hackbrasil.com](mailto:oi@hackbrasil.com).

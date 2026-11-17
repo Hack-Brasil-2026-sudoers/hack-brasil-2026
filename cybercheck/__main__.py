@@ -6,9 +6,9 @@ from .config import Settings
 
 
 def main():
-    parser = argparse.ArgumentParser(description="API e worker do CyberCheck")
+    parser = argparse.ArgumentParser(description="CyberCheck API and worker")
     parser.add_argument("command", choices=["api", "worker"])
-    parser.add_argument("--once", action="store_true", help="Worker: processa no máximo uma solicitação")
+    parser.add_argument("--once", action="store_true", help="Worker: process at most one request")
     args = parser.parse_args()
     load_dotenv()
     try:

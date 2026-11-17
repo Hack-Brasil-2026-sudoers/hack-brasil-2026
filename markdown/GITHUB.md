@@ -1,69 +1,69 @@
-# Configuração da GitHub App
+# GitHub App setup
 
-## Cadastro na organização
+## Organization registration
 
-A App deve pertencer à organização **Hack-Brasil-2026-sudoers**. O usuário confirmou ser proprietário da organização.
+The App must belong to **Hack-Brasil-2026-sudoers**. The user confirmed they own the organization.
 
-[Abrir cadastro pré-preenchido](https://github.com/organizations/Hack-Brasil-2026-sudoers/settings/apps/new?name=CyberCheck%20Sudoers&url=https%3A%2F%2Fgithub.com%2FHack-Brasil-2026-sudoers%2Fhack-brasil-2026&description=Diagnostico%20defensivo%20de%20repositorios%20Python&contents=read&metadata=read&public=false&webhook_active=false&request_oauth_on_install=false).
+[Open the prefilled registration form](https://github.com/organizations/Hack-Brasil-2026-sudoers/settings/apps/new?name=CyberCheck%20Sudoers&url=https%3A%2F%2Fgithub.com%2FHack-Brasil-2026-sudoers%2Fhack-brasil-2026&description=Defensive%20assessment%20of%20Python%20repositories&contents=read&metadata=read&public=false&webhook_active=false&request_oauth_on_install=false).
 
-Conferir antes de criar:
+Check before creating:
 
-- Nome: CyberCheck Sudoers; caso já esteja em uso, escolher outro nome disponível.
-- Homepage: repositório público do projeto.
-- Repository permissions: **Contents: Read-only** e **Metadata: Read-only**.
-- Demais permissões: sem acesso.
-- Webhooks: desativados, pois as análises serão iniciadas manualmente.
-- OAuth durante instalação, callback e setup URL: não configurar nesta etapa. O backend atual usa autenticação da instalação, não login individual do usuário.
-- Instalação: somente na conta proprietária, para o teste inicial da organização. Acesso a outras contas é uma evolução separada.
+- Name: CyberCheck Sudoers; choose another available name if it is already taken.
+- Homepage: the project's public repository.
+- Repository permissions: **Contents: Read-only** and **Metadata: Read-only**.
+- All other permissions: no access.
+- Webhooks: disabled, since analyses are started manually.
+- OAuth during installation, callback, and setup URL: do not configure them at this stage. The current backend authenticates the installation rather than individual users.
+- Installation: only on the owning account for the organization's initial test. Access to other accounts is a separate enhancement.
 
-O link é um guia para recriar a configuração, se necessário. A App do time já está cadastrada e instalada, conforme a seção de estado; não é necessário criar outra.
+The link is a guide for recreating the configuration if needed. The team's App is already registered and installed, as recorded in the status section; another App is not needed.
 
-## Instalação e credenciais locais
+## Installation and local credentials
 
-Depois de criar a App:
+After creating the App:
 
-1. Anotar o **App ID** na página de configurações. Não confundir com Client ID.
-2. Gerar uma chave privada e baixar o arquivo PEM. Mantê-lo fora do repositório, em diretório privado, com permissão de leitura apenas do proprietário.
-3. Em **Install App**, instalar na organização com **Only select repositories** e selecionar inicialmente apenas `hack-brasil-2026`. Adicionar outros projetos de teste somente quando necessário.
-4. Obter o **Installation ID** no endereço da página de configuração dessa instalação.
-5. Preencher no `.env` local: `GITHUB_APP_ID`, `GITHUB_INSTALLATION_ID` e `GITHUB_PRIVATE_KEY_PATH` com o caminho absoluto do PEM.
+1. Record the **App ID** from its settings page. Do not confuse it with the Client ID.
+2. Generate a private key and download the PEM file. Keep it outside the repository in a private directory, readable only by its owner.
+3. Under **Install App**, install it on the organization with **Only select repositories**, initially selecting only `hack-brasil-2026`. Add other test projects only when needed.
+4. Obtain the **Installation ID** from that installation's configuration page URL.
+5. Set `GITHUB_APP_ID`, `GITHUB_INSTALLATION_ID`, and `GITHUB_PRIVATE_KEY_PATH` in the local `.env`, using the absolute PEM path.
 
-Não enviar a chave ou tokens pelo chat, colocá-los no frontend ou adicioná-los ao Git. O `.env` é ignorado e contém a configuração local validada. Em uma nova máquina, ele deve ser preenchido localmente; o repositório não distribui essas credenciais.
+Do not send keys or tokens through chat, put them in the frontend, or add them to Git. The `.env` is ignored and contains the validated local configuration. On a new machine, configure it locally; credentials are not distributed through the repository.
 
-## Verificação após configurar
+## Verify the configuration
 
-Com a virtualenv instalada:
+With the virtual environment installed:
 
 ```bash
 .venv/bin/python -m cybercheck api
 ```
 
-Em `http://127.0.0.1:8000/docs`, usar **Authorize** com o token local e chamar `GET /api/repositories`. A resposta deve listar somente os repositórios autorizados à instalação.
+At `http://127.0.0.1:8000/docs`, select **Authorize**, enter the local token, and call `GET /api/repositories`. The response should list only repositories authorized for the installation.
 
-Em seguida, validar resolução do commit, download e análise de um projeto próprio. O worker é iniciado separadamente:
+Then validate commit resolution, download, and analysis of a project you own. Start the worker separately:
 
 ```bash
 .venv/bin/python -m cybercheck worker
 ```
 
-O login individual e o isolamento multiusuário ainda não estão implementados. Não publicar esse backend de operador único como serviço aberto.
+Individual login and multiuser isolation are not implemented yet. Do not publish this single-operator backend as an open service.
 
-## Estado
+## Status
 
-A App `cybercheck-sudoers` está criada e instalada na organização, com Contents e Metadata somente leitura e seleção explícita de repositórios. Os IDs e o caminho da chave RSA estão configurados no `.env` local; a chave está com permissão 600 e não foi copiada ao Git.
+The `cybercheck-sudoers` App is registered and installed on the organization, with read-only Contents and Metadata permissions and explicit repository selection. Its IDs and RSA key path are configured in the local `.env`; the key has permission 600 and has not been copied into Git.
 
-Verificação real em 17/11/2026:
+Live verification on November 17, 2026:
 
-- Autenticação da App e emissão do token da instalação: OK.
-- Listagem: um repositório autorizado, `Hack-Brasil-2026-sudoers/hack-brasil-2026`.
-- Resolução da branch padrão `main` para o commit `35bb2ff6d80982a08ee32d59e12de12d4df1cb79`: OK.
-- Download e extração temporária da revisão: OK; arquivos descartados após a verificação.
-- Rota `GET /api/repositories` com acesso real ao GitHub: OK; requisição sem token local bloqueada com 401.
+- App authentication and installation token issuance: OK.
+- Listing: one authorized repository, `Hack-Brasil-2026-sudoers/hack-brasil-2026`.
+- Resolution of the default `main` branch to commit `35bb2ff6d80982a08ee32d59e12de12d4df1cb79`: OK.
+- Temporary download and extraction of the revision: OK; files discarded after verification.
+- `GET /api/repositories` with real GitHub access: OK; requests without a local token blocked with 401.
 
-Depois da configuração, o fluxo completo também foi validado na branch `pedro`, commit `156862f5d413c74bd2888f4e45c594883511cc88`: solicitação autenticada pela API, fila SQLite, worker, download, scanners, consulta do relatório e descarte dos arquivos temporários.
+After setup, the complete flow was also validated on branch `pedro`, commit `156862f5d413c74bd2888f4e45c594883511cc88`: authenticated API request, SQLite queue, worker, download, scanners, report retrieval, and temporary file cleanup.
 
-Bandit e Betterleaks concluíram. O OSV-Scanner não encontrou arquivo de dependências suportado nessa revisão, então o relatório registra a verificação como não realizada (`skipped`) e a análise como parcial. Isso não significa ausência de vulnerabilidades nas dependências. A análise de verificação ficou no histórico local em `.data/`, fora do Git.
+Bandit and Betterleaks completed. OSV-Scanner found no supported dependency file in that revision, so the report marks the check as not performed (`skipped`) and the analysis as partial. This does not establish that dependencies have no vulnerabilities. The verification analysis remains in the local `.data/` history, outside Git.
 
-Foi adicionado tratamento específico para esse caso e a suíte passou com 24 testes. Login individual, acesso a outro repositório privado e revogação da instalação ainda precisam de testes próprios.
+Specific handling was added for this case, and the suite passed with 24 tests. Individual login, access to an additional private repository, and installation revocation still require their own tests.
 
-Referências: [cadastro de GitHub Apps](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) e [parâmetros de pré-preenchimento](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-using-url-parameters).
+References: [GitHub App registration](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) and [prefilled URL parameters](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-using-url-parameters).

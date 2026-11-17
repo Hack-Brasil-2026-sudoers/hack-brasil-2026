@@ -20,31 +20,31 @@ def extract_archive(archive: Path, target: Path):
     with zipfile.ZipFile(archive) as package:
         entries = package.infolist()
         if not entries or len(entries) > 5000:
-            raise ValueError("Arquivo vazio ou mais de 5.000 entradas.")
+            raise ValueError("Archive is empty or contains more than 5,000 entries.")
         root = None
         for entry in entries:
             path = PurePosixPath(entry.filename)
             if path.is_absolute() or ".." in path.parts or "\\" in entry.filename:
-                raise ValueError("Arquivo com caminho inseguro.")
+                raise ValueError("Archive contains an unsafe path.")
             if not path.parts:
-                raise ValueError("Caminho vazio no arquivo.")
+                raise ValueError("Archive contains an empty path.")
             root = root or path.parts[0]
             if path.parts[0] != root:
-                raise ValueError("Arquivo deve conter uma única raiz.")
+                raise ValueError("Archive must contain a single root directory.")
             relative = Path(*path.parts[1:])
             mode = entry.external_attr >> 16
             if stat.S_ISLNK(mode) or (stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR)):
-                raise ValueError("Links e arquivos especiais não são aceitos.")
+                raise ValueError("Links and special files are not allowed.")
             if entry.is_dir():
                 continue
             if not relative.parts or relative in names:
-                raise ValueError("Entrada inválida ou duplicada.")
+                raise ValueError("Invalid or duplicate archive entry.")
             names.add(relative)
             if entry.file_size > 2 * 1024 * 1024:
-                raise ValueError("Arquivo individual excede 2 MiB.")
+                raise ValueError("Individual file exceeds 2 MiB.")
             total += entry.file_size
             if total > 100 * 1024 * 1024:
-                raise ValueError("Conteúdo descompactado excede 100 MiB.")
+                raise ValueError("Uncompressed content exceeds 100 MiB.")
             output = target / relative
             output.parent.mkdir(parents=True, exist_ok=True)
             with package.open(entry) as src, output.open("xb") as dst:
@@ -66,17 +66,17 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
             statuses = [c["status"] for c in checks]
             status = "completed" if all(s == "completed" for s in statuses) else (
                 "partial" if any(s in ("completed", "partial") for s in statuses) else "failed")
-        # Só finaliza depois de descartar código e saídas brutas.
+        # Finalize only after discarding source code and raw outputs.
         store.finish(analysis["id"], status, findings, checks)
     except GitHubError as exc:
         store.finish(analysis["id"], "failed", error=str(exc))
     except (ValueError, zipfile.BadZipFile):
-        store.finish(analysis["id"], "failed", error="Arquivo inválido ou excede os limites do MVP.")
+        store.finish(analysis["id"], "failed", error="Archive is invalid or exceeds the MVP limits.")
     except (OSError, httpx.HTTPError):
-        store.finish(analysis["id"], "failed", error="Falha de rede ou de armazenamento durante a análise.")
+        store.finish(analysis["id"], "failed", error="Network or storage failure during analysis.")
     except Exception:
-        # Erros inesperados não devem persistir conteúdo/token presente em exceções.
-        store.finish(analysis["id"], "failed", error="Falha inesperada no worker. Solicite uma nova análise.")
+        # Unexpected errors must not persist content or tokens from exceptions.
+        store.finish(analysis["id"], "failed", error="Unexpected worker failure. Request a new analysis.")
 
 
 def run(settings: Settings, once=False):
@@ -85,8 +85,8 @@ def run(settings: Settings, once=False):
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise SystemExit("Já existe um worker para esse diretório de dados.")
-        # Com o lock adquirido, nenhum processo anterior deve estar trabalhando aqui.
+            raise SystemExit("A worker is already running for this data directory.")
+        # Once the lock is acquired, no previous worker should still be active here.
         for old in store.directory.glob("analysis-*"):
             if old.is_dir() and not old.is_symlink():
                 shutil.rmtree(old)

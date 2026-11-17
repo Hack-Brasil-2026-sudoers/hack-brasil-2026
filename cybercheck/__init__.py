@@ -1,1 +1,1 @@
-"""CyberCheck: diagnóstico defensivo, sem executar o projeto analisado."""
+"""CyberCheck: defensive assessment without executing the analyzed project."""
