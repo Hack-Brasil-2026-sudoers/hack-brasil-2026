@@ -189,6 +189,14 @@ def run_scanners(source: Path, working: Path, settings: Settings, dependency_loo
             if tool == "betterleaks" and not match[1].startswith("1."):
                 raise ScannerError("Este adaptador requer Betterleaks 1.x.")
             code, raw = run_command(command, working, settings.scanner_timeout)
+            if tool == "osv-scanner" and code == 128:
+                diagnostic = (working / "stderr").read_text(errors="replace")
+                if "No package sources found" in diagnostic:
+                    check.update(status="skipped", error="Nenhum arquivo de dependências suportado foi identificado. "
+                                 "Forneça um lockfile ou requirements.txt com versões resolvidas; "
+                                 "dependências não foram avaliadas.")
+                    checks.append(check)
+                    continue
             if code not in accepted:
                 raise ScannerError("A ferramenta encerrou com erro; verificação incompleta.")
             if tool == "betterleaks":

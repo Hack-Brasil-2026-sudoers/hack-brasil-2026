@@ -1,6 +1,6 @@
 # CyberCheck
 
-Documento vivo da proposta. Atualizado em 15/11/2026 com as decisões da conversa.
+Documento vivo da proposta. Atualizado em 17/11/2026. O escopo abaixo descreve o produto pretendido; o estado efetivamente implementado está separado a seguir.
 
 ## Proposta
 
@@ -9,6 +9,18 @@ O CyberCheck ajuda desenvolvedores autônomos e pequenas equipes a identificar p
 A primeira versão terá foco na análise interna de repositórios. A entrega reúne achados, evidências, localização, possível impacto e ações de correção priorizadas.
 
 O produto pode atender diferentes tipos de software, sem ficar restrito a aplicações web. A cobertura efetiva depende das linguagens, ferramentas e verificações implementadas.
+
+## Estado de implementação em 17/11/2026
+
+Já existe backend FastAPI com autenticação por token de operador único, fila e histórico em SQLite, worker separado e adaptadores dos três scanners. A interface operacional da demo ficará com outro integrante e ainda não foi implementada.
+
+A GitHub App da organização está instalada com leitura de Contents e Metadata, limitada ao repositório escolhido. Foram validados acesso real, resolução do commit, download, solicitação pela API, processamento pela fila e consulta do relatório. A cópia temporária foi descartada e o relatório registra SHA e datas.
+
+Bandit 1.9.4, OSV-Scanner 2.7.1 e Betterleaks 1.10.1 foram executados em exemplos controlados. Na análise real da branch `pedro`, Bandit e Betterleaks concluíram; as dependências não foram avaliadas por falta de arquivo suportado nessa revisão. O resultado ficou explicitamente parcial. A suíte atual passou com 24 testes.
+
+Ainda faltam login e autorização por usuário, testes reais em repositório privado e de revogação, ampliação da validação de cobertura, isolamento mais forte do executor, coleta de sinais de descontinuação/arquivamento, avaliação de substituições e interface. IA externa e hospedagem permanecem adiadas.
+
+Detalhes e responsabilidades: [frentes de trabalho](FRENTES-DE-TRABALHO.md), [próximos passos](PROXIMOS-PASSOS.md) e [configuração do GitHub](GITHUB.md).
 
 ## Decisões tomadas
 
@@ -70,7 +82,7 @@ Considerar o contexto: exemplos fictícios, configurações de desenvolvimento e
 
 ## Experiência proposta
 
-1. O desenvolvedor autoriza a GitHub App nos repositórios escolhidos e seleciona um deles para análise. O MVP atenderá repositórios públicos e privados, com as permissões de leitura necessárias. As permissões exatas e o fluxo de autenticação serão verificados na documentação do GitHub antes da implementação.
+1. O desenvolvedor autoriza a GitHub App nos repositórios escolhidos e seleciona um deles para análise. O MVP atenderá repositórios públicos e privados, com as permissões de leitura necessárias. Contents e Metadata somente leitura já foram configurados na instalação da organização. O código atual usa um operador único; o fluxo de login e autorização individual ainda será implementado.
 2. O desenvolvedor aciona “Iniciar análise”; o sistema identifica as tecnologias e executa as verificações disponíveis.
 3. O resultado apresenta os achados com evidências e ações sugeridas.
 4. O desenvolvedor corrige e pode realizar uma nova análise para comparar os resultados.

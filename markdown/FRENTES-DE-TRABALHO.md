@@ -2,15 +2,15 @@
 
 Organização para os quatro integrantes trabalharem em paralelo. Os nomes dos responsáveis ainda serão combinados pelo time. A interface da demo ficará com outro integrante, conforme definido pelo usuário.
 
-A implementação foi interrompida a pedido do usuário. Este documento organiza a continuação; não autoriza retomar todas as frentes ao mesmo tempo.
+Após organizar as frentes, o usuário retomou o trabalho na conexão GitHub e na validação do fluxo. O estado abaixo foi atualizado em 17/11/2026; cada participante deve continuar apenas nos arquivos e contratos combinados.
 
 ## Estado atual
 
 - Há uma primeira base de API, SQLite, integração GitHub App, worker e adaptadores dos três scanners no diretório de trabalho.
 - O commit que inclui este documento compartilha a base inicial para o time. Cada frente deve partir desse mesmo commit e revisar os contratos antes de alterar os módulos.
-- Os 22 testes atuais passaram na verificação anterior ao commit. Os três scanners também foram executados com exemplos controlados. Isso não substitui validar o fluxo real da GitHub App do time nem o produto completo. Há um aviso de depreciação do TestClient sobre o uso de httpx, sem falha nos testes.
+- Os 24 testes atuais passaram na verificação de 17/11/2026. Os três scanners também foram executados com exemplos controlados. A conexão e o fluxo real pelo repositório selecionado também foram verificados, com resultado parcial documentado; isso não valida o produto completo. Há um aviso de depreciação do TestClient sobre o uso de httpx, sem falha nos testes.
 - Não há frontend da aplicação, login multiusuário ou coleta de sinais de descontinuação implementados.
-- O fluxo real com uma GitHub App do time ainda precisa ser configurado e validado. Os testes existentes dessa integração usam respostas simuladas.
+- A GitHub App do time foi configurada e teve acesso real validado em 17/11/2026: autenticação, repositório selecionado, resolução do commit, download temporário e listagem pela API. Os testes automatizados continuam usando respostas simuladas; o fluxo pela fila e relatório também foi validado com código real, com dependências explicitamente não avaliadas por falta de arquivo suportado. Repositório privado adicional e revogação ainda precisam de validação real.
 - O site em `website/` é a apresentação do projeto, não a interface operacional da demo.
 
 ## Divisão de propriedade dos arquivos
@@ -26,11 +26,16 @@ Cada arquivo deve ter uma frente responsável. As pastas futuras abaixo são sug
 
 ## Frente 1 — Backend e dados
 
+### Já feito
+
+- API, Bearer token local, validação de entrada, SQLite, fila, histórico e rota de exclusão.
+- Testes de autenticação, duplicatas, recuperação da fila e exclusão; fluxo real de solicitação e consulta do relatório.
+
 ### Falta fazer
 
 - Revisar e estabilizar as rotas, os formatos JSON e os códigos de erro para o frontend.
 - Completar os modelos de resposta e a documentação OpenAPI.
-- Validar fila persistente, prevenção de análises duplicadas, histórico e exclusão dos relatórios e evidências.
+- Ampliar validação de concorrência e conectar histórico/exclusão à futura autorização por usuário; as operações iniciais já possuem testes.
 - Definir a evolução da autenticação: o código inicial usa um token de operador único, não contas de usuários independentes.
 - Garantir que a autorização acompanhe essa evolução; não apresentar a base atual como um serviço multiusuário pronto.
 - Fazer os ajustes mínimos para servir os templates e arquivos estáticos entregues pela frente 4, quando necessário.
@@ -41,12 +46,19 @@ Cada arquivo deve ter uma frente responsável. As pastas futuras abaixo são sug
 
 ## Frente 2 — Análises e executor
 
+### Já feito
+
+- Adaptadores dos três scanners, instalador com hashes, worker separado e normalização dos resultados.
+- Timeout, extração defensiva, descarte temporário e representação de análises parciais.
+- Três scanners executados em exemplos controlados; Bandit e Betterleaks executados também no repositório real.
+- Falta de fonte de dependências identificada no fluxo real e tratada explicitamente como verificação não realizada, com testes de regressão.
+
 ### Falta fazer
 
 - Revisar os adaptadores e fixar as configurações e versões efetivamente suportadas.
 - Validar exemplos vulneráveis e corrigidos das categorias aprovadas, incluindo falsos positivos.
-- Testar ferramentas ausentes, saídas inválidas, falta de lockfile, falhas de rede, timeouts e interrupções.
-- Garantir descarte de código e saídas brutas, mascaramento e tratamento de análises parciais.
+- Ampliar a matriz de falhas de ferramentas e rede. Já há testes de ferramenta ausente, falta de fonte de dependências, timeout e recuperação de trabalhos interrompidos.
+- Ampliar os testes de descarte e proteção de evidências; o descarte e o resultado parcial já foram observados no fluxo real.
 - Completar os limites de recursos e o isolamento necessário ao executor. Processo separado não equivale a isolamento de segurança.
 - Integrar os sinais de manutenção produzidos pela frente 3 sem alterar seus critérios.
 
@@ -56,10 +68,16 @@ Cada arquivo deve ter uma frente responsável. As pastas futuras abaixo são sug
 
 ## Frente 3 — GitHub e manutenção de dependências
 
+### Já feito
+
+- App da organização cadastrada e instalada com leitura de Contents/Metadata, somente no repositório escolhido.
+- Configuração local protegida; autenticação real, listagem, resolução de SHA e download temporário validados.
+- Fluxo integrado com API, fila e worker validado sem colocar credenciais ou relatórios no Git. Ver [GITHUB.md](GITHUB.md).
+
 ### Falta fazer
 
-- Configurar e testar a GitHub App do time com leitura e seleção de repositórios, inclusive privados.
-- Validar paginação, permissões revogadas, resolução do commit e download limitado à revisão registrada.
+- Testar o acesso real a um repositório privado próprio autorizado; a instalação inicial e o acesso ao repositório selecionado já funcionam.
+- Ampliar testes reais de paginação e revogação. Resolução de commit e download da revisão já foram testados com GitHub real.
 - Apoiar a frente 1 no fluxo de autorização do usuário, sem editar a API ou as configurações em paralelo.
 - Associar corretamente o pacote Python ao projeto de origem.
 - Coletar apenas os dois sinais aprovados: aviso explícito dos mantenedores e repositório arquivado, com fonte e data.
