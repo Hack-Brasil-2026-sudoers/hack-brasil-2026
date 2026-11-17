@@ -106,9 +106,9 @@ As prioridades serão crítica, alta, média e baixa, considerando a gravidade i
 - SQLite para persistir usuários, projetos, análises e achados.
 - Processo separado em Python para executar Bandit, OSV-Scanner e Betterleaks sem bloquear o atendimento do site.
 
-A prioridade é implementar o programa. Hospedagem e formato de disponibilização da demo serão decididos depois; não há compromisso com demo local, AWS ou outro provedor. Isolamento do executor e mecanismo de coordenação das análises precisam ser tratados na implementação. Um processo separado não constitui, por si só, isolamento de segurança. O SQLite exige armazenamento persistente no ambiente escolhido.
+A prioridade é implementar o programa. Decisão atualizada em 17/11/2026: executar a demo localmente, no computador usado na apresentação. Hospedagem pública, AWS e outros provedores ficam fora do escopo desta etapa. Isolamento do executor e mecanismo de coordenação das análises precisam ser tratados na implementação. Um processo separado não constitui, por si só, isolamento de segurança. O SQLite exige armazenamento persistente no ambiente escolhido.
 
-Antes da submissão, definir a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. Essa decisão fica para depois da implementação e não define o ambiente de desenvolvimento.
+Antes da submissão, definir a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. A execução local está confirmada; o acesso dos jurados por link permanece uma pendência para a submissão, sem bloquear a implementação.
 
 ## Papel da IA no MVP
 
@@ -170,7 +170,7 @@ Antes de prometer suporte, avaliar a cobertura real das ferramentas para cada li
 
 ## Próximas decisões, uma por vez
 
-1. Priorizar a implementação do programa, tratando execução e isolamento das análises; decidir hospedagem e disponibilização da demo posteriormente.
+1. Implementar o programa e preparar execução local para a demo, tratando execução e isolamento das análises. Não provisionar hospedagem pública nesta etapa.
 2. Definir as versões de Python e os frameworks cobertos.
 3. Detalhar regras e critérios das três frentes de análise confirmadas.
 4. Retomar provedor/modelo de IA e tratamento dos dados enviados posteriormente; decisão adiada, sem bloquear a implementação.

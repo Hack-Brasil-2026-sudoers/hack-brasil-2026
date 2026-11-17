@@ -1,6 +1,6 @@
 # Guia de implementação do CyberCheck
 
-Estado: planejamento em andamento. Este arquivo orienta o trabalho técnico e deve acompanhar as decisões do usuário. A explicação do produto e a pesquisa estão em [PROJETO.md](PROJETO.md).
+Estado: base inicial de backend em desenvolvimento, interrompida a pedido do usuário em 17/11/2026 para organizar o trabalho do time. A divisão de responsabilidades e dos arquivos está em [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). A interface da demo ficará com outro integrante. Este arquivo orienta o trabalho técnico; a explicação do produto e a pesquisa estão em [PROJETO.md](PROJETO.md).
 
 ## Como conduzir o trabalho
 
@@ -49,7 +49,7 @@ A experiência do usuário é principalmente em C e C++. Considerá-la ao avalia
 - SQLite para usuários, projetos, análises e resultados.
 - Executor em processo Python separado, rodando as três ferramentas sem bloquear as requisições do site.
 
-Prioridade confirmada: implementar o programa primeiro. Hospedagem e disponibilização da demo ficam para depois, sem decisão de demo local ou preferência aprovada por AWS. Na implementação, tratar armazenamento persistente para SQLite, isolamento do executor, limites de recursos e coordenação durável das análises. Separar processos não equivale a isolar código não confiável. Evitar iniciar análises longas apenas como tarefas em memória do processo web; o mecanismo concreto ainda será escolhido.
+Prioridade confirmada: implementar o programa primeiro. Decisão atualizada em 17/11/2026: a demo será executada localmente. Não provisionar hospedagem pública nem assumir AWS como destino nesta etapa. Execução local não significa funcionamento offline: manter as integrações GitHub e consultas de vulnerabilidades previstas. Na implementação, tratar armazenamento persistente para SQLite, isolamento do executor, limites de recursos e coordenação durável das análises. Separar processos não equivale a isolar código não confiável. Evitar iniciar análises longas apenas como tarefas em memória do processo web; o mecanismo concreto ainda será escolhido.
 
 Antes da submissão, retomar a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. Não condicionar o início da implementação à escolha de hospedagem e não criar recursos de nuvem nesta etapa.
 
@@ -130,4 +130,4 @@ Combinação aprovada: Bandit + OSV-Scanner + Betterleaks. Scorecard fica como r
 
 ## Próximo passo
 
-Implementar o programa antes de decidir hospedagem e formato da demo. Não manter como requisito a decisão anterior de demo local nem assumir AWS como destino. A stack Python/FastAPI, Jinja2/HTML/CSS, SQLite e executor Python separado está confirmada. A escala crítica/alta/média/baixa e a indicação “prioridade a revisar”, com justificativas, estão confirmadas. A apresentação por tipo e prioridade, sem notas ou scores, está confirmada. As três ferramentas iniciais estão confirmadas. O papel limitado da IA, o disparo manual, a cópia temporária do código, o histórico de relatórios e o registro do commit e da data/hora estão confirmados. A escolha do provedor/modelo de IA está adiada e não bloqueia a implementação. Detalhes de autenticação e permissões, versões de Python, frameworks, regras específicas e mecanismos de coleta dos sinais de manutenção aprovados serão pesquisados e definidos durante a implementação, respeitando o escopo confirmado.
+Implementar o programa com instruções de configuração e execução local para a demo. A execução local foi confirmada em 17/11/2026; hospedagem pública permanece fora do escopo desta etapa. A stack Python/FastAPI, Jinja2/HTML/CSS, SQLite e executor Python separado está confirmada. A escala crítica/alta/média/baixa e a indicação “prioridade a revisar”, com justificativas, estão confirmadas. A apresentação por tipo e prioridade, sem notas ou scores, está confirmada. As três ferramentas iniciais estão confirmadas. O papel limitado da IA, o disparo manual, a cópia temporária do código, o histórico de relatórios e o registro do commit e da data/hora estão confirmados. A escolha do provedor/modelo de IA está adiada e não bloqueia a implementação. Detalhes de autenticação e permissões, versões de Python, frameworks, regras específicas e mecanismos de coleta dos sinais de manutenção aprovados serão pesquisados e definidos durante a implementação, respeitando o escopo confirmado.

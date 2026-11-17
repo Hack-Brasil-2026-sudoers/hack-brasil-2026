@@ -1,9 +1,10 @@
 # Próximos passos do CyberCheck
 
-O planejamento principal está definido. A prioridade agora é implementar e validar o programa. Hospedagem e provedor de IA ficam para depois, sem bloquear o trabalho.
+O planejamento principal está definido. A prioridade agora é implementar e validar o programa. A demo será executada localmente, conforme decisão de 17/11/2026. Hospedagem pública e provedor de IA ficam para depois, sem bloquear o trabalho.
 
 ## Referências
 
+- [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md): divisão de escopo, arquivos e pontos de integração entre os participantes. Organizar e compartilhar a base comum antes de retomar o trabalho em paralelo.
 - [PROJETO.md](PROJETO.md): proposta e decisões confirmadas.
 - [IMPLEMENTACAO.md](IMPLEMENTACAO.md): orientações técnicas, ferramentas e limites.
 - [RASCUNHO.md](RASCUNHO.md): apresentação do problema e do objetivo para o evento.
@@ -80,7 +81,7 @@ O planejamento principal está definido. A prioridade agora é implementar e val
 ## 8. Retomar as decisões adiadas e preparar a entrega
 
 - Escolher provedor/modelo de IA quando houver condições de avaliar custos e tratamento de dados; ativar somente após definir o envio autorizado dos dados mínimos.
-- Definir hospedagem e acesso à demo depois de implementar o programa.
+- Preparar a execução local da demo e documentar as configurações e conexões necessárias. Antes da submissão, resolver o acesso dos jurados por link conforme o regulamento; não provisionar nuvem agora.
 - Preparar o vídeo e os links de entrega conforme o regulamento.
 - Conferir elegibilidade dos repositórios, licenças, prazos e regras de congelamento antes da submissão.
 
