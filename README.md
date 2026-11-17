@@ -1,24 +1,23 @@
-# hack-brasil-2026
+# CyberCheck
 
-CyberCheck, the Sudoers team's project for Hack Brasil 2026.
+**Team:** Sudoers · Hack Brasil 2026\
+**Track:** Cybersecurity
 
-CyberCheck helps independent developers and small teams assess Python repositories through GitHub. It presents potential code vulnerabilities, dependency issues, and exposed secrets or unsafe configuration, with evidence and prioritized remediation guidance, without security scores. The current proposal is documented in [PROJETO.md](markdown/PROJETO.md).
+## Motivation
 
-## Documentation
+Independent developers and small teams need to secure their projects without dedicated security specialists. Potentially vulnerable code, outdated dependencies, exposed credentials, and unsafe configuration can introduce risks that are difficult to identify and prioritize.
 
-- [Submission draft](markdown/RASCUNHO.md)
-- [Project proposal and decisions](markdown/PROJETO.md)
-- [Developer and LLM guide: workflow, English, and project standards](markdown/IMPLEMENTACAO.md)
-- [Next steps](markdown/PROXIMOS-PASSOS.md)
-- [Workstreams and file ownership](markdown/FRENTES-DE-TRABALHO.md)
-- [GitHub App setup](markdown/GITHUB.md)
-- [Event rules — English translation](markdown/regulamento-atual.md)
+Technical alerts alone do not always explain what matters or how to start fixing it. Discontinued dependencies can also require migration rather than a simple version upgrade.
 
-The project presentation website is in [website/](website/).
+## Objective
 
-## Run the backend
+CyberCheck aims to help developers identify potential security issues and decide what to fix first. The initial focus is internal analysis of Python repositories through GitHub, covering code, dependencies, and secrets/configuration.
 
-Requires Python 3.11+ and Linux for this initial worker implementation.
+Results group findings by type and priority, with evidence and suggested actions, without assigning security scores. Each analysis records the exact commit and timestamp. Dependency maintenance checks and possible alternatives are planned; collection of these signals is not yet implemented.
+
+## Run the project
+
+The initial backend requires Python 3.11+ and Linux. The scanner installer supports Linux x86_64.
 
 ```bash
 python3 -m venv .venv
@@ -26,7 +25,7 @@ python3 -m venv .venv
 .venv/bin/python scripts/install_scanners.py
 ```
 
-Create a `.env` from `.env.example`, generate a random API token, and follow the [GitHub App guide](markdown/GITHUB.md). The scanner installer supports Linux x86_64 and verifies binary hashes.
+Create a local `.env` using `.env.example`, generate a random API token of at least 32 characters, and configure the GitHub App following [GITHUB.md](markdown/GITHUB.md). Set `OSV_SCANNER_BIN` and `BETTERLEAKS_BIN` to the absolute paths of the installed executables in `.tools/`.
 
 Start the API and worker in separate terminals from the repository root:
 
@@ -38,10 +37,20 @@ Start the API and worker in separate terminals from the repository root:
 .venv/bin/python -m cybercheck worker
 ```
 
-Interactive API documentation is available at `http://127.0.0.1:8000/docs`. Select **Authorize**, enter the local token, list repositories, and request an analysis using the returned repository ID. External dependency lookup requires authorization through the `dependency_lookup` field.
+Open `http://127.0.0.1:8000/docs`, select **Authorize**, and enter the local API token. List authorized repositories with `GET /api/repositories`, then request an analysis with `POST /api/analyses`. For example, replace `123` with a returned repository ID:
 
-```bash
-.venv/bin/python -m pytest -q
+```json
+{
+  "repository_id": 123,
+  "authorization_confirmed": true,
+  "dependency_lookup": false
+}
 ```
 
-This foundation uses a single-operator token and does not yet provide multiuser isolation. Do not expose the backend as a public service. Partial results indicate missing coverage or failed checks; the absence of alerts does not guarantee security. Another team member will build the operational demo UI.
+Confirm authorization only for projects you own or have written permission to assess. Set `dependency_lookup` to `true` to authorize external dependency metadata queries. Use the returned analysis ID with `GET /api/analyses/{identity}` to check progress and retrieve the report.
+
+The current backend uses a single-operator token; the operational UI and individual user login are not implemented yet. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
+
+## Development
+
+Run tests with `.venv/bin/python -m pytest -q`. See the [developer and LLM guide](markdown/IMPLEMENTACAO.md), [workstreams](markdown/FRENTES-DE-TRABALHO.md), and [next steps](markdown/PROXIMOS-PASSOS.md). The complete proposal is in [PROJETO.md](markdown/PROJETO.md), and the presentation website is in [website/](website/).
