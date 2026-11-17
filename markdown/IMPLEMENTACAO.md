@@ -102,6 +102,7 @@ git diff --check
 ```
 
 - For changed behavior, add or update focused tests that demonstrate the expected result and relevant failure cases. Security-sensitive changes must preserve authorization, masking, cleanup, and failure handling. Documentation-only changes require link and content checks rather than new application tests.
+- Never remove an existing test without the user's explicit permission. If a test appears obsolete or conflicts with a change, explain why and obtain permission before deleting it. Do not disable, skip, or weaken tests merely to make a check pass; preserve the coverage when updating expected behavior.
 - Use mocked GitHub/network responses for automated tests; do not embed real credentials or require another contributor's local installation. Run live checks only against authorized systems and identify them separately in the handoff.
 - For UI changes, check desktop and mobile layouts, empty/error/partial states when applicable, accessibility labels, and the actual API contract. Report browser interactions that were not tested.
 - Before handoff, inspect the complete diff and, if committing, the staged diff for unrelated changes and secrets. Confirm new repository text is English and local documentation links resolve.
