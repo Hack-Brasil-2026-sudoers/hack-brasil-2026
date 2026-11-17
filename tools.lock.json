@@ -1,0 +1,20 @@
+{
+  "platform": "linux-x86_64",
+  "tools": [
+    {
+      "name": "osv-scanner",
+      "version": "2.7.1",
+      "license": "Apache-2.0",
+      "url": "https://github.com/google/osv-scanner/releases/download/v2.7.1/osv-scanner_linux_amd64",
+      "sha256": "fb7dab19a8bd9bbe5c3189f09d4b7ee1820c9553a23bac202648a56efd2f6ee8"
+    },
+    {
+      "name": "betterleaks",
+      "version": "1.10.1",
+      "license": "MIT",
+      "url": "https://github.com/betterleaks/betterleaks/releases/download/v1.10.1/betterleaks_1.10.1_linux_x64.tar.gz",
+      "sha256": "c174b42d7aa60caf58c0c3e555c0e4bed01fe6b0d99a412bce777b5af4ce913e",
+      "archive_member": "betterleaks"
+    }
+  ]
+}

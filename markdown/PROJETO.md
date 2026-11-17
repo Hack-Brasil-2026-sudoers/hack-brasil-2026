@@ -1,6 +1,6 @@
 # CyberCheck
 
-Documento vivo da proposta. Atualizado em 15/11/2026 com as decisões da conversa.
+Documento vivo da proposta. Atualizado em 17/11/2026. O escopo abaixo descreve o produto pretendido; o estado efetivamente implementado está separado a seguir.
 
 ## Proposta
 
@@ -9,6 +9,18 @@ O CyberCheck ajuda desenvolvedores autônomos e pequenas equipes a identificar p
 A primeira versão terá foco na análise interna de repositórios. A entrega reúne achados, evidências, localização, possível impacto e ações de correção priorizadas.
 
 O produto pode atender diferentes tipos de software, sem ficar restrito a aplicações web. A cobertura efetiva depende das linguagens, ferramentas e verificações implementadas.
+
+## Estado de implementação em 17/11/2026
+
+Já existe backend FastAPI com autenticação por token de operador único, fila e histórico em SQLite, worker separado e adaptadores dos três scanners. A interface operacional da demo ficará com outro integrante e ainda não foi implementada.
+
+A GitHub App da organização está instalada com leitura de Contents e Metadata, limitada ao repositório escolhido. Foram validados acesso real, resolução do commit, download, solicitação pela API, processamento pela fila e consulta do relatório. A cópia temporária foi descartada e o relatório registra SHA e datas.
+
+Bandit 1.9.4, OSV-Scanner 2.7.1 e Betterleaks 1.10.1 foram executados em exemplos controlados. Na análise real da branch `pedro`, Bandit e Betterleaks concluíram; as dependências não foram avaliadas por falta de arquivo suportado nessa revisão. O resultado ficou explicitamente parcial. A suíte atual passou com 24 testes.
+
+Ainda faltam login e autorização por usuário, testes reais em repositório privado e de revogação, ampliação da validação de cobertura, isolamento mais forte do executor, coleta de sinais de descontinuação/arquivamento, avaliação de substituições e interface. IA externa e hospedagem permanecem adiadas.
+
+Detalhes e responsabilidades: [frentes de trabalho](FRENTES-DE-TRABALHO.md), [próximos passos](PROXIMOS-PASSOS.md) e [configuração do GitHub](GITHUB.md).
 
 ## Decisões tomadas
 
@@ -70,7 +82,7 @@ Considerar o contexto: exemplos fictícios, configurações de desenvolvimento e
 
 ## Experiência proposta
 
-1. O desenvolvedor autoriza a GitHub App nos repositórios escolhidos e seleciona um deles para análise. O MVP atenderá repositórios públicos e privados, com as permissões de leitura necessárias. As permissões exatas e o fluxo de autenticação serão verificados na documentação do GitHub antes da implementação.
+1. O desenvolvedor autoriza a GitHub App nos repositórios escolhidos e seleciona um deles para análise. O MVP atenderá repositórios públicos e privados, com as permissões de leitura necessárias. Contents e Metadata somente leitura já foram configurados na instalação da organização. O código atual usa um operador único; o fluxo de login e autorização individual ainda será implementado.
 2. O desenvolvedor aciona “Iniciar análise”; o sistema identifica as tecnologias e executa as verificações disponíveis.
 3. O resultado apresenta os achados com evidências e ações sugeridas.
 4. O desenvolvedor corrige e pode realizar uma nova análise para comparar os resultados.
@@ -106,9 +118,9 @@ As prioridades serão crítica, alta, média e baixa, considerando a gravidade i
 - SQLite para persistir usuários, projetos, análises e achados.
 - Processo separado em Python para executar Bandit, OSV-Scanner e Betterleaks sem bloquear o atendimento do site.
 
-A prioridade é implementar o programa. Hospedagem e formato de disponibilização da demo serão decididos depois; não há compromisso com demo local, AWS ou outro provedor. Isolamento do executor e mecanismo de coordenação das análises precisam ser tratados na implementação. Um processo separado não constitui, por si só, isolamento de segurança. O SQLite exige armazenamento persistente no ambiente escolhido.
+A prioridade é implementar o programa. Decisão atualizada em 17/11/2026: executar a demo localmente, no computador usado na apresentação. Hospedagem pública, AWS e outros provedores ficam fora do escopo desta etapa. Isolamento do executor e mecanismo de coordenação das análises precisam ser tratados na implementação. Um processo separado não constitui, por si só, isolamento de segurança. O SQLite exige armazenamento persistente no ambiente escolhido.
 
-Antes da submissão, definir a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. Essa decisão fica para depois da implementação e não define o ambiente de desenvolvimento.
+Antes da submissão, definir a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. A execução local está confirmada; o acesso dos jurados por link permanece uma pendência para a submissão, sem bloquear a implementação.
 
 ## Papel da IA no MVP
 
@@ -170,7 +182,7 @@ Antes de prometer suporte, avaliar a cobertura real das ferramentas para cada li
 
 ## Próximas decisões, uma por vez
 
-1. Priorizar a implementação do programa, tratando execução e isolamento das análises; decidir hospedagem e disponibilização da demo posteriormente.
+1. Implementar o programa e preparar execução local para a demo, tratando execução e isolamento das análises. Não provisionar hospedagem pública nesta etapa.
 2. Definir as versões de Python e os frameworks cobertos.
 3. Detalhar regras e critérios das três frentes de análise confirmadas.
 4. Retomar provedor/modelo de IA e tratamento dos dados enviados posteriormente; decisão adiada, sem bloquear a implementação.

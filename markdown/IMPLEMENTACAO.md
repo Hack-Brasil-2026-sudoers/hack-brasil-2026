@@ -1,6 +1,6 @@
 # Guia de implementação do CyberCheck
 
-Estado: planejamento em andamento. Este arquivo orienta o trabalho técnico e deve acompanhar as decisões do usuário. A explicação do produto e a pesquisa estão em [PROJETO.md](PROJETO.md).
+Estado em 17/11/2026: backend inicial implementado e conexão real da GitHub App validada, incluindo execução pela fila e consulta do relatório. O trabalho foi retomado pelo usuário na conexão GitHub e na validação do fluxo, mantendo a separação das frentes. A divisão de responsabilidades e dos arquivos está em [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). A interface da demo ficará com outro integrante. Este arquivo orienta o trabalho técnico; a explicação do produto e a pesquisa estão em [PROJETO.md](PROJETO.md).
 
 ## Como conduzir o trabalho
 
@@ -10,6 +10,20 @@ Estado: planejamento em andamento. Este arquivo orienta o trabalho técnico e de
 - Atualizar estes dois documentos conforme as decisões forem tomadas.
 - Preservar a transcrição do PDF como referência histórica.
 - Não iniciar a implementação só porque há um fluxo proposto neste documento.
+
+## Implementado e validado
+
+- API com Bearer token de operador único, validação de entrada, histórico e exclusão; testes de acesso sem token e conflitos.
+- SQLite com fila persistente, prevenção de duplicatas ativas, limite de fila e recuperação de execuções interrompidas.
+- Worker separado, download limitado ao commit, extração com rejeição de caminhos inseguros e links, timeout e descarte de temporários.
+- Adaptadores Bandit 1.9.4, OSV-Scanner 2.7.1 e Betterleaks 1.10.1; versões e hashes dos binários em `tools.lock.json`.
+- Achados agrupáveis por tipo/prioridade, evidências estruturadas e confiança separada, sem código/matches ou segredos brutos nos resultados normalizados.
+- GitHub App da organização configurada localmente: Contents e Metadata somente leitura, instalação em repositório selecionado. Autenticação, listagem, commit e download testados com GitHub real.
+- Fluxo real API → fila → worker → scanners → relatório validado em revisão da branch `pedro`; dependências ficaram não avaliadas por ausência de arquivo suportado, preservando o estado parcial.
+- Tratamento específico do OSV para ausência de fontes de pacotes (`skipped`), sem mascarar outros erros como falta de cobertura.
+- 24 testes automatizados passaram. Scanners também testados com exemplos controlados. O TestClient emite um aviso não bloqueante de depreciação do httpx.
+
+Credenciais e resultados locais ficam em `.env`/`.data`, ignorados pelo Git. A chave privada está fora do repositório; `.env` e chave têm permissão 600. Verificação pré-push por valores locais, padrões e Betterleaks não detectou segredos nos arquivos versionáveis nem no histórico Git local.
 
 ## Requisitos confirmados
 
@@ -49,7 +63,7 @@ A experiência do usuário é principalmente em C e C++. Considerá-la ao avalia
 - SQLite para usuários, projetos, análises e resultados.
 - Executor em processo Python separado, rodando as três ferramentas sem bloquear as requisições do site.
 
-Prioridade confirmada: implementar o programa primeiro. Hospedagem e disponibilização da demo ficam para depois, sem decisão de demo local ou preferência aprovada por AWS. Na implementação, tratar armazenamento persistente para SQLite, isolamento do executor, limites de recursos e coordenação durável das análises. Separar processos não equivale a isolar código não confiável. Evitar iniciar análises longas apenas como tarefas em memória do processo web; o mecanismo concreto ainda será escolhido.
+Prioridade confirmada: implementar o programa primeiro. Decisão atualizada em 17/11/2026: a demo será executada localmente. Não provisionar hospedagem pública nem assumir AWS como destino nesta etapa. Execução local não significa funcionamento offline: manter as integrações GitHub e consultas de vulnerabilidades previstas. Na implementação, tratar armazenamento persistente para SQLite, isolamento do executor, limites de recursos e coordenação durável das análises. Separar processos não equivale a isolar código não confiável. Evitar iniciar análises longas apenas como tarefas em memória do processo web; o mecanismo concreto ainda será escolhido.
 
 Antes da submissão, retomar a disponibilização da demo conforme os itens 7.2 e 7.3 do regulamento. Não condicionar o início da implementação à escolha de hospedagem e não criar recursos de nuvem nesta etapa.
 
@@ -72,15 +86,15 @@ Tecnologias são livres (6.3), IA é permitida e recomendada (6.4), e componente
 
 ### Decisões pendentes
 
-- Versões de Python cobertas na primeira entrega.
+- Validar a matriz de versões de Python: pacote declara 3.11+, mas os testes atuais rodaram em Python 3.14.10 no Linux.
 - Verificações e regras concretas dentro das três frentes confirmadas; não presumir cobertura completa dos exemplos discutidos.
 - Mecanismos de coleta de avisos dos mantenedores e status de arquivamento, associação correta entre pacote e repositório de origem, e critérios para selecionar alternativas.
-- Versões e configurações das ferramentas escolhidas; avisos de licença, dependências incluídas, custos operacionais e limites de uso.
-- Detalhes do fluxo de autenticação e seleção de repositórios via GitHub App; verificar na documentação oficial as permissões exatas antes de implementar.
-- Interface, armazenamento e formato de exportação.
+- Ampliar validação das regras, dos formatos de dependências e dos falsos positivos; manter avisos de licença e revisar limites de uso. Versões iniciais e hashes dos binários já estão registrados.
+- Login/autorização individual para além do operador local, testes reais em repositório privado, revogação e paginação. A instalação inicial da organização já foi configurada e testada.
+- Interface e eventual exportação; a persistência inicial dos resultados em SQLite já existe.
 - Revisão humana e regras detalhadas de classificação/mapeamento das prioridades aprovadas.
 - Decisão adiada: provedor/modelo de IA, custos, retenção pelo provedor e fluxo de autorização para envio dos dados mínimos; não é pré-requisito para implementar análises e relatórios.
-- Fluxo de exclusão dos relatórios/evidências pelo usuário; a retenção até exclusão e o descarte da cópia temporária do código já estão confirmados.
+- Integrar a exclusão à interface e à futura autorização por usuário; a rota de exclusão já existe e foi testada no modo de operador único.
 
 ## Critérios propostos para a implementação
 
@@ -109,7 +123,7 @@ Mostrar explicitamente o que foi analisado e quais limites permaneceram. Não pr
 
 ### Ferramentas candidatas pesquisadas em 15/11/2026
 
-Seleção confirmada pelo usuário: Bandit, OSV-Scanner e Betterleaks. As demais ferramentas pesquisadas permanecem alternativas ou fontes candidatas, sem adoção confirmada. Nenhuma ferramenta foi instalada ou testada nesta etapa de planejamento.
+Seleção confirmada pelo usuário: Bandit, OSV-Scanner e Betterleaks. As demais ferramentas pesquisadas permanecem alternativas ou fontes candidatas, sem adoção confirmada. A pesquisa original antecedeu a implementação. As três ferramentas escolhidas já foram instaladas localmente e executadas; consultar a seção de estado para as versões e a cobertura validadas.
 
 | Frente | Candidata e licença declarada | Adequação e limites |
 | --- | --- | --- |
@@ -130,4 +144,6 @@ Combinação aprovada: Bandit + OSV-Scanner + Betterleaks. Scorecard fica como r
 
 ## Próximo passo
 
-Implementar o programa antes de decidir hospedagem e formato da demo. Não manter como requisito a decisão anterior de demo local nem assumir AWS como destino. A stack Python/FastAPI, Jinja2/HTML/CSS, SQLite e executor Python separado está confirmada. A escala crítica/alta/média/baixa e a indicação “prioridade a revisar”, com justificativas, estão confirmadas. A apresentação por tipo e prioridade, sem notas ou scores, está confirmada. As três ferramentas iniciais estão confirmadas. O papel limitado da IA, o disparo manual, a cópia temporária do código, o histórico de relatórios e o registro do commit e da data/hora estão confirmados. A escolha do provedor/modelo de IA está adiada e não bloqueia a implementação. Detalhes de autenticação e permissões, versões de Python, frameworks, regras específicas e mecanismos de coleta dos sinais de manutenção aprovados serão pesquisados e definidos durante a implementação, respeitando o escopo confirmado.
+Seguir a divisão de [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). Na frente 3, validar repositório privado/revogação e implementar os sinais de manutenção aprovados; na frente 2, completar validação de cobertura e isolamento. Frente 1 deve estabilizar os schemas da API e definir login/autorização individual com a frente 3. A frente 4 constrói a interface consumindo o contrato combinado.
+
+A escolha de provedor/modelo de IA e de hospedagem não bloqueia esse trabalho. Não ativar IA externa nem publicar o backend de operador único como serviço aberto.
