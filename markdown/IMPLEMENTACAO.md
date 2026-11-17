@@ -43,6 +43,17 @@ Use the next-step checklist for the backlog and the workstream document for owne
 - Preserve API schemas and status values agreed with the frontend. Negotiate breaking changes and update affected callers and tests together. Do not invent missing endpoints or present development mocks as real integrations.
 - Keep UI work within the confirmed HTML/CSS/Jinja2 direction, with minimal JavaScript. The static site in `website/` is the project presentation; the operational analysis interface is separate work.
 
+### Commit scope and pull requests
+
+- Keep each commit focused on one coherent topic with a clear purpose. A reviewer should be able to understand and, when practical, revert that change independently.
+- Include the implementation and its directly related tests in the same commit. Include documentation required to understand that specific behavior; do not split a fix from the tests that establish it.
+- Separate unrelated changes, such as a scanner bug fix, a Pages deployment change, dependency automation, and contributor guidance, into distinct commits. Do not bundle everything done during a session into one oversized commit.
+- Let the pull request assemble the related commits that deliver the overall task. Explain the complete outcome in the PR description, while each commit message explains its own change.
+- This is separation by purpose, not a rule to create one commit per file. Avoid artificial fragments that leave the code broken or are not useful to review on their own.
+- Before committing, inspect the staged diff and stage only the intended topic. Keep unrelated formatting, refactoring, generated files, and another contributor's work out of the commit.
+- Write concise, specific English subjects, such as `fix: reject unsafe scanner download URLs`, `ci: add Python security checks`, or `docs: define contribution standards`. Avoid vague messages such as `update everything`.
+- If an unpublished commit mixes topics, split it before pushing while preserving the working changes. Do not rewrite published history or force-push merely to tidy commits without explicit agreement.
+
 ### Security and reporting boundaries
 
 - Analyze only owned projects or projects with written authorization, using read access limited to authorized repositories.
