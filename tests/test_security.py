@@ -58,7 +58,21 @@ def test_installation_token_is_restricted_and_jwt_is_not_persisted(tmp_path, mon
 def test_installer_rejects_checksum_without_replacing_binary(tmp_path, monkeypatch):
     monkeypatch.setattr("scripts.install_scanners.urlopen", lambda *a, **kw: io.BytesIO(b"bad-download"))
     (tmp_path / "scanner").write_bytes(b"original")
-    tool = {"name": "scanner", "url": "https://example.invalid/scanner", "sha256": hashlib.sha256(b"expected").hexdigest()}
+    tool = {"name": "scanner", "url": "https://github.com/example/scanner/releases/download/v1/scanner", "sha256": hashlib.sha256(b"expected").hexdigest()}
     with pytest.raises(ValueError, match="SHA-256"):
         install(tool, tmp_path)
     assert (tmp_path / "scanner").read_bytes() == b"original"
+
+
+@pytest.mark.parametrize("url", [
+    "file:///etc/passwd", "http://github.com/example/scanner", "https://example.invalid/scanner",
+    "https://github.com@evil.invalid/scanner", "https://user@github.com/scanner", "https://github.com:444/scanner",
+])
+def test_installer_rejects_untrusted_download_urls(tmp_path, monkeypatch, url):
+    def unexpected_download(*args, **kwargs):
+        pytest.fail("An invalid download URL must be rejected before network access")
+    monkeypatch.setattr("scripts.install_scanners.urlopen", unexpected_download)
+    tool = {"name": "scanner", "url": url, "sha256": "0" * 64}
+    with pytest.raises(ValueError, match="HTTPS GitHub"):
+        install(tool, tmp_path)
+    assert not (tmp_path / "scanner").exists()

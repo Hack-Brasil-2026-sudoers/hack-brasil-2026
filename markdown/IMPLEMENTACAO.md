@@ -99,6 +99,28 @@ git diff --check
 
 ## Implemented and validated
 
+### Repository security and merge checks
+
+The repository's CI protects CyberCheck's own code. It is separate from the product's scanner executor and does not implement automatic analysis of customers' repositories.
+
+- `.github/workflows/ci.yml` runs tests on Python 3.11 and 3.14, Bandit, pip-audit, and a redacted Betterleaks Git-history scan on PRs to `main` and pushes to `main`.
+- Bandit checks `cybercheck/` and `scripts/`, failing on findings with at least medium severity and confidence. Any targeted suppression requires a documented justification and appropriate validation/tests; do not hide findings just to pass CI.
+- pip-audit checks the installed environment, skipping the editable CyberCheck package. It queries public vulnerability metadata and fails on known vulnerabilities or audit errors. These checks apply to this repository's CI; they do not authorize installing an untrusted project in the product's analysis pipeline.
+- `.github/workflows/codeql.yml` runs Python CodeQL with security-extended queries on PRs, `main`, and weekly schedules. The merge rules also require CodeQL results and block high/critical security alerts and error-level alerts.
+- `.github/workflows/scorecard.yml` assesses repository supply-chain practices on `main` and weekly. It publishes repository results to OpenSSF and uploads SARIF to GitHub code scanning. This repository assessment is separate from the product: CyberCheck findings still have no security score. Scorecard is not a required PR check because it assesses the default branch.
+- All workflow Actions are pinned to full commit SHAs, checkout credentials are not persisted, and write permissions are limited to jobs that upload security reports or deploy Pages. Do not use `pull_request_target` to execute PR code with elevated permissions.
+- `.github/dependabot.yml` requests weekly Python and GitHub Actions updates. Review update PRs and let the same checks run; do not auto-merge security-tool or workflow changes without review.
+
+`.github/main-ruleset.json` records the intended `main` protection: PRs with one approval, dismissal of stale approvals, approval of the latest push by another person, resolved review threads, an up-to-date branch, required checks, no force pushes or deletion, and no bypass actors. Required check names are `Tests (Python 3.11)`, `Tests (Python 3.14)`, `Bandit`, `Dependency audit`, `Secret scan`, and `CodeQL (Python)`. Coordinate renames with the ruleset; otherwise PRs can wait indefinitely for a nonexistent check.
+
+The JSON file is a record of the repository settings, not an automatically applied policy. Repository administrators apply and verify it through GitHub Settings or the API. Editing the file alone does not change protection. Do not weaken the rules or bypass a failing check to land a change; investigate and fix it. The author cannot provide their own required approval.
+
+For a failed check, inspect its Actions log or Security alert, reproduce the issue when possible, and add a focused fix with a regression test where appropriate. Do not add real tokens to make checks pass. Scanner downloads are checksum-verified; found credentials are never validated against providers.
+
+References: [OpenSSF Scorecard Action](https://github.com/ossf/scorecard-action), [CodeQL merge protection](https://docs.github.com/en/code-security/how-tos/find-and-fix-code-vulnerabilities/manage-your-configuration/set-merge-protection), and [pip-audit](https://github.com/pypa/pip-audit).
+
+### Application baseline
+
 - API with a single-operator Bearer token, input validation, history, and deletion; tests for missing tokens and conflicts.
 - SQLite with a persistent queue, active duplicate prevention, queue limits, and recovery of interrupted runs.
 - Separate worker, commit-specific download, extraction that rejects unsafe paths and links, timeouts, and temporary file cleanup.

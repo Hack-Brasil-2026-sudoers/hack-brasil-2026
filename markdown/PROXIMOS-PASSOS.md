@@ -6,6 +6,8 @@ Status updated on November 17, 2026. The initial foundation exists and the real 
 
 ## Workstream summary
 
+Repository-security changes add required PR tests/security checks, CodeQL, a default-branch Scorecard workflow, Dependabot configuration, and a versioned `main` ruleset. See the [repository-security guide](IMPLEMENTACAO.md#repository-security-and-merge-checks). These workflows protect CyberCheck's source; automatic analysis of customers' projects remains deferred. When changing a required job name, coordinate the corresponding GitHub ruleset update.
+
 | Workstream | Completed | Remaining |
 | --- | --- | --- |
 | 1. Backend and data | FastAPI API, local Bearer token, SQLite, queue, history, and deletion | Stabilize frontend schemas, expand concurrency validation, and implement per-user authorization |
