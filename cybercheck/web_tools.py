@@ -106,6 +106,7 @@ def read_report(path):
 
 
 def create_certificate(directory, profile):
+    # The weak key is a deliberate test stimulus, used only by the generated isolated laboratory.
     key = rsa.generate_private_key(public_exponent=65537, key_size=1024 if profile == "vulnerable" else 2048)
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "lab-site")])
     start = datetime.now(timezone.utc) - timedelta(minutes=1)

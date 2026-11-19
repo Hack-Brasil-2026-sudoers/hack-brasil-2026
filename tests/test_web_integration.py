@@ -63,6 +63,7 @@ def create_test_certificate(directory):
 def running_server(handler, context=None):
     server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
     if context:
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
         server.socket = context.wrap_socket(server.socket, server_side=True)
     thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.02}, daemon=True)
     thread.start()
