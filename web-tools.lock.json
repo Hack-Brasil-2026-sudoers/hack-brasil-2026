@@ -1,0 +1,20 @@
+{
+  "platform": "linux-amd64",
+  "images": {
+    "zap": {
+      "version": "2.17.0",
+      "license": "Apache-2.0",
+      "image": "ghcr.io/zaproxy/zaproxy@sha256:9624669db72f54d86c4b46a7064518bd9bf79d8c61a4c31befa9923489f328af"
+    },
+    "testssl": {
+      "version": "3.2.5",
+      "license": "GPL-2.0",
+      "image": "ghcr.io/testssl/testssl.sh@sha256:b9328c75eedb0a49abfab45b9a1267ef1573ef7b7be06bf0020a2a9781097547"
+    },
+    "site": {
+      "version": "3.14-alpine",
+      "license": "PSF-2.0 and bundled-component licenses",
+      "image": "docker.io/library/python@sha256:5862d971d1f0ae26b258cefa4e893556b1d3aba81bd2ff30888704ad378bab67"
+    }
+  }
+}
