@@ -2,6 +2,8 @@
 
 Living proposal document. Updated on November 17, 2026. The scope below describes the intended product; the actual implementation status is reported separately.
 
+Update on November 18, 2026: the user prioritized external website assessment before returning to repository-analysis work. The first delivery was a terminal command; the user subsequently authorized queued API integration and a frontend contract. Basic checks for TLS, response security headers, and cookie attributes are now available through `cybercheck web URL --authorization-confirmed` or the API, with shared queue/history/report/deletion support. See the [usage and limits](../README.md#analyze-an-authorized-website) and [frontend contract](API.md). This mode does not crawl, authenticate, inject payloads, or prove exploitability. ZAP/testssl.sh remain limited to the isolated CLI laboratory. The repository-analysis implementation remains available.
+
 ## Proposal
 
 CyberCheck helps independent developers and small teams identify potential security issues in their projects and understand what to fix first.
@@ -34,7 +36,7 @@ Details and responsibilities: [workstreams](FRENTES-DE-TRABALHO.md), [next steps
 - MVP trigger: manual, with the user selecting a repository and clicking “Start analysis.” Future options remain open for GitHub Actions or other automation, such as GitHub events, CI/CD pipelines, or schedules. No future mechanism has been selected or included in the MVP.
 - Focus: security issues with suggested actions.
 - Confirmed MVP areas: code, dependencies, and secrets/configuration.
-- External website and API analysis: a separate mode planned for future development.
+- External website analysis: basic transport, header, and cookie checks are available through the terminal and queued API. Authenticated and active vulnerability testing remain outside this increment; the frontend is developed by another team member against the published contract.
 - Monitoring for new risks: future development.
 - Commercial plans and billing: decide later.
 
