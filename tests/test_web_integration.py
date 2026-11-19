@@ -12,8 +12,12 @@ from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
+from fastapi.testclient import TestClient
 
 from cybercheck import web
+from cybercheck.api import create_app
+from cybercheck.config import Settings
+from cybercheck.worker import process
 
 
 HOSTNAME = "local-site.test"
@@ -220,3 +224,37 @@ def test_local_addresses_remain_blocked_without_test_override(local_site):
     report = web.analyze_web("http://127.0.0.1/vulnerable", authorization_confirmed=True)
     assert report["status"] == "failed" and "blocked" in report["checks"][-1]["error"]
     assert local_site["requests"] == []
+
+
+@pytest.mark.parametrize("path,expected_status", [("/vulnerable", "completed"), ("/fixed", "completed"),
+                                                  ("/api", "partial"), ("/external", "partial")])
+def test_web_api_worker_history_and_deletion_over_real_tls(authorized_local_site, tmp_path, path, expected_status):
+    settings = Settings(api_token="test-operator-" + "x" * 40, data_dir=tmp_path / "api-data")
+    headers = {"Authorization": f"Bearer {settings.api_token}"}
+    with TestClient(create_app(settings)) as client:
+        response = client.post("/api/web-analyses", headers=headers, json={
+            "target_url": f"https://{HOSTNAME}{path}", "authorization_confirmed": True,
+        })
+        assert response.status_code == 202
+        assert authorized_local_site["requests"] == []
+        store = client.app.state.store
+        job = store.claim()
+        assert job["status"] == "running"
+        assert client.delete(response.headers["location"], headers=headers).status_code == 409
+        process(job, store, None, settings)
+        report = client.get(response.headers["location"], headers=headers).json()
+        analysis = report["analysis"]
+        assert analysis["status"] == expected_status
+        assert analysis["kind"] == "web" and analysis["commit_sha"] is None
+        assert analysis["requests"][0]["tls"]["certificate_verified"] is True
+        assert analysis["limitations"] and analysis["finished_at"]
+        if path == "/vulnerable":
+            assert "web_cookies" in report["groups"] and "web_headers" in report["groups"]
+        if path == "/fixed":
+            assert analysis["findings"] == []
+        serialized = json.dumps(report)
+        assert COOKIE_VALUE not in serialized and BODY.decode() not in serialized
+        assert all(request["authorization"] is None for request in authorized_local_site["requests"])
+        assert client.get("/api/analyses", headers=headers).json()["analyses"] == [analysis]
+        assert client.delete(response.headers["location"], headers=headers).status_code == 204
+        assert store.list() == []
