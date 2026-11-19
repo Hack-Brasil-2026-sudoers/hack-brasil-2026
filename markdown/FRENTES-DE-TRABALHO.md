@@ -2,7 +2,7 @@
 
 All contributors and coding assistants should first read the [implementation guide](IMPLEMENTACAO.md), including the English-language requirement and shared development standards. Use this document for file ownership and contracts, and [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md) for the task checklist.
 
-Organization for the four team members to work in parallel. The team still needs to agree on owners. Another member will build the demo interface, as decided by the user.
+Organization for the four team members to work in parallel. DAVI (Davi Braz) owns workstream 4: the operational demo interface and a separate deliberately vulnerable Python test website/project for CyberCheck validation, as assigned on November 18, 2026. Owners for the other workstreams remain to be agreed upon. The detailed task checklist is in [PROXIMOS-PASSOS.md](PROXIMOS-PASSOS.md#workstream-4--next-tasks).
 
 After organizing the workstreams, the user resumed work on the GitHub connection and flow validation. The status below was updated on November 17, 2026; each participant should continue only within agreed files and contracts.
 
@@ -11,7 +11,7 @@ After organizing the workstreams, the user resumed work on the GitHub connection
 - An initial API, SQLite store, GitHub App integration, worker, and adapters for the three scanners exist in the working directory.
 - The commit containing this document shares the initial foundation with the team. Each workstream should start from that same commit and review contracts before modifying modules.
 - All 24 current tests passed on November 17, 2026. The three scanners were also run against controlled examples. The connection and real flow through the selected repository were verified, with a documented partial result; this does not validate the complete product. TestClient emits a deprecation warning about httpx usage, without test failures.
-- No application frontend, multiuser login, or discontinuation-signal collection has been implemented.
+- Frontend update: DAVI has built six standalone demo views in `static/demo/`, using in-memory simulated data only. Real API integration, multiuser login, and discontinuation-signal collection remain pending.
 - The team's GitHub App was configured and real access validated on November 17, 2026: authentication, selected repository, commit resolution, temporary download, and API listing. Automated tests still use mocked responses; the queue and report flow was also validated with real code, with dependencies explicitly unassessed due to a missing supported file. An additional private repository and revocation still require real validation.
 - The site in `website/` presents the project; it is not the operational demo interface.
 
@@ -24,7 +24,7 @@ Each file should have one responsible workstream. Future directories below are s
 | 1. Backend and data | API, CyberCheck authentication, queue, and history | `cybercheck/api.py`, `cybercheck/store.py`, `cybercheck/config.py`, `cybercheck/__main__.py`; new tests in `tests/test_api.py` and `tests/test_store.py` | `feat/backend` |
 | 2. Analysis and executor | Run scanners, normalize findings, and manage execution | `cybercheck/scanners.py`, `cybercheck/worker.py`, `tools.lock.json`, `scripts/install_scanners.py`; new tests in `tests/test_scanners.py` and `tests/test_worker.py` | `feat/analyses` |
 | 3. GitHub and dependency maintenance | Repository access and discontinuation/archive evidence | `cybercheck/github.py`; new `cybercheck/maintenance.py`; new tests in `tests/test_github.py` and `tests/test_maintenance.py` | `feat/github` |
-| 4. Demo interface | Screens and API interaction | New `templates/` and `static/`; changes in `website/` only when necessary and agreed | `feat/demo-ui` |
+| 4. Demo interface — DAVI | Screens, frontend demo data, and future API interaction | `static/demo/`; future `templates/` integration; changes in `website/` only when necessary and agreed | `feat/demo-ui` |
 
 ## Workstream 1 — Backend and data
 
@@ -91,6 +91,12 @@ Each file should have one responsible workstream. Future directories below are s
 **Do not modify:** SQLite schemas, scanner execution, or the interface.
 
 ## Workstream 4 — Demo interface
+
+**Owner: DAVI (Davi Braz).** In addition to the interface, DAVI prepares the separate, team-owned test website/project with intentional security flaws and corrected examples. Use fictitious credentials and synthetic data, and coordinate expected coverage with workstream 2 and GitHub access with workstream 3. The test project's location remains to be agreed upon; it must stay separate from CyberCheck's production modules. See [the task checklist](PROXIMOS-PASSOS.md#deliberately-vulnerable-test-websiteproject--davi) for scope and acceptance criteria.
+
+### Frontend preview delivered
+
+`static/demo/` contains the six operational views with a browser hash router, simulated lifecycle, report filters, evidence, history, and deletion/reset confirmation. No backend modules were changed. The demo adapter is the replacement boundary for future integration. Real GitHub/scanner results are not displayed at this stage. See [setup and limitations](../static/demo/README.md).
 
 ### Remaining
 

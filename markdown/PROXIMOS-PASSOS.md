@@ -2,7 +2,7 @@
 
 Before taking a task, read the [developer and LLM guide](IMPLEMENTACAO.md) for English-language requirements, code and security standards, verification, and handoff rules. Confirm your workstream and file ownership in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md), then select an agreed item below. Keep this file as the task checklist; maintain implementation standards in the guide.
 
-Status updated on November 17, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred; another team member will implement the demo UI.
+Implementation baseline updated on November 17, 2026; responsibility assignment updated on November 18, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred. DAVI is responsible for the demo UI and a deliberately vulnerable test website/project for CyberCheck validation.
 
 ## Workstream summary
 
@@ -13,7 +13,7 @@ Repository-security changes add required PR tests/security checks, CodeQL, a def
 | 1. Backend and data | FastAPI API, local Bearer token, SQLite, queue, history, and deletion | Stabilize frontend schemas, expand concurrency validation, and implement per-user authorization |
 | 2. Analysis and worker | Three scanner adapters, worker, normalization, initial limits, and temporary cleanup | Expand coverage and dependency formats, calibrate false positives, and complete isolation/resource limits |
 | 3. GitHub and maintenance | Organization App installed read-only, selected repository, real commit resolution and download validated | Test private access/revocation, collect discontinuation/archival signals, and evaluate alternatives |
-| 4. Demo UI | Existing presentation website; operational UI not started | Build screens and integrate the real API, including partial states, history, and deletion |
+| 4. Demo UI — DAVI | Six standalone frontend views in `static/demo/`, with simulated runs, filters, reports, history, and deletion | Complete real API/authentication integration and real-browser interaction/accessibility validation; build the separate vulnerable test project |
 
 File ownership and contracts are in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). Each participant should work within their workstream; shared-file changes go through the integrator.
 
@@ -62,14 +62,31 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 
 ## Workstream 4 — Next tasks
 
-- [ ] Repository selection, authorization confirmation, and manual start.
-- [ ] Execution progress and messages for failures/checks not performed.
-- [ ] Findings by type and priority, with evidence, confidence, and suggested actions, without scores.
-- [ ] Commit and timestamp display.
-- [ ] History and deletion with confirmation.
-- [ ] Desktop/mobile review and real API integration.
+**Owner: DAVI (Davi Braz).** Current responsibilities: build the operational demo website and prepare a separate website/project with intentional cybersecurity flaws for testing CyberCheck. The existing `website/` directory remains the presentation site. Frontend-first implementation is confirmed: `static/demo/` uses demonstration data only; connect the real backend after its contract is ready.
+
+### Operational demo website — DAVI
+
+- [x] Frontend repository selection, authorization confirmation, and manual simulated start.
+- [x] Simulated execution progress and examples of failures/checks not performed.
+- [x] Demonstration findings by type and priority, with evidence, confidence, and suggested actions, without scores.
+- [x] Example full commit SHA and explicitly time-zoned timestamp display.
+- [x] In-memory demo history and deletion/reset with confirmation.
+- [ ] Complete real-browser interaction and accessibility validation in addition to rendered desktop/mobile captures and DOM-emulated checks.
+- [ ] Agree the final response/error/authentication contract with workstream 1, then replace the demo adapter with real API integration.
+
+Frontend evidence: seven Node.js demo-service tests passed. A separate DOM-emulated workflow pass covered selection, authorization, simulation, filtering, reports, deletion, reset, and recovery. Impeccable captures were produced at desktop and mobile sizes; browser-driven control and assistive-technology testing remain pending. See [frontend setup](../static/demo/README.md).
 
 **Done when:** users can complete the flow without simulated data being presented as real results. Do not embed real credentials in the frontend.
+
+### Deliberately vulnerable test website/project — DAVI
+
+- [ ] Prepare a separate, team-owned Python web project with intentional security flaws within CyberCheck's approved analysis categories.
+- [ ] Include controlled examples of unsafe code, vulnerable dependency versions, and secrets/insecure configuration. Use fictitious credentials and synthetic data only.
+- [ ] Document each intentional flaw, its location, and the expected scanner finding or known coverage limitation; coordinate expectations with workstream 2.
+- [ ] Provide corrected counterparts or revisions to demonstrate findings before and after fixes, recording the commit analyzed.
+- [ ] Make the test repository available to the authorized GitHub App for the existing repository-analysis flow, coordinating access with workstream 3.
+
+**Done when:** the project provides reproducible inputs for real CyberCheck analyses, with expected and observed results documented, including missed detections and false positives. This is a controlled local test project; public deployment is outside this task. CyberCheck reads its repository without running the vulnerable application. Scanning a live website URL remains outside the MVP.
 
 ## Deferred decisions and delivery
 
