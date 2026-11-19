@@ -13,9 +13,9 @@ Technical alerts alone do not always explain what matters or how to start fixing
 
 CyberCheck aims to help developers identify potential security issues and decide what to fix first. The initial focus is internal analysis of Python repositories through GitHub, covering code, dependencies, and secrets/configuration.
 
-An additional website mode now checks an authorized public page from the terminal, starting with transport, response headers, and cookies.
+An additional website mode checks an authorized public page through the terminal or the queued API, starting with transport, response headers, and cookies.
 
-Results group findings by type and priority, with evidence and suggested actions, without assigning security scores. Each analysis records the exact commit and timestamp. Dependency maintenance checks and possible alternatives are planned; collection of these signals is not yet implemented.
+Results group findings by type and priority, with evidence and suggested actions, without assigning security scores. Repository analyses record the exact commit; website analyses record the target URL. Both record timestamps. Dependency maintenance checks and possible alternatives are planned; collection of these signals is not yet implemented.
 
 ## Run the project
 
@@ -51,6 +51,17 @@ Open `http://127.0.0.1:8000/docs`, select **Authorize**, and enter the local API
 
 Confirm authorization only for projects you own or have written permission to assess. Set `dependency_lookup` to `true` to authorize external dependency metadata queries. Use the returned analysis ID with `GET /api/analyses/{identity}` to check progress and retrieve the report.
 
+For basic website checks, send `POST /api/web-analyses` instead:
+
+```json
+{
+  "target_url": "https://your-authorized-site.example/",
+  "authorization_confirmed": true
+}
+```
+
+Both modes use the same worker, report/history routes, and deletion flow. A `202` response means the job was accepted; poll the returned `Location` while its status is `queued` or `running`. Web jobs do not require GitHub credentials. The [frontend API contract](markdown/API.md) documents response schemas, examples, authentication, CORS, errors, and scope. Stop the API and worker together before upgrading an existing database; the store preserves repository reports through an automatic transactional migration.
+
 The current backend uses a single-operator token; the operational UI and individual user login are not implemented yet. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
 
 ## Analyze an authorized website
@@ -67,7 +78,7 @@ Coverage: certificate verification and negotiated TLS version for HTTPS, unencry
 
 Only standard HTTP/HTTPS ports and URLs without credentials, queries, or fragments are accepted. Internal/special-use IPs and mixed DNS answers are blocked. Connections use a validated IP while preserving hostname verification. Up to three redirects may stay on the same hostname, with HTTPS downgrades blocked; cookies and credentials are not forwarded. Each connection has a five-second socket timeout; DNS resolution uses the operating system's timeout.
 
-This version does not crawl, log in, submit forms, inject SQL/shell/XSS payloads, enumerate paths, or test all TLS protocols/ciphers. API integration, history, and the web-analysis interface are next steps.
+This version does not crawl, log in, submit forms, inject SQL/shell/XSS payloads, enumerate paths, or test all TLS protocols/ciphers. The API provides the same basic checks with persistent history; the operational web-analysis interface is being developed separately.
 
 ## ZAP and testssl.sh laboratory
 

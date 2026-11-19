@@ -2,7 +2,7 @@
 
 Before taking a task, read the [developer and LLM guide](IMPLEMENTACAO.md) for English-language requirements, code and security standards, verification, and handoff rules. Confirm your workstream and file ownership in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md), then select an agreed item below. Keep this file as the task checklist; maintain implementation standards in the guide.
 
-Status updated on November 17, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred; another team member will implement the demo UI.
+Status updated on November 18, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred; another team member is implementing the demo UI using the [frontend API contract](API.md).
 
 ## Workstream summary
 
@@ -17,7 +17,7 @@ User decision on November 18, 2026: implement website checks through the termina
 - [x] Add focused tests without removing existing tests, including DNS rebinding, redirects, redaction, and TLS/network failures.
 - [x] Validate real local HTTP/HTTPS test servers with insecure/corrected pages, redirects, trusted/untrusted certificates, and hostname mismatches. Overrides are restricted to test fixtures; normal local-address blocking remains enabled.
 - [ ] Validate a deployed site owned by the team or authorized in writing. Local integration tests do not establish coverage of real hosting environments.
-- [ ] Agree on the web API, worker/history model, and UI contract before integrating them. Do not run long web jobs inside API request handlers.
+- [x] Integrate basic web checks into the persistent queue, worker, history, report, and deletion flow through `POST /api/web-analyses`; publish typed response models and the [frontend contract](API.md). Jobs execute outside API handlers. Real loopback HTTPS tests cover the complete flow; deployed-site validation and frontend integration remain pending.
 - [ ] Decide any later crawling or active testing separately; this delivery sends unauthenticated GET requests only.
 
 ### Selected heavier web tools
@@ -33,7 +33,7 @@ The user selected ZAP and testssl.sh. Their first integration is the `web-lab` c
 
 Commands and current validation limits: [README](../README.md#zap-and-testsslsh-laboratory).
 
-Current local verification: 96 automated tests passed, with the existing TestClient/httpx deprecation warning. Bandit and the candidate-file Betterleaks scan passed. Native scanner runs are separate evidence from the mocked adapter tests; no real external website was scanned.
+Current API integration verification: 115 automated tests passed on local Python 3.14, with the existing TestClient/httpx deprecation warning. Bandit, `git diff --check`, Markdown file links, and a Betterleaks scan of the candidate files passed. Added tests cover migration, concurrent deduplication, contract compatibility, worker failures, and the real HTTPS end-to-end flow. Native scanner runs are separate evidence from the mocked adapter tests; no real external website was scanned.
 
 Usage and limits: [README](../README.md#analyze-an-authorized-website). Workstream 2 owns `web.py` and its tests; CLI changes are coordinated with workstream 1. The original workstreams remain below.
 
@@ -41,7 +41,7 @@ Repository-security changes add required PR tests/security checks, CodeQL, a def
 
 | Workstream | Completed | Remaining |
 | --- | --- | --- |
-| 1. Backend and data | FastAPI API, local Bearer token, SQLite, queue, history, and deletion | Stabilize frontend schemas, expand concurrency validation, and implement per-user authorization |
+| 1. Backend and data | Typed API contract, local Bearer token, SQLite, shared repository/web queue, history, deletion, migration, and concurrent web deduplication tests | Validate integration with the teammate's frontend and implement per-user authorization if required |
 | 2. Analysis and worker | Three scanner adapters, worker, normalization, initial limits, and temporary cleanup | Expand coverage and dependency formats, calibrate false positives, and complete isolation/resource limits |
 | 3. GitHub and maintenance | Organization App installed read-only, selected repository, real commit resolution and download validated | Test private access/revocation, collect discontinuation/archival signals, and evaluate alternatives |
 | 4. Demo UI | Existing presentation website; operational UI not started | Build screens and integrate the real API, including partial states, history, and deletion |
@@ -62,9 +62,10 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 
 ## Workstream 1 — Next tasks
 
-- [ ] Define stable response and error schemas with workstream 4.
-- [ ] Complete OpenAPI documentation and integration examples.
-- [ ] Expand concurrency, persistence, and deletion tests.
+- [x] Publish typed response/error schemas for workstream 4 in [API.md](API.md); validate against the actual frontend during integration.
+- [x] Publish OpenAPI response documentation and integration examples.
+- [x] Expand concurrency, persistence, and deletion tests for web jobs and the repository-history migration.
+- [ ] Validate the actual frontend against the API and expand operational concurrency testing as deployment needs evolve.
 - [ ] Define per-user login and authorization with workstream 3; the current foundation is single-operator.
 - [ ] Integrate templates/static files when delivered by workstream 4.
 
@@ -107,7 +108,7 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 - AI provider/model, costs, and authorization to send the minimum required data.
 - Publication and judge access through a link, to be resolved before submission according to the rules.
 - Video, links, and final review of event requirements.
-- Python version matrix validation: declared 3.11+, tested so far on 3.14.10 on Linux.
+- Python compatibility: declared 3.11+; existing CI passed on Python 3.11 and 3.14. Revalidate new changes through CI as well as local Python 3.14 tests.
 - Dependency notices/licenses and a reproducible Python installation strategy.
 - TestClient/httpx deprecation warning: non-blocking for current tests, but should be tracked.
 

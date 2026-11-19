@@ -2,7 +2,7 @@
 
 Living proposal document. Updated on November 17, 2026. The scope below describes the intended product; the actual implementation status is reported separately.
 
-Update on November 18, 2026: the user prioritized a first external website assessment before returning to repository-analysis work. The agreed first delivery is a terminal command; API integration is deferred. `cybercheck web URL --authorization-confirmed` now provides unauthenticated checks for TLS, response security headers, and cookie attributes, with structured evidence and recommendations. See the [usage and limits](../README.md#analyze-an-authorized-website). It does not crawl, authenticate, inject payloads, or prove exploitability. The repository-analysis implementation remains available.
+Update on November 18, 2026: the user prioritized external website assessment before returning to repository-analysis work. The first delivery was a terminal command; the user subsequently authorized queued API integration and a frontend contract. Basic checks for TLS, response security headers, and cookie attributes are now available through `cybercheck web URL --authorization-confirmed` or the API, with shared queue/history/report/deletion support. See the [usage and limits](../README.md#analyze-an-authorized-website) and [frontend contract](API.md). This mode does not crawl, authenticate, inject payloads, or prove exploitability. ZAP/testssl.sh remain limited to the isolated CLI laboratory. The repository-analysis implementation remains available.
 
 ## Proposal
 
@@ -36,7 +36,7 @@ Details and responsibilities: [workstreams](FRENTES-DE-TRABALHO.md), [next steps
 - MVP trigger: manual, with the user selecting a repository and clicking “Start analysis.” Future options remain open for GitHub Actions or other automation, such as GitHub events, CI/CD pipelines, or schedules. No future mechanism has been selected or included in the MVP.
 - Focus: security issues with suggested actions.
 - Confirmed MVP areas: code, dependencies, and secrets/configuration.
-- External website analysis: a separate terminal mode is now being developed, starting with transport, headers, and cookies. API integration follows later; authenticated and active vulnerability testing remain outside this first increment.
+- External website analysis: basic transport, header, and cookie checks are available through the terminal and queued API. Authenticated and active vulnerability testing remain outside this increment; the frontend is developed by another team member against the published contract.
 - Monitoring for new risks: future development.
 - Commercial plans and billing: decide later.
 

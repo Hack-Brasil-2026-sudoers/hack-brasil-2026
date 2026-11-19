@@ -12,6 +12,7 @@ from .config import Settings
 from .github import GitHub, GitHubError
 from .scanners import run_scanners
 from .store import Store
+from .web import WebError, analyze_web
 
 
 def extract_archive(archive: Path, target: Path):
@@ -54,6 +55,12 @@ def extract_archive(archive: Path, target: Path):
 
 def process(analysis, store: Store, github: GitHub, settings: Settings):
     try:
+        if analysis["kind"] == "web":
+            report = analyze_web(analysis["target_url"], authorization_confirmed=True)
+            error = next((check["error"] for check in report["checks"] if check.get("error")), None)
+            store.finish(analysis["id"], report["status"], report["findings"], report["checks"], error,
+                         requests=report["requests"], limitations=report["limitations"])
+            return
         with tempfile.TemporaryDirectory(prefix="analysis-", dir=store.directory) as tmp:
             working = Path(tmp)
             archive = working / "source.zip"
@@ -69,6 +76,8 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
         # Finalize only after discarding source code and raw outputs.
         store.finish(analysis["id"], status, findings, checks)
     except GitHubError as exc:
+        store.finish(analysis["id"], "failed", error=str(exc))
+    except WebError as exc:
         store.finish(analysis["id"], "failed", error=str(exc))
     except (ValueError, zipfile.BadZipFile):
         store.finish(analysis["id"], "failed", error="Archive is invalid or exceeds the MVP limits.")
