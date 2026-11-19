@@ -4,6 +4,8 @@ Start here if you are a developer or a coding assistant contributing to CyberChe
 
 Status on November 17, 2026: initial backend implemented and real GitHub App connection validated, including execution through the queue and report retrieval. The user resumed work on the GitHub connection and flow validation while preserving workstream boundaries. Responsibilities and file ownership are defined in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). Another team member will build the demo interface. This file guides technical work; the product explanation and research are in [PROJETO.md](PROJETO.md).
 
+November 18 update: basic web checks now use the persistent API queue and shared worker/history/report/deletion flow. The [frontend contract](API.md) and response models in `cybercheck/schemas.py` define requests, polling, states, and errors. The user authorized the backend/worker integration while another member develops the frontend. Preserve existing repository request fields and coordinate further contract changes. Upgrade API and worker together, stopping both processes first; the store transactionally migrates the repository-only schema without discarding reports. ZAP/testssl.sh remain CLI laboratory tools.
+
 ## Onboarding and choosing a task
 
 1. Read the [README](../README.md) for setup and commands, then [PROJETO.md](PROJETO.md) for confirmed scope and product decisions.

@@ -4,7 +4,7 @@ All contributors and coding assistants should first read the [implementation gui
 
 Organization for the four team members to work in parallel. The team still needs to agree on owners. Another member will build the demo interface, as decided by the user.
 
-Scope update on November 18, 2026: the first website checks are now available through the terminal. Workstream 2 owns `cybercheck/web.py`, `tests/test_web.py`, and `tests/test_web_integration.py`; `cybercheck/__main__.py` exposes the command under workstream 1's shared CLI contract. Web API/history/UI integration is deferred. See [current tasks](PROXIMOS-PASSOS.md#current-priority-first-website-assessment) and [usage](../README.md#analyze-an-authorized-website). The existing repository-analysis contracts below remain unchanged.
+Scope update on November 18, 2026: basic website checks are available through the terminal and the queued API. The user authorized integration across workstreams 1 and 2; another member is developing the frontend. Workstream 2 owns `cybercheck/web.py`, `tests/test_web.py`, and `tests/test_web_integration.py`; `cybercheck/__main__.py` exposes the command under workstream 1's shared CLI contract. Web jobs share the worker, history, reports, and deletion routes. The [frontend API contract](API.md) and OpenAPI define the integration; the frontend remains independently owned. Existing repository routes and request fields are preserved.
 
 Workstream 2 also owns the ZAP/testssl.sh laboratory adapter in `cybercheck/web_tools.py`, its tests in `tests/test_web_tools.py`, the isolated site fixture in `tests/fixtures/web_lab_site.py`, `web-tools.lock.json`, and `scripts/install_web_tools.py`. The `web-lab` CLI is coordinated with workstream 1. This first external-tool integration accepts only the generated laboratory, not arbitrary website targets.
 
@@ -25,7 +25,7 @@ Each file should have one responsible workstream. Future directories below are s
 
 | Workstream | Responsibility | Exclusively owned files | Suggested branch |
 | --- | --- | --- | --- |
-| 1. Backend and data | API, CyberCheck authentication, queue, and history | `cybercheck/api.py`, `cybercheck/store.py`, `cybercheck/config.py`, `cybercheck/__main__.py`; new tests in `tests/test_api.py` and `tests/test_store.py` | `feat/backend` |
+| 1. Backend and data | API, CyberCheck authentication, queue, and history | `cybercheck/api.py`, `cybercheck/schemas.py`, `cybercheck/store.py`, `cybercheck/config.py`, `cybercheck/__main__.py`, `tests/test_api.py`, `tests/test_store.py` | `feat/backend` |
 | 2. Analysis and executor | Run scanners, normalize findings, and manage execution | `cybercheck/scanners.py`, `cybercheck/worker.py`, `tools.lock.json`, `scripts/install_scanners.py`; new tests in `tests/test_scanners.py` and `tests/test_worker.py` | `feat/analyses` |
 | 3. GitHub and dependency maintenance | Repository access and discontinuation/archive evidence | `cybercheck/github.py`; new `cybercheck/maintenance.py`; new tests in `tests/test_github.py` and `tests/test_maintenance.py` | `feat/github` |
 | 4. Demo interface | Screens and API interaction | New `templates/` and `static/`; changes in `website/` only when necessary and agreed | `feat/demo-ui` |
@@ -36,11 +36,12 @@ Each file should have one responsible workstream. Future directories below are s
 
 - API, local Bearer token, input validation, SQLite, queue, history, and deletion route.
 - Authentication, duplicate, queue recovery, and deletion tests; real request and report retrieval flow.
+- Basic web analysis route, typed response/error schemas, shared web/repository history, CORS `Location` exposure, and [frontend integration examples](API.md).
+- Transactional migration preserving existing repository reports; mixed queue limits, concurrent web deduplication, persistence, and deletion tests.
 
 ### Remaining
 
-- Review and stabilize routes, JSON formats, and error codes for the frontend.
-- Complete response models and OpenAPI documentation.
+- Validate the published routes, response models, and error contract against workstream 4's actual frontend.
 - Expand concurrency validation and connect history/deletion to future per-user authorization; initial operations already have tests.
 - Define authentication's evolution: the initial code uses a single-operator token, rather than independent user accounts.
 - Ensure authorization evolves accordingly; do not present the current foundation as a ready multiuser service.
@@ -120,19 +121,20 @@ Existing initial routes:
 | `GET /health` | API status |
 | `GET /api/repositories` | Repositories accessible to the configured installation |
 | `POST /api/analyses` | Request manual analysis of a reference |
+| `POST /api/web-analyses` | Queue basic checks for an authorized public website |
 | `GET /api/analyses` | Retrieve history |
 | `GET /api/analyses/{id}` | Retrieve the report and grouped issues |
 | `DELETE /api/analyses/{id}` | Delete an analysis; a running analysis returns a conflict |
 
 The initial request body contains `repository_id`, optional `reference`, `authorization_confirmed`, and `dependency_lookup`. The last option authorizes external dependency metadata queries. Data routes require a Bearer token in the current foundation.
 
-Workstreams 1 and 4 must confirm this contract before implementing the visual integration. Per-user GitHub login does not yet exist: do not build screens assuming this flow is ready.
+Use [API.md](API.md) and `/openapi.json` for exact requests, typed responses, polling, errors, authentication, and CORS. The additive web request contains `target_url` and a boolean `authorization_confirmed`; its response uses the same analysis envelope and report routes. Workstreams 1 and 4 must coordinate contract changes. Per-user GitHub login does not yet exist: do not build screens assuming this flow is ready.
 
 ### Executor ↔ API and database
 
 Initial states: `queued`, `running`, `completed`, `partial`, and `failed`.
 
-The report records the repository, SHA, timestamps, findings, and each tool's status/version. The `completed` state means configured checks finished, rather than that the project is secure. Scope rules and uncovered cases must be explicit.
+The shared analysis has `kind` (`repository` or `web`). Repository reports record identity and SHA; web reports record `target_url` with null repository/revision fields, observed request metadata, and limitations. Both retain timestamps, findings, and check statuses; repository checks also retain tool versions. The `completed` state means configured checks finished, rather than that the project is secure. Scope rules and uncovered cases must be explicit.
 
 Priorities: `critical`, `high`, `medium`, `low`, and `review`. The interface may translate labels while retaining contract values. Confidence and priority are distinct fields.
 
