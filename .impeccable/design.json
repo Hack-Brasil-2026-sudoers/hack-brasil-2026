@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T02:05:27.884335+00:00",
+  "title": "Design System: CyberCheck operational demo",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Black Canvas"
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sidebar Navy"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface Navy"
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Navy"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Cool Border"
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Evidence White"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Context Slate"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Evidence Blue"
+      },
+      "action": {
+        "role": "primary",
+        "displayName": "Action Blue"
+      },
+      "selected": {
+        "role": "primary",
+        "displayName": "Selected Navy"
+      },
+      "critical": {
+        "role": "secondary",
+        "displayName": "Critical Rose",
+        "tonalRamp": [
+          "oklch(15% 0.0630 17.02)",
+          "oklch(27% 0.1170 17.02)",
+          "oklch(39% 0.1620 17.02)",
+          "oklch(51% 0.1800 17.02)",
+          "oklch(63% 0.1800 17.02)",
+          "oklch(75% 0.1440 17.02)",
+          "oklch(87% 0.0900 17.02)",
+          "oklch(95% 0.0360 17.02)"
+        ]
+      },
+      "high": {
+        "role": "secondary",
+        "displayName": "High Orange",
+        "tonalRamp": [
+          "oklch(15% 0.0522 60.69)",
+          "oklch(27% 0.0969 60.69)",
+          "oklch(39% 0.1341 60.69)",
+          "oklch(51% 0.1490 60.69)",
+          "oklch(63% 0.1490 60.69)",
+          "oklch(75% 0.1192 60.69)",
+          "oklch(87% 0.0745 60.69)",
+          "oklch(95% 0.0298 60.69)"
+        ]
+      },
+      "medium": {
+        "role": "secondary",
+        "displayName": "Medium Gold",
+        "tonalRamp": [
+          "oklch(15% 0.0428 90.82)",
+          "oklch(27% 0.0794 90.82)",
+          "oklch(39% 0.1100 90.82)",
+          "oklch(51% 0.1222 90.82)",
+          "oklch(63% 0.1222 90.82)",
+          "oklch(75% 0.0978 90.82)",
+          "oklch(87% 0.0611 90.82)",
+          "oklch(95% 0.0244 90.82)"
+        ]
+      },
+      "low": {
+        "role": "secondary",
+        "displayName": "Low Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0336 259.35)",
+          "oklch(27% 0.0624 259.35)",
+          "oklch(39% 0.0863 259.35)",
+          "oklch(51% 0.0959 259.35)",
+          "oklch(63% 0.0959 259.35)",
+          "oklch(75% 0.0767 259.35)",
+          "oklch(87% 0.0480 259.35)",
+          "oklch(95% 0.0192 259.35)"
+        ]
+      },
+      "review": {
+        "role": "secondary",
+        "displayName": "Review Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0290 294.67)",
+          "oklch(27% 0.0538 294.67)",
+          "oklch(39% 0.0745 294.67)",
+          "oklch(51% 0.0827 294.67)",
+          "oklch(63% 0.0827 294.67)",
+          "oklch(75% 0.0662 294.67)",
+          "oklch(87% 0.0414 294.67)",
+          "oklch(95% 0.0165 294.67)"
+        ]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Completion Green",
+        "tonalRamp": [
+          "oklch(15% 0.0338 157.80)",
+          "oklch(27% 0.0627 157.80)",
+          "oklch(39% 0.0868 157.80)",
+          "oklch(51% 0.0965 157.80)",
+          "oklch(63% 0.0965 157.80)",
+          "oklch(75% 0.0772 157.80)",
+          "oklch(87% 0.0482 157.80)",
+          "oklch(95% 0.0193 157.80)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "technical": {
+        "displayName": "Technical evidence",
+        "purpose": "Code, paths, and literal identifiers."
+      }
+    },
+    "shadows": [
+      {
+        "name": "toast",
+        "value": "0 8px 28px #0005",
+        "purpose": "Transient feedback only; normal panels remain flat."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-state",
+        "value": "160ms",
+        "purpose": "Background, text, and border state changes."
+      },
+      {
+        "name": "view-entry",
+        "value": "180ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Opacity and 4px vertical view entry; disabled with reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "1200px"
+      },
+      {
+        "name": "stacked",
+        "value": "1000px"
+      },
+      {
+        "name": "mobile",
+        "value": "760px"
+      },
+      {
+        "name": "narrow-mobile",
+        "value": "390px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Start simulated analysis button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Index-style outlined action using the selected Guide palette.",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">Start simulated analysis</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid var(--accent,#c1ccf0);border-radius:6px;background:transparent;color:var(--accent,#c1ccf0);font:550 12px/1.5 Inter,system-ui,sans-serif;cursor:pointer;transition:background .16s,border-color .16s}.ds-button-primary:hover{background:var(--raised,#202a3e);color:var(--text,#e9ecf5)}.ds-button-primary:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}@media(max-width:760px){.ds-button-primary{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none}}"
+    },
+    {
+      "name": "View full report button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary action from the operational demo.",
+      "html": "<button class=\"ds-button-secondary\" type=\"button\">View full report</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid var(--border,#364058);border-radius:6px;background:var(--surface,#181f30);color:var(--text,#e9ecf5);font:550 12px/1.5 Inter,system-ui,sans-serif;cursor:pointer;transition:background .16s,border-color .16s}.ds-button-secondary:hover{background:var(--raised,#202a3e)}.ds-button-secondary:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}@media(max-width:760px){.ds-button-secondary{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none}}"
+    },
+    {
+      "name": "Cancel button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Ghost action from the operational demo.",
+      "html": "<button class=\"ds-button-ghost\" type=\"button\">Cancel</button>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--muted,#b0b9ce);font:550 12px/1.5 Inter,system-ui,sans-serif;cursor:pointer;transition:background .16s,border-color .16s}.ds-button-ghost:hover{background:var(--surface,#181f30)}.ds-button-ghost:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}@media(max-width:760px){.ds-button-ghost{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-button-ghost{transition:none}}"
+    },
+    {
+      "name": "Delete analysis button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Danger action from the operational demo.",
+      "html": "<button class=\"ds-button-danger\" type=\"button\">Delete analysis</button>",
+      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 14px;border:1px solid transparent;border-radius:6px;background:#c7354b;color:#fff;font:550 12px/1.5 Inter,system-ui,sans-serif;cursor:pointer;transition:background .16s,border-color .16s}.ds-button-danger:hover{background:#bc3043}.ds-button-danger:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}@media(max-width:760px){.ds-button-danger{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none}}"
+    },
+    {
+      "name": "Labeled text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Reference entry with a persistent visible label.",
+      "html": "<label class=\"ds-field\">Reference<input class=\"ds-input\" placeholder=\"main\" autocomplete=\"off\"></label>",
+      "css": ".ds-field{display:grid;gap:8px;color:var(--text,#e9ecf5);font:500 12px/1.5 Inter,system-ui,sans-serif}.ds-input{min-height:40px;padding:9px 12px;border:1px solid #3a4960;border-radius:6px;background:var(--canvas,#0c101a);color:var(--text,#e9ecf5);font:400 12px/1.5 Inter,system-ui,sans-serif;caret-color:var(--accent,#c1ccf0)}.ds-input::placeholder{color:#93a2b7}.ds-input:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}"
+    },
+    {
+      "name": "Workspace navigation",
+      "kind": "nav",
+      "refersTo": "navigation-selected",
+      "description": "Quiet navigation with an explicit current destination.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Demo navigation\"><a class=\"ds-nav-link\" aria-current=\"page\" href=\"#overview\">Overview</a><a class=\"ds-nav-link\" href=\"#repositories\">Repositories</a></nav>",
+      "css": ".ds-nav{display:grid;gap:4px}.ds-nav-link{display:flex;align-items:center;min-height:42px;padding:10px 13px;border-radius:6px;color:var(--muted,#b0b9ce);text-decoration:none;font:500 13px/1.5 Inter,system-ui,sans-serif;transition:background .16s,color .16s}.ds-nav-link:hover{background:var(--surface,#181f30);color:var(--text,#e9ecf5)}.ds-nav-link[aria-current=page]{background:var(--selected,#25314a);color:#a6c8ff}.ds-nav-link:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}@media(max-width:760px){.ds-nav{display:flex}.ds-nav-link{min-height:46px;font-size:12px}}@media(prefers-reduced-motion:reduce){.ds-nav-link{transition:none}}"
+    },
+    {
+      "name": "Critical priority badge",
+      "kind": "chip",
+      "refersTo": "priority-critical",
+      "description": "Informational priority with text and a non-color bar mark.",
+      "html": "<span class=\"ds-priority\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 10 10\" aria-hidden=\"true\"><path d=\"M1 9V5M5 9V2M9 9V0\" stroke=\"currentColor\" stroke-width=\"2\"/></svg>Critical</span>",
+      "css": ".ds-priority{display:inline-flex;align-items:center;gap:6px;padding:3px 7px;border-radius:4px;background:#301824;color:var(--critical,#ff6978);font:500 11px/1.5 Inter,system-ui,sans-serif;white-space:nowrap}@media(max-width:760px){.ds-priority{font-size:12px}}"
+    },
+    {
+      "name": "Grouped panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Tonal grouping for report context and forms.",
+      "html": "<section class=\"ds-panel\"><h2 class=\"ds-panel-title\">Finding context</h2><p class=\"ds-panel-copy\">Review the exact revision and check coverage.</p></section>",
+      "css": ".ds-panel{padding:24px;border:1px solid var(--border,#364058);border-radius:8px;background:var(--surface,#181f30);color:var(--text,#e9ecf5)}.ds-panel-title{margin:0;font:600 16px/1.3 Inter,system-ui,sans-serif;letter-spacing:-.015em}.ds-panel-copy{margin:12px 0 0;color:var(--muted,#b0b9ce);font:400 13px/1.8 Inter,system-ui,sans-serif}"
+    },
+    {
+      "name": "Investigation row",
+      "kind": "custom",
+      "description": "Border-separated evidence row with confidence kept distinct.",
+      "html": "<article class=\"ds-investigation\"><a class=\"ds-finding\" href=\"#finding\">Potential SQL injection</a><p class=\"ds-source\">app/routes.py:42</p><p class=\"ds-confidence\">Confidence: Medium</p></article>",
+      "css": ".ds-investigation{padding:20px 0;border-bottom:1px solid var(--border,#364058)}.ds-investigation:hover{background:#0c121d}.ds-finding{display:block;color:var(--text,#e9ecf5);font:500 13px/1.6 Inter,system-ui,sans-serif;text-decoration:none}.ds-finding:hover{color:var(--accent,#c1ccf0)}.ds-finding:focus-visible{outline:2px solid var(--accent,#c1ccf0);outline-offset:4px}.ds-source{margin:4px 0 0;color:var(--muted,#b0b9ce);font:400 12px/1.5 \"JetBrains Mono\",monospace;overflow-wrap:anywhere}.ds-confidence{margin:5px 0 0;color:var(--muted,#b0b9ce);font:400 11px/1.5 Inter,system-ui,sans-serif}@media(max-width:760px){.ds-finding{font-size:14px}.ds-confidence{font-size:12px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Investigation Workspace",
+    "overview": "This system describes only the operational demo in `static/demo/`. It does not govern the separate marketing website. The user's pinned identity is a minimal professional interface in black and dark navy, with Inter for interface text and JetBrains Mono for technical evidence.\n\nThe shipped workspace favors quiet investigation lists, precise revision context, and secondary coverage information. Containers organize forms, reports, and detail views without turning every metric into a card. The metaphor names the existing implementation; it is not a replacement visual identity.",
+    "keyCharacteristics": [
+      "Black canvas and tonal navy surfaces with discreet cool borders.",
+      "Stable semantic priority colors, separate from confidence and analysis state.",
+      "Inter hierarchy paired with monospaced identifiers and evidence.",
+      "Investigation lists with compact counts and secondary coverage.",
+      "Flat surfaces, visible keyboard focus, and restrained state transitions."
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Separation Rule",
+        "body": "Priority, confidence, and coverage retain separate labels. A completion color or finding count never implies a security score.",
+        "section": "colors"
+      },
+      {
+        "name": "The Evidence Type Rule",
+        "body": "Reserve mono for literal code, paths, and identifiers; keep explanations and actions in Inter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Quiet Surface Rule",
+        "body": "Use separators for investigation rows and compact count groups. Add a container when it groups a form, report, or contextual detail, rather than as decoration around every datum.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** preserve the black and dark navy identity, Inter interface text, and JetBrains Mono technical values.",
+      "**Do** pair semantic color with words and keep confidence separate from priority.",
+      "**Do** preserve exact revision context, visible incomplete coverage, and explicit time zones.",
+      "**Do** use quiet lists and discreet separators when presenting investigation work.",
+      "**Do** keep keyboard focus visible and retain reduced-motion behavior."
+    ],
+    "donts": [
+      "**Don't** introduce decorative neon, excessive gradients, or unnecessary ornament.",
+      "**Don't** interpret a green completion state or a finding count as a security guarantee or score.",
+      "**Don't** replace every information group with a dashboard card.",
+      "**Don't** generalize compact footer text or opacity-only disabled styling into defaults for new screens.",
+      "**Don't** apply this operational-demo system to the separate marketing website without its own design decision."
+    ]
+  }
+}

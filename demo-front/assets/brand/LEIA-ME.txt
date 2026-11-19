@@ -1,0 +1,20 @@
+CYBERCHECK — KIT SVG
+
+logo-horizontal.svg: Cyber branco + Check e escudo azuis.
+logo-icon.svg: escudo isolado, recorte vertical.
+favicon.svg: símbolo no enquadramento quadrado.
+logo-monochrome-white.svg: aplicação sobre fundos escuros.
+logo-monochrome-black.svg: documentos e fundos claros.
+preview.png: prancha de conferência (fundos apenas demonstrativos).
+
+Azul sólido: #265FDF
+Branco: #FFFFFF
+Preto: #000000
+
+Todos os SVGs têm fundo transparente e formas vetoriais. As letras
+estão convertidas em caminhos: não precisam de fontes instaladas.
+Sem imagens embutidas, filtros, gradientes ou efeitos de brilho.
+
+Vetorização reconstruída a partir da referência raster aprovada.
+O desenho e as proporções foram preservados; textura e variações
+de iluminação da referência foram removidas para cores sólidas.

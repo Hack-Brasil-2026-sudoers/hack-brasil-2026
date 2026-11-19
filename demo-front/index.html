@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0c101a">
+    <meta name="description" content="Explore CyberCheck with a fully simulated security analysis workspace.">
+    <title>CyberCheck · Demo workspace</title>
+    <link rel="icon" href="./assets/brand/favicon.svg" type="image/svg+xml">
+    <link rel="preload" href="./assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Workspace navigation">
+        <a class="brand" href="#overview" aria-label="CyberCheck overview">
+          <img class="brand-logo" src="./assets/brand/logo-horizontal.svg" width="1478" height="298" alt="CyberCheck">
+        </a>
+        <div class="workspace-label"><div>Sudoers workspace<span>Frontend preview</span></div></div>
+        <nav id="navigation"></nav>
+        <div class="sidebar-footer">
+          <div class="demo-label"><span class="demo-dot"></span>Demo workspace</div>
+          <p>Explore with simulated data.<br>No repositories are accessed.</p>
+          <button class="text-button" id="reset-demo" type="button">Reset demo data</button>
+        </div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar"><div id="breadcrumb">Workspace <span>/</span> Overview</div><span class="demo-badge">Demo mode<span>Simulated data</span></span></header>
+        <main id="main" tabindex="-1" aria-busy="true"><div class="loading-state" role="status">Loading demo workspace…</div></main>
+        <footer class="workspace-footer"><span>Findings guide investigation. They do not guarantee security.</span><span>CyberCheck · Hack Brasil 2026</span></footer>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <dialog id="confirmation" aria-labelledby="confirmation-title" aria-describedby="confirmation-description">
+      <form method="dialog"><div id="confirmation-icon"></div><h2 id="confirmation-title">Delete this analysis?</h2><p id="confirmation-description"></p><div class="dialog-actions"><button class="button secondary" value="cancel" autofocus>Cancel</button><button class="button danger" id="confirm-action" value="confirm">Delete analysis</button></div></form>
+    </dialog>
+    <noscript><p class="noscript">Enable JavaScript to explore this frontend demo. No backend connection is required.</p></noscript>
+  </body>
+</html>

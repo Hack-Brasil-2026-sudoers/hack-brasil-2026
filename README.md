@@ -51,18 +51,7 @@ Open `http://127.0.0.1:8000/docs`, select **Authorize**, and enter the local API
 
 Confirm authorization only for projects you own or have written permission to assess. Set `dependency_lookup` to `true` to authorize external dependency metadata queries. Use the returned analysis ID with `GET /api/analyses/{identity}` to check progress and retrieve the report.
 
-For basic website checks, send `POST /api/web-analyses` instead:
-
-```json
-{
-  "target_url": "https://your-authorized-site.example/",
-  "authorization_confirmed": true
-}
-```
-
-Both modes use the same worker, report/history routes, and deletion flow. A `202` response means the job was accepted; poll the returned `Location` while its status is `queued` or `running`. Web jobs do not require GitHub credentials. The [frontend API contract](markdown/API.md) documents response schemas, examples, authentication, CORS, errors, and scope. Stop the API and worker together before upgrading an existing database; the store preserves repository reports through an automatic transactional migration.
-
-The current backend uses a single-operator token; the operational UI and individual user login are not implemented yet. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
+The current backend uses a single-operator token. A standalone frontend demo is available with simulated data; real API integration and individual user login remain pending. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
 
 ## Analyze an authorized website
 
@@ -108,6 +97,14 @@ Tool references: [ZAP Baseline](https://www.zaproxy.org/docs/docker/baseline-sca
 Arbitrary authorized website targets, an egress-enforced scanner proxy, authenticated scans, and active testing remain separate integration work. The existing `web URL` command continues to provide its lightweight public-site checks.
 
 ## Development
+
+The standalone [frontend demo](static/demo/README.md) runs with simulated data and does not need the backend:
+
+```bash
+python3 -m http.server 8081 --bind 127.0.0.1 --directory static
+```
+
+Open `http://127.0.0.1:8081/demo/`. All six views are available; API integration remains pending. The project presentation website is separate in `website/`.
 
 Run tests with `.venv/bin/python -m pytest -q`. See the [developer and LLM guide](markdown/IMPLEMENTACAO.md), [workstreams](markdown/FRENTES-DE-TRABALHO.md), and [next steps](markdown/PROXIMOS-PASSOS.md). The complete proposal is in [PROJETO.md](markdown/PROJETO.md), and the presentation website is in [website/](website/).
 

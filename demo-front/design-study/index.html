@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080b12">
+    <title>Visual identity study · CyberCheck</title>
+    <link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
+    <meta name="description" content="Three visual directions for CyberCheck, compared using the same simulated security finding. No symbol or logo proposal is included.">
+    <link rel="preload" href="../assets/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#directions">Skip to proposals</a>
+    <header class="study-header">
+      <a class="study-brand" href="../" aria-label="CyberCheck demo"><img src="../assets/brand/logo-horizontal.svg" width="1478" height="298" alt="CyberCheck"></a>
+      <span>Visual identity study</span>
+      <a class="demo-link" href="../">Open current demo</a>
+    </header>
+    <main>
+      <div class="study-intro">
+        <div><h1>A clearer identity for CyberCheck.</h1><p>Three directions, shown through the same security finding.<br>Black and navy foundations. Inter and JetBrains Mono. Evidence before decoration.</p></div>
+        <p class="study-note">Trace + Guide + Index selected.<br>All content is simulated.<br>Symbol and logo are outside this study.</p>
+      </div>
+      <nav class="study-navigation" aria-label="Visual directions">
+        <a href="#trace">Trace <span>Evidence first</span></a>
+        <a href="#index">Index <span>Precise and compact</span></a>
+        <a href="#guide">Guide <span>Clear and approachable</span></a>
+        <div class="display-control"><label for="display-mode">View</label><select id="display-mode"><option value="detail">Detailed</option><option value="compare">Side by side</option></select></div>
+      </nav>
+
+      <div id="directions" class="directions">
+        <section id="trace" class="direction trace selected" aria-labelledby="trace-title">
+          <div class="direction-description">
+            <h2 id="trace-title">Trace<span>Selected combination</span></h2>
+            <p>Trace’s evidence-first structure, Guide’s palette, and Index’s outlined button. The selected visual direction for CyberCheck.</p>
+            <dl class="direction-facts"><div><dt>Character</dt><dd>Investigative, deliberate, precise.</dd></div><div><dt>Signature</dt><dd>A compact evidence record with a consistent finding reference.</dd></div><div><dt>Tradeoff</dt><dd>More space per finding; best for focused investigation.</dd></div></dl>
+            <ul class="swatches" aria-label="Selected Guide palette"><li style="--swatch:#0c101a"><span>Canvas</span><code>#0C101A</code></li><li style="--swatch:#181f30"><span>Surface</span><code>#181F30</code></li><li style="--swatch:#c1ccf0"><span>Accent</span><code>#C1CCF0</code></li></ul>
+          </div>
+          <div class="preview" aria-label="Trace finding preview">
+            <header class="preview-header"><span class="wordmark">CyberCheck</span><span class="preview-label">Sample finding</span></header>
+            <div class="preview-body">
+              <div class="finding-topline"><span class="finding-reference">CC-014</span><span class="severity">Critical</span></div>
+              <h3>Potential SQL injection</h3>
+              <p class="finding-subtitle">A query is constructed using external input.</p>
+              <div class="trace-context"><div><span>Source</span><code>app/database.py:42</code></div><div><span>Rule</span><code>Bandit B608 · CWE-89</code></div><div><span>Confidence</span><strong>High</strong></div></div>
+              <div class="evidence-record"><div class="record-heading"><h4>Evidence</h4><span>Exposure not confirmed</span></div><pre><code><span class="line-number">42</span>query = <span class="code-string">f"SELECT * FROM users WHERE id = {user_id}"</span></code></pre><p>Review where <code>user_id</code> originates and how the query is executed.</p></div>
+              <div class="trace-explanation"><div><h4>Potential impact</h4><p>Untrusted input could change the query and expose database records.</p></div><div><h4>Suggested correction</h4><p>Use query parameters and keep user input separate from SQL.</p></div></div>
+              <div class="preview-actions"><button class="direction-button" type="button" data-example="trace">Compare correction</button><span class="scope-note">Illustrative evidence</span></div>
+              <div class="correction" id="trace-correction" hidden><h4>Parameterized query · Example</h4><pre><code>cursor.execute(
+    "SELECT * FROM users WHERE id = ?",
+    (user_id,),
+)</code></pre></div>
+            </div>
+            <footer class="preview-footer"><code>7f3a91d</code><span>Example revision · Nov 18, 2026 · 21:30 UTC</span></footer>
+          </div>
+        </section>
+
+        <section id="index" class="direction index" aria-labelledby="index-title">
+          <div class="direction-description">
+            <h2 id="index-title">Index<span>Precise and compact</span></h2>
+            <p>A stable reference system for scanning findings, comparing priorities, and discussing a specific issue with a teammate.</p>
+            <dl class="direction-facts"><div><dt>Character</dt><dd>Technical, orderly, direct.</dd></div><div><dt>Signature</dt><dd>Finding IDs and aligned technical fields carry the identity.</dd></div><div><dt>Tradeoff</dt><dd>Higher density; explanations need careful disclosure.</dd></div></dl>
+            <ul class="swatches" aria-label="Index palette"><li style="--swatch:#090f1b"><span>Canvas</span><code>#090F1B</code></li><li style="--swatch:#111e33"><span>Surface</span><code>#111E33</code></li><li style="--swatch:#a8bcfb"><span>Accent</span><code>#A8BCFB</code></li></ul>
+          </div>
+          <div class="preview" aria-label="Index finding preview">
+            <header class="preview-header"><span class="wordmark">CyberCheck</span><span class="preview-label">Sample finding</span></header>
+            <div class="index-location"><span>Findings</span><span>/</span><code>CC-014</code></div>
+            <div class="preview-body">
+              <div class="index-title"><div><h3>Potential SQL injection</h3><p class="finding-subtitle">A query is constructed using external input.</p></div><span class="severity">Critical</span></div>
+              <dl class="index-register"><div><dt>Finding</dt><dd><code>CC-014</code></dd></div><div><dt>Source</dt><dd><code>app/database.py:42</code></dd></div><div><dt>Rule</dt><dd><code>Bandit B608 · CWE-89</code></dd></div><div><dt>Confidence</dt><dd>High</dd></div><div><dt>Exposure</dt><dd>Not confirmed</dd></div></dl>
+              <div class="index-observation"><h4>Evidence</h4><p>A query string includes <code>user_id</code>. Review its origin and execution context.</p></div>
+              <div class="index-impact"><h4>Potential impact</h4><p>Untrusted input could change the query and expose database records.</p></div>
+              <div class="index-fix"><div><h4>Suggested correction</h4><p>Use query parameters and keep user input separate from SQL.</p></div><button class="direction-button" type="button" data-example="index">View correction</button></div>
+              <div class="correction" id="index-correction" hidden><h4>Parameterized query · Example</h4><pre><code>cursor.execute(
+    "SELECT * FROM users WHERE id = ?",
+    (user_id,),
+)</code></pre></div>
+            </div>
+            <footer class="preview-footer"><code>7f3a91d</code><span>Example revision · Nov 18, 2026 · 21:30 UTC</span></footer>
+          </div>
+        </section>
+
+        <section id="guide" class="direction guide" aria-labelledby="guide-title">
+          <div class="direction-description">
+            <h2 id="guide-title">Guide<span>Clear and approachable</span></h2>
+            <p>Give developers a calm reading path from the evidence to the next change, with less technical detail competing for attention.</p>
+            <dl class="direction-facts"><div><dt>Character</dt><dd>Considered, readable, helpful.</dd></div><div><dt>Signature</dt><dd>Evidence, impact, and correction form one continuous reading path.</dd></div><div><dt>Tradeoff</dt><dd>Longer reports; less efficient for scanning many findings.</dd></div></dl>
+            <ul class="swatches" aria-label="Guide palette"><li style="--swatch:#0c101a"><span>Canvas</span><code>#0C101A</code></li><li style="--swatch:#181f30"><span>Surface</span><code>#181F30</code></li><li style="--swatch:#c1ccf0"><span>Accent</span><code>#C1CCF0</code></li></ul>
+          </div>
+          <div class="preview" aria-label="Guide finding preview">
+            <header class="preview-header"><span class="wordmark">CyberCheck</span><span class="preview-label">Sample finding</span></header>
+            <div class="preview-body">
+              <div class="finding-topline"><span class="finding-reference">CC-014</span><span class="severity">Critical</span></div>
+              <h3>Potential SQL injection</h3>
+              <p class="finding-subtitle">A query is constructed using external input.</p>
+              <div class="guide-source"><code>app/database.py:42</code><span>Confidence: High</span></div>
+              <div class="guide-reading"><section><h4>What the evidence shows</h4><p>A query string includes <code>user_id</code>. Review its origin and execution context. Exposure has not been confirmed.</p><span class="rule-reference">Bandit B608 · CWE-89</span></section><section><h4>Why it matters</h4><p>Untrusted input could change the query and expose database records.</p></section><section><h4>What to change</h4><p>Use query parameters and keep user input separate from SQL.</p><button class="direction-button" type="button" data-example="guide">See an example correction</button></section></div>
+              <div class="correction" id="guide-correction" hidden><h4>Parameterized query · Example</h4><pre><code>cursor.execute(
+    "SELECT * FROM users WHERE id = ?",
+    (user_id,),
+)</code></pre></div>
+            </div>
+            <footer class="preview-footer"><code>7f3a91d</code><span>Example revision · Nov 18, 2026 · 21:30 UTC</span></footer>
+          </div>
+        </section>
+      </div>
+      <section class="comparison-notes" aria-labelledby="comparison-title"><h2 id="comparison-title">What stays consistent</h2><p>The priority colors, 8px panel corners, 6px controls, 4px priority labels, and distinction between confidence and priority are shared. No option uses a security score. The name is shown as text only; no symbol is proposed.</p><p class="recommendation"><strong>Selected direction: Trace + Guide + Index.</strong> Trace supplies the structure, Guide supplies the palette, and Index supplies the outlined button. This combination is now applied to the operational demo.</p></section>
+    </main>
+    <footer class="study-footer"><span>CyberCheck · Identity exploration</span><span>The selected combination is applied to the operational demo.</span></footer>
+    <noscript><p class="noscript-note">All proposals are visible. Enable JavaScript to switch comparison layouts or expand correction examples.</p></noscript>
+  </body>
+</html>
