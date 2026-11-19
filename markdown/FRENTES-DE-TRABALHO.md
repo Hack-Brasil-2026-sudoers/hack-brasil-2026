@@ -4,6 +4,10 @@ All contributors and coding assistants should first read the [implementation gui
 
 Organization for the four team members to work in parallel. The team still needs to agree on owners. Another member will build the demo interface, as decided by the user.
 
+Scope update on November 18, 2026: the first website checks are now available through the terminal. Workstream 2 owns `cybercheck/web.py`, `tests/test_web.py`, and `tests/test_web_integration.py`; `cybercheck/__main__.py` exposes the command under workstream 1's shared CLI contract. Web API/history/UI integration is deferred. See [current tasks](PROXIMOS-PASSOS.md#current-priority-first-website-assessment) and [usage](../README.md#analyze-an-authorized-website). The existing repository-analysis contracts below remain unchanged.
+
+Workstream 2 also owns the ZAP/testssl.sh laboratory adapter in `cybercheck/web_tools.py`, its tests in `tests/test_web_tools.py`, the isolated site fixture in `tests/fixtures/web_lab_site.py`, `web-tools.lock.json`, and `scripts/install_web_tools.py`. The `web-lab` CLI is coordinated with workstream 1. This first external-tool integration accepts only the generated laboratory, not arbitrary website targets.
+
 After organizing the workstreams, the user resumed work on the GitHub connection and flow validation. The status below was updated on November 17, 2026; each participant should continue only within agreed files and contracts.
 
 ## Current status
