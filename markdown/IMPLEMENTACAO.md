@@ -103,7 +103,7 @@ git diff --check
 
 - For changed behavior, add or update focused tests that demonstrate the expected result and relevant failure cases. Security-sensitive changes must preserve authorization, masking, cleanup, and failure handling. Documentation-only changes require link and content checks rather than new application tests.
 - Never remove an existing test without the user's explicit permission. If a test appears obsolete or conflicts with a change, explain why and obtain permission before deleting it. Do not disable, skip, or weaken tests merely to make a check pass; preserve the coverage when updating expected behavior.
-- Use mocked GitHub/network responses for automated tests; do not embed real credentials or require another contributor's local installation. Run live checks only against authorized systems and identify them separately in the handoff.
+- Use mocked GitHub/network responses for unit tests; do not embed real credentials or require another contributor's local installation. Web integration tests may run isolated loopback-only HTTP/HTTPS servers, with temporary certificates and test-only connection overrides. Never add a production bypass of private-address blocking to accommodate tests. Run external live checks only against authorized systems and identify them separately in the handoff.
 - For UI changes, check desktop and mobile layouts, empty/error/partial states when applicable, accessibility labels, and the actual API contract. Report browser interactions that were not tested.
 - Before handoff, inspect the complete diff and, if committing, the staged diff for unrelated changes and secrets. Confirm new repository text is English and local documentation links resolve.
 - Update the relevant task checklist with completed work and its evidence. Keep incomplete work and deferred decisions explicit; do not mark the whole MVP complete after validating one flow.
@@ -147,6 +147,10 @@ Local credentials and results remain in `.env`/`.data`, ignored by Git. The priv
 
 ## Confirmed requirements
 
+The heavier web tools selected by the user are ZAP and testssl.sh. `web_tools.py` normalizes their results and runs them only against the generated `tests/fixtures/web_lab_site.py` inside a verified internal Podman network, with digest-pinned images in `web-tools.lock.json`. `scripts/install_web_tools.py` installs these images separately. `tests/test_web_tools.py` covers the adapter/lifecycle behavior; it does not replace a real-tool run. The `web-lab` command uses ZAP's passive baseline and selected testssl.sh TLS checks, with no persistent raw report output. Arbitrary targets and active injection scans are not yet integrated. See [README](../README.md#zap-and-testsslsh-laboratory).
+
+Scope update on November 18, 2026: the user requested starting website analysis now, with a terminal interface first and API integration later. `cybercheck/web.py` and `tests/test_web.py` implement the first conservative checks; `__main__.py` exposes the `web` command before loading repository credentials. See [README usage](../README.md#analyze-an-authorized-website). Existing repository/API contracts remain unchanged. Website results identify the URL, timestamps, observations, coverage, and limitations; a commit SHA is applicable to repository analyses, not live website responses.
+
 - Serve independent developers and small teams.
 - Start with internal repository analysis.
 - Analyze Python projects in the first version.
@@ -165,7 +169,7 @@ Local credentials and results remain in `.env`/`.data`, ignored by Git. The priv
 - In the MVP, limit abandonment/discontinuation signals to explicit maintainer notices and upstream repository archival. Do not use inactivity as a criterion. Record the observed fact and possible successors; absence of a signal does not confirm active maintenance.
 - Secrets/configuration: potentially exposed credentials, enabled debug mode, and disabled TLS certificate validation.
 - Keep the product vision open to different types of software.
-- Treat external analysis as a separate future mode.
+- Keep external website analysis separate from repository analysis. The first web increment is now approved as a CLI for TLS, headers, and cookies; API/history/UI integration is deferred.
 - Leave monitoring and commercial plans for later stages.
 
 ## Analyzed language: confirmed decision
