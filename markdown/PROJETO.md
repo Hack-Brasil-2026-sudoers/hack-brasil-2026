@@ -4,6 +4,8 @@ Living proposal document. Updated on November 17, 2026. The scope below describe
 
 Update on November 18, 2026: the user prioritized external website assessment before returning to repository-analysis work. The first delivery was a terminal command; the user subsequently authorized queued API integration and a frontend contract. Basic checks for TLS, response security headers, and cookie attributes are now available through `cybercheck web URL --authorization-confirmed` or the API, with shared queue/history/report/deletion support. See the [usage and limits](../README.md#analyze-an-authorized-website) and [frontend contract](API.md). This mode does not crawl, authenticate, inject payloads, or prove exploitability. ZAP/testssl.sh remain limited to the isolated CLI laboratory. The repository-analysis implementation remains available.
 
+November 19 update: individual GitHub App OAuth login is implemented as an optional backend mode, with user-token repository access and isolated history/reports/deletion. Controlled-response tests cover authorization and worker execution; live client-credential/callback activation and frontend integration are still pending. See [setup](GITHUB.md#enable-user-login) and [contract 0.3.0](API.md#github-user-login). The November 17 status below is historical.
+
 ## Proposal
 
 CyberCheck helps independent developers and small teams identify potential security issues in their projects and understand what to fix first.
@@ -84,7 +86,7 @@ Consider context: fictional examples, development configuration, and tests must 
 
 ## Proposed experience
 
-1. The developer authorizes the GitHub App for selected repositories and chooses one for analysis. The MVP will support public and private repositories with the necessary read permissions. Read-only Contents and Metadata permissions have already been configured in the organization's installation. The current code uses a single operator; individual login and authorization remain to be implemented.
+1. The developer signs in with GitHub, authorizes the GitHub App for selected repositories, and chooses one for analysis. The backend supports optional user sessions and user-scoped public/private repository access using read-only Contents and Metadata permissions. Actual OAuth activation and frontend integration still need validation; operator-only mode remains available for the local demo.
 2. The developer clicks “Start analysis”; the system identifies technologies and runs the available checks.
 3. The result presents findings with evidence and suggested actions.
 4. The developer applies fixes and can run another analysis to compare results.

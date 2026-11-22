@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 import httpx
 
 from .config import Settings
+from .auth import Auth
 from .github import GitHub, GitHubError
 from .scanners import run_scanners
 from .store import Store
@@ -66,7 +67,11 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
             archive = working / "source.zip"
             source = working / "source"
             source.mkdir()
-            github.download(analysis, archive)
+            repository_github = github
+            if analysis.get("owner", "operator") != "operator":
+                token = Auth(settings, store).token_for_owner(analysis["owner"])
+                repository_github = GitHub(settings, user_token=token)
+            repository_github.download(analysis, archive)
             extract_archive(archive, source)
             archive.unlink()
             findings, checks = run_scanners(source, working, settings, analysis["dependency_lookup"])
@@ -74,7 +79,11 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
             status = "completed" if all(s == "completed" for s in statuses) else (
                 "partial" if any(s in ("completed", "partial") for s in statuses) else "failed")
         # Finalize only after discarding source code and raw outputs.
-        store.finish(analysis["id"], status, findings, checks)
+        store.finish(analysis["id"], status, findings, checks, limitations=[
+            "Python code checks use selected Bandit patterns without full data-flow analysis. "
+            "Assignment aliases and dynamically selected calls may be missed. "
+            "Findings require input-trust and deployment-context review; no findings does not establish safety.",
+        ])
     except GitHubError as exc:
         store.finish(analysis["id"], "failed", error=str(exc))
     except WebError as exc:

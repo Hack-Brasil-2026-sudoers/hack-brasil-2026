@@ -6,6 +6,8 @@ Status on November 17, 2026: initial backend implemented and real GitHub App con
 
 November 18 update: basic web checks now use the persistent API queue and shared worker/history/report/deletion flow. The [frontend contract](API.md) and response models in `cybercheck/schemas.py` define requests, polling, states, and errors. The user authorized the backend/worker integration while another member develops the frontend. Preserve existing repository request fields and coordinate further contract changes. Upgrade API and worker together, stopping both processes first; the store transactionally migrates the repository-only schema without discarding reports. ZAP/testssl.sh remain CLI laboratory tools.
 
+November 19 update: the user selected individual GitHub login and access to each user's repositories. Optional GitHub App OAuth now provides PKCE/state, encrypted expiring sessions, CSRF protection, user-accessible installation selection, user-token downloads, and owner-scoped history/report/deletion/deduplication. User mode rejects the operator token. The migration keeps existing history under `operator`; upgrade API and worker together. OAuth client credentials/callback activation and frontend integration remain pending. [Setup](GITHUB.md#enable-user-login) and [contract 0.3.0](API.md#github-user-login) describe the configuration and verification limits. `cryptography`, already installed via PyJWT, is declared directly for Fernet; do not replace encryption with plaintext token storage.
+
 ## Onboarding and choosing a task
 
 1. Read the [README](../README.md) for setup and commands, then [PROJETO.md](PROJETO.md) for confirmed scope and product decisions.
@@ -216,11 +218,11 @@ Technology choices are unrestricted (6.3), AI is allowed and recommended (6.4), 
 - Concrete checks and rules within the three confirmed areas; do not assume full coverage of discussed examples.
 - Mechanisms for collecting maintainer notices and archive status, correctly mapping packages to upstream repositories, and criteria for selecting alternatives.
 - Expand validation of rules, dependency formats, and false positives; retain license notices and review usage restrictions. Initial binary versions and hashes are already recorded.
-- Individual login/authorization beyond the local operator, real private-repository tests, revocation, and pagination. The initial organization installation has already been configured and tested.
+- Live activation and browser validation of the implemented GitHub user login, real private-repository tests, revocation, and pagination. The initial organization installation has already been configured and tested; the new OAuth scenarios have controlled-response tests.
 - Interface and possible export; initial SQLite result persistence already exists.
 - Human review and detailed classification/mapping rules for approved priorities.
 - Deferred decision: AI provider/model, costs, provider retention, and authorization flow for sending minimal data; this is not a prerequisite for implementing analyses and reports.
-- Integrate deletion into the interface and future per-user authorization; the deletion route already exists and has been tested in single-operator mode.
+- Integrate user-scoped deletion into the interface; the API enforces ownership and has operator/two-user isolation tests.
 
 ## Proposed implementation criteria
 
@@ -270,6 +272,6 @@ Approved combination: Bandit + OSV-Scanner + Betterleaks. Scorecard remains a re
 
 ## Next step
 
-Follow the division in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). In workstream 3, validate private repositories/revocation and implement approved maintenance signals; in workstream 2, complete coverage validation and isolation. Workstream 1 must stabilize API schemas and define individual login/authorization with workstream 3. Workstream 4 builds the interface using the agreed contract.
+Follow the division in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). In workstream 3, activate and validate user OAuth/private repositories/revocation and implement approved maintenance signals; in workstream 2, complete coverage validation and isolation. Workstream 1 maintains the implemented user authorization and API schemas. Workstream 4 builds the interface using the agreed contract.
 
 AI provider/model and hosting selection do not block this work. Do not activate external AI or publish the single-operator backend as an open service.

@@ -13,8 +13,8 @@ Check before creating:
 - Repository permissions: **Contents: Read-only** and **Metadata: Read-only**.
 - All other permissions: no access.
 - Webhooks: disabled, since analyses are started manually.
-- OAuth during installation, callback, and setup URL: do not configure them at this stage. The current backend authenticates the installation rather than individual users.
-- Installation: only on the owning account for the organization's initial test. Access to other accounts is a separate enhancement.
+- Operator-only mode needs no OAuth callback. For individual users, configure the callback and client credentials under [Enable user login](#enable-user-login). A setup URL is not required.
+- The original installation was restricted to the owning organization. To let users install the App on their own accounts, allow installation on **Any account** in the App settings, keeping repository selection and read-only permissions.
 
 The link is a guide for recreating the configuration if needed. The team's App is already registered and installed, as recorded in the status section; another App is not needed.
 
@@ -46,7 +46,28 @@ Then validate commit resolution, download, and analysis of a project you own. St
 .venv/bin/python -m cybercheck worker
 ```
 
-Individual login and multiuser isolation are not implemented yet. Do not publish this single-operator backend as an open service.
+Without OAuth configuration this remains the local operator flow. For isolated user sessions, follow the section below. Keep the backend local; deployment hardening remains separate work.
+
+## Enable user login
+
+The backend supports user authorization on the existing **GitHub App**. Do not create a separate OAuth App or use a personal access token. User access is limited by both the user's permissions and the App's installation permissions, including selected private repositories. Login does not itself install the App.
+
+1. In the existing App settings, add this **Callback URL** for local development: `http://127.0.0.1:8000/auth/github/callback`. Use the same hostname consistently in the browser and configuration. Leave the setup URL empty; users start authorization through the backend's login route.
+2. Retain **Contents: Read-only** and **Metadata: Read-only**, with no new write permissions. Allow installation on **Any account** if users need their own account/organization repositories. The repository owner or organization administrator installs the App using **Only select repositories**.
+3. Record the App's **Client ID** and generate a **Client secret**. These are separate from the App ID and private key. Configure them locally as `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`; never send their real values through chat or commit them.
+4. Generate a session encryption key locally with the command in `.env.example`, save it as `CYBERCHECK_SESSION_KEY`, and set `CYBERCHECK_PUBLIC_URL=http://127.0.0.1:8000`. All three OAuth settings must be provided together. API and worker must share the same data directory and stable session key. HTTPS is required for non-loopback origins. The `cryptography` package, already used through PyJWT's crypto extra, is now declared directly for Fernet encryption (Apache-2.0/BSD-3-Clause).
+5. Stop API and worker, upgrade both together, then restart. The owner migration preserves old reports under the legacy operator; it does not assign them to a GitHub user. In OAuth mode the operator Bearer token is not accepted, and `CYBERCHECK_API_TOKEN`, the installation ID, and the App private key are not required for user authorization.
+6. Open `http://127.0.0.1:8000/auth/github/start` in the browser. After authorization, the callback sets the session cookie and opens `/docs`. Call `GET /auth/me`, then use its CSRF token in the documented `X-CSRF-Token` header for writes. Read the user's installations, select one, list its accessible repositories, and submit an analysis. See [the API flow](API.md#github-user-login).
+
+The flow uses PKCE S256, a browser-bound ten-minute single-use state, HttpOnly/SameSite=Lax cookies, and Secure cookies for HTTPS. Session identifiers are hashed in SQLite, and GitHub access tokens are encrypted with Fernet. Tokens never enter analysis records, frontend responses, or scanner environment variables. GitHub refresh tokens are discarded; sessions last at most eight hours and then require login again. Logout removes only the current browser session. Another valid session for the same user may still authorize that user's jobs.
+
+The worker downloads the exact queued SHA using the user's GitHub token, rechecking repository access at execution time. An expired/missing session or revoked access fails the job; no organization-installation token is substituted. The operator mode remains available by removing OAuth configuration and restarting both processes; user-owned history stays isolated.
+
+The CLI disables HTTP access logging because OAuth callbacks contain one-time codes in query parameters. If launching Uvicorn directly, use `--no-access-log`; any proxy must also omit callback query strings from logs. Do not expose the local demo publicly as part of this setup.
+
+Automated tests use controlled GitHub responses. The current machine still needs the OAuth client credentials and callback configured before real browser login can be verified. Private access, revocation, and pagination in these tests are simulations, not evidence of a new live installation.
+
+Official references: [user tokens, permission intersection, state and PKCE](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app), [user-accessible installations and repositories](https://docs.github.com/en/rest/apps/installations), [callback configuration](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/about-the-user-authorization-callback-url), and [token expiration](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens).
 
 ## Status
 
@@ -64,6 +85,6 @@ After setup, the complete flow was also validated on branch `pedro`, commit `156
 
 Bandit and Betterleaks completed. OSV-Scanner found no supported dependency file in that revision, so the report marks the check as not performed (`skipped`) and the analysis as partial. This does not establish that dependencies have no vulnerabilities. The verification analysis remains in the local `.data/` history, outside Git.
 
-Specific handling was added for this case, and the suite passed with 24 tests. Individual login, access to an additional private repository, and installation revocation still require their own tests.
+Specific handling was added for this case, and the suite then passed with 24 tests. The later user-login implementation has separate mocked OAuth, private-access, pagination, and revocation tests; new live verification remains pending.
 
 References: [GitHub App registration](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app) and [prefilled URL parameters](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-using-url-parameters).

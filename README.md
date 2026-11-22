@@ -51,7 +51,15 @@ Open `http://127.0.0.1:8000/docs`, select **Authorize**, and enter the local API
 
 Confirm authorization only for projects you own or have written permission to assess. Set `dependency_lookup` to `true` to authorize external dependency metadata queries. Use the returned analysis ID with `GET /api/analyses/{identity}` to check progress and retrieve the report.
 
-The current backend uses a single-operator token. A standalone frontend demo is available with simulated data; real API integration and individual user login remain pending. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
+By default, the backend uses a single-operator token. Optional [GitHub user login](markdown/GITHUB.md#enable-user-login) adds browser sessions, installation selection, user-scoped repository access, and isolated history/deletion. In that mode, Bearer operator authentication is disabled; see the [frontend contract](markdown/API.md#github-user-login) for cookies and CSRF. The standalone frontend still uses simulated data and needs API integration. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
+
+Repository code checks use Bandit for selected SQL/shell construction, `eval`/`exec`, unsafe deserialization, Flask debug mode, and disabled TLS verification. Tests execute the installed Bandit against vulnerable and corrected examples without executing those examples. Findings remain potential issues: even a fixed executable invoked without a shell can produce a command-review alert that requires context.
+
+All 14 selected Bandit rules are exercised by real-tool tests, including marshal, pickle wrappers (pandas/jsonpickle), import aliases, SQL formatting variants, shell calls, and executable search paths. Recommendations distinguish shell interpretation, argument review, and partial executable paths. Safe controls cover bound SQL values, JSON, literal parsing, safe YAML loaders, and enabled TLS verification; this does not establish general framework coverage. Only Flask debug-mode detection is explicitly exercised as a framework-specific check.
+
+Repository reports record the code-analysis limits in `limitations`. These checks do not perform full data-flow analysis or determine whether input is trusted. A known missed case is `evaluate = eval; evaluate(text)`: an assignment alias can avoid the direct-call rule. Dynamic calls and application-specific vulnerabilities can also be missed. No findings and `completed` must not be presented as proof of safety.
+
+Bandit reports `skipped` when no Python files are found within its scope, `failed` when none of the discovered files can be analyzed, and `partial` when only some files fail. An empty valid Python file is still assessed. Invalid scanner output fails that tool's check while preserving other tools' findings. Repository status also accounts for dependency and secret checks; a successful code check alone does not establish complete coverage.
 
 ## Analyze an authorized website
 

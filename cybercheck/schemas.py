@@ -97,6 +97,29 @@ class Health(BaseModel):
     status: Literal["ok"]
 
 
+class GitHubUser(BaseModel):
+    id: int
+    login: str
+
+
+class LoginSession(BaseModel):
+    mode: Literal["operator", "github"]
+    user: GitHubUser | None
+    csrf_token: str | None
+
+
+class Installation(BaseModel):
+    id: int
+    account: str
+    suspended: bool
+
+
+class InstallationPage(BaseModel):
+    installations: list[Installation]
+    page: int
+    total_count: int
+
+
 class ValidationIssue(BaseModel):
     loc: list[str | int]
     msg: str
