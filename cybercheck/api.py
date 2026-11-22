@@ -113,8 +113,8 @@ def create_app(settings=None, github=None, auth_transport=None):
             raise HTTPException(503, "GitHub user login is not configured.")
         try:
             session, lifetime = auth.complete(code, state, request.cookies.get(STATE_COOKIE))
-        except GitHubError as exc:
-            response = JSONResponse(status_code=400, content={"detail": str(exc)})
+        except GitHubError:
+            response = JSONResponse(status_code=400, content={"detail": "GitHub login failed. Start again."})
         else:
             auth.logout(request.cookies.get(SESSION_COOKIE))
             response = RedirectResponse("/app/", status_code=303)

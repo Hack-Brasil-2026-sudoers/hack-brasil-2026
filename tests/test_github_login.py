@@ -16,7 +16,7 @@ from fastapi.testclient import TestClient
 from cybercheck.api import create_app
 from cybercheck.auth import SESSION_COOKIE, STATE_COOKIE, digest
 from cybercheck.config import Settings
-from cybercheck.github import GitHub
+from cybercheck.github import GitHub, GitHubError
 from cybercheck.store import Store
 from cybercheck.worker import process
 
@@ -188,6 +188,18 @@ def test_user_installations_repository_selection_and_revoked_access(environment)
     assert response.status_code == 502 and "synthetic-sensitive" not in response.text
 
 
+def test_commit_reference_stays_in_one_url_segment(environment):
+    settings, service, transport, _, _ = environment
+    github = GitHub(settings, transport, user_token="synthetic-user-alice")
+
+    assert github.resolve(10, "feature/login")[2] == "feature/login"
+    assert service.requests[-1].url.raw_path == b"/repos/team/shared/commits/feature%2Flogin"
+
+    with pytest.raises(GitHubError, match="Select a valid Git reference"):
+        github.resolve(10, ".")
+    assert service.requests[-1].url.path == "/repositories/10"
+
+
 def test_two_users_have_isolated_history_reports_deletion_and_deduplication(environment):
     _, _, _, app, make_client = environment
     alice, bob = make_client(), make_client()
@@ -301,7 +313,8 @@ def test_token_exchange_failures_are_safe_and_not_followed(environment, failure)
     start = client.get("/auth/github/start", follow_redirects=False)
     state = parse_qs(urlsplit(start.headers["location"]).query)["state"][0]
     response = client.get("/auth/github/callback", params={"code": "alice", "state": state})
-    assert response.status_code == 400 and "synthetic-sensitive" not in response.text
+    assert response.status_code == 400
+    assert response.json() == {"detail": "GitHub login failed. Start again."}
     assert len(calls) == 1 and calls[0].url.host == "github.com"
 
 

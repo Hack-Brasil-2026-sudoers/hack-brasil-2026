@@ -90,9 +90,12 @@ class GitHub:
             raise GitHubError("GitHub returned an invalid installation list.") from exc
 
     def repositories(self, page=1, installation_id=None):
-        if self.user_token and installation_id is None:
-            raise GitHubError("Select an accessible GitHub App installation first.")
-        path = f"/user/installations/{installation_id}/repositories" if self.user_token else "/installation/repositories"
+        path = "/installation/repositories"
+        if self.user_token:
+            installation_segment = str(installation_id)
+            if not re.fullmatch(r"[1-9][0-9]*", installation_segment):
+                raise GitHubError("Select an accessible GitHub App installation first.")
+            path = f"/user/installations/{installation_segment}/repositories"
         result = self.request(path, self.installation_token(),
                               {"per_page": 100, "page": page})
         try:
@@ -103,15 +106,21 @@ class GitHub:
             raise GitHubError("GitHub returned an invalid repository list.") from exc
 
     def resolve(self, repository_id, reference=None):
+        repository_segment = str(repository_id)
+        if not re.fullmatch(r"[1-9][0-9]*", repository_segment):
+            raise GitHubError("Select a valid GitHub repository.")
         token = self.installation_token(repository_id)
-        repo = self.request(f"/repositories/{repository_id}", token)
+        repo = self.request(f"/repositories/{repository_segment}", token)
         full_name = repo.get("full_name")
         if not isinstance(full_name, str) or not re.fullmatch(r"[\w.-]+/[\w.-]+", full_name):
             raise GitHubError("GitHub returned an invalid repository name.")
         ref = reference or repo.get("default_branch")
         if not isinstance(ref, str) or not ref:
             raise GitHubError("The repository has no readable default branch.")
-        commit = self.request(f"/repos/{full_name}/commits/{quote(ref, safe='')}", token)
+        ref_segment = quote(ref, safe="")
+        if ref_segment in (".", "..") or not re.fullmatch(r"(?:[A-Za-z0-9._~-]|%[0-9A-F]{2})+", ref_segment):
+            raise GitHubError("Select a valid Git reference.")
+        commit = self.request(f"/repos/{full_name}/commits/{ref_segment}", token)
         sha = commit.get("sha")
         if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
             raise GitHubError("GitHub returned an invalid commit identifier.")
