@@ -1,21 +1,46 @@
 # Frontend API contract
 
-Contract version: **0.2.0**, November 18, 2026. Implemented by `cybercheck/api.py` and `cybercheck/schemas.py`. Interactive documentation: `http://127.0.0.1:8000/docs`; machine-readable schema: `GET /openapi.json`. Keep these schemas and this guide synchronized when changing the contract. The presentation website is separate from the operational interface.
+Contract version: **0.3.0**, November 19, 2026. Implemented by `cybercheck/api.py` and `cybercheck/schemas.py`. Interactive documentation: `http://127.0.0.1:8000/docs`; machine-readable schema: `GET /openapi.json`. Keep these schemas and this guide synchronized when changing the contract. The presentation website is separate from the operational interface.
 
 ## Setup and authentication
 
 Start the API and worker as described in the [README](../README.md#run-the-project). Both processes must use the same data directory. A stopped worker leaves requests queued; the API does not execute scans itself. Basic web jobs do not require GitHub credentials or external scanner installations. Repository jobs require the configured GitHub App and repository scanners.
 
-The local base URL is `http://127.0.0.1:8000`. Every `/api/` route requires `Authorization: Bearer <operator-token>`. `/health`, `/docs`, and `/openapi.json` are public. This is a **single-operator** backend: every valid token request accesses the same history, with no user accounts or per-user ownership. Do not expose it as a public multiuser service.
+The local base URL is `http://127.0.0.1:8000`. Two mutually exclusive authentication modes are supported. Without OAuth configuration, every `/api/` route requires `Authorization: Bearer <operator-token>` and accesses only the operator's history. With GitHub user login configured, these routes require an HttpOnly session cookie; the operator token cannot bypass login. History, reports, deletion, and active-job deduplication are isolated by the stable GitHub user ID. Repository and website jobs both follow ownership checks. A different owner's report returns `404`. `/health`, `/docs`, `/openapi.json`, and the OAuth start/callback routes are public. Keep execution local; this change does not establish production readiness.
 
 Never embed the real operator token in committed frontend files, a public build, URLs, or logs. The GitHub App private key stays in the backend. For a separate local frontend origin, configure the exact origin in `CYBERCHECK_CORS_ORIGINS`, for example `http://localhost:5173`; restart the API after changing it. CORS exposes the `Location` response header. It does not replace authentication.
+
+### GitHub user login
+
+Configure the existing GitHub App as described in [GITHUB.md](GITHUB.md#enable-user-login). Navigate the browser to `GET /auth/github/start`; do not fetch the redirect as an AJAX request. The server uses browser-bound, single-use state and PKCE S256. GitHub redirects to `/auth/github/callback`, and successful login sets an opaque HttpOnly, SameSite=Lax cookie and redirects to `/docs`. HTTPS origins receive Secure cookies. No GitHub access token is returned to browser JavaScript.
+
+Read `GET /auth/me` after login:
+
+```json
+{"mode":"github","user":{"id":123,"login":"octocat"},"csrf_token":"<session-specific-token>"}
+```
+
+Send `X-CSRF-Token` with the returned value on every authenticated `POST` and `DELETE`, including `/auth/logout`. Missing/incorrect tokens or unapproved Origin headers return `403`. Read the CSRF token again after signing in; a new session has a new token. The header is exposed as an optional parameter in OpenAPI for manual Swagger testing. Operator mode returns `{"mode":"operator","user":null,"csrf_token":null}` and retains Bearer authentication without CSRF headers.
+
+For a separate configured frontend origin, use `fetch(url, {credentials: "include", ...})`; CORS permits credentials only for exact configured origins, with wildcards rejected in GitHub mode. Use the same hostname (`localhost` or `127.0.0.1`) on both local servers so SameSite cookies work. A same-origin proxy is also suitable. The operational frontend still needs to connect this flow; its simulated adapter has not been replaced.
+
+List `GET /api/github/installations?page=1`, choose an accessible installation, and list `GET /api/repositories?installation_id=50&page=1`. Each installation has `id`, `account`, and `suspended`; disable selection of suspended entries. Both lists use pages of up to 100 entries; stop pagination when the page is empty or the listed count reaches `total_count`. Users without an accessible installation must install the App on selected repositories or ask the owner to grant access. Authorizing login alone does not install the App. Repository resolution and downloads use the user token, so GitHub enforces both the user's and App's permissions.
+
+`POST /auth/logout` returns `204`, deletes the current local session, and clears its cookie. Sessions expire no later than the GitHub token or eight hours. Refresh tokens are discarded: sign in again after expiration. A queued repository job needs an active session for its owner; the worker fails safely if none exists and never falls back to the organization's installation token. Logout affects only that browser's session; another active session for the same user may still authorize their queued jobs. GitHub revocation is enforced on subsequent GitHub requests. It does not delete the user's stored reports.
+
+Existing history is transactionally assigned to the legacy operator during migration and is not claimed by the first GitHub login. Stop API and worker before upgrading, then restart both with the same data directory and session key. New user-owned jobs and reports are not visible in operator mode.
 
 ## Routes
 
 | Method and path | Successful response | Purpose |
 | --- | --- | --- |
 | `GET /health` | `200`, `{"status":"ok"}` | API liveness; does not establish worker or scanner readiness |
-| `GET /api/repositories?page=1` | `200`, repository page | Repositories available to the configured GitHub installation; pages contain up to 100 entries |
+| `GET /auth/github/start` | `302` to GitHub | Start browser login when OAuth is configured; otherwise `503` |
+| `GET /auth/github/callback` | `303` to `/docs` | Complete login; invalid/denied/expired login returns a safe `400` |
+| `GET /auth/me` | `200`, session identity and CSRF token | Requires the configured authentication mode |
+| `POST /auth/logout` | `204` | Delete this browser's session; requires CSRF in GitHub mode |
+| `GET /api/github/installations?page=1` | `200`, installation page | GitHub mode only; operator mode returns `409` |
+| `GET /api/repositories?page=1&installation_id=50` | `200`, repository page | GitHub mode requires installation selection; operator mode uses the configured installation |
 | `POST /api/analyses` | `202`, analysis acceptance | Queue a repository revision, preserving the existing route and request fields |
 | `POST /api/web-analyses` | `202`, analysis acceptance | Queue basic checks for one authorized public website URL |
 | `GET /api/analyses?limit=50&offset=0` | `200`, `{"analyses":[...]}` | Shared history, newest creation first; `limit` is 1–100, `offset` is nonnegative |
@@ -62,7 +87,7 @@ Website request:
 }
 ```
 
-Require the operator to confirm ownership or written authorization before submitting either kind. The backend rejects missing/false confirmation. The web confirmation must be a JSON boolean. Unknown request fields are rejected.
+Require the user to confirm ownership or written authorization before submitting either kind. The backend rejects missing/false confirmation. Both authorization confirmations and `dependency_lookup` must be JSON booleans; strings such as `"true"` are rejected. Unknown request fields are rejected.
 
 Website URLs are normalized. Only HTTP(S), standard ports, and URLs without credentials, query strings, or fragments are accepted. Paths are retained: do not submit secret-bearing paths. Syntax is validated before queueing; DNS and network restrictions are enforced **by the worker on each connection**, not by the request handler. A syntactically valid URL can therefore be accepted and later fail because its address is private, unavailable, or out of scope. Never present `202` as proof that the destination passed network validation.
 
@@ -155,6 +180,7 @@ Web `analysis.requests` contains only observed response metadata: `url`, `status
 | `404` | Analysis is absent or was deleted; refresh history |
 | `409` | Analysis is running and cannot be deleted; continue polling |
 | `422` | Invalid request, identifier, pagination, or missing authorization confirmation |
+| `403` | Missing/invalid CSRF token or unapproved request origin in GitHub session mode |
 | `429` | Shared queue capacity reached (20 queued/running jobs); wait before retrying |
 | `502` | GitHub access/configuration/network failure; display the safe message |
 
@@ -176,4 +202,4 @@ Do not call `response.json()` after a successful `204` deletion. Confirm deletio
 
 The store automatically migrates the original repository-only database transactionally, preserving IDs, revision identities, status, timestamps, findings, checks, and errors. Stop both processes before upgrading and take a private backup of valuable data. Upgrade API and worker together; do not run old workers against the new schema.
 
-Contract checks cover authentication, normalization, rejected inputs without raw-input disclosure, OpenAPI schemas, CORS, shared queue capacity, deduplication, migration, and deletion. Real loopback HTTP/TLS tests exercise API → queue → worker → persisted report → history → deletion. Their network overrides are test-only; public-site address restrictions remain enabled. This validation does not establish production hosting, multiuser access, or coverage of a real external website.
+Contract checks cover authentication, normalization, rejected inputs without raw-input disclosure, OpenAPI schemas, CORS, shared queue capacity, deduplication, migration, and deletion. OAuth tests use controlled GitHub responses for PKCE, state replay/expiry, encrypted sessions, two-user isolation, private access, logout/revocation, and worker authorization. Real loopback HTTP/TLS tests exercise API → queue → worker → persisted report → history → deletion. Their network overrides are test-only; public-site address restrictions remain enabled. Live OAuth activation and browser integration still require the App's client credentials and callback configuration. These tests do not establish production hosting or coverage of a real external website.

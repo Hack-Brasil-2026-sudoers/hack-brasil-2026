@@ -8,14 +8,16 @@ Scope update on November 18, 2026: basic website checks are available through th
 
 Workstream 2 also owns the ZAP/testssl.sh laboratory adapter in `cybercheck/web_tools.py`, its tests in `tests/test_web_tools.py`, the isolated site fixture in `tests/fixtures/web_lab_site.py`, `web-tools.lock.json`, and `scripts/install_web_tools.py`. The `web-lab` CLI is coordinated with workstream 1. This first external-tool integration accepts only the generated laboratory, not arbitrary website targets.
 
-After organizing the workstreams, the user resumed work on the GitHub connection and flow validation. The status below was updated on November 17, 2026; each participant should continue only within agreed files and contracts.
+November 19 scope update: the user selected GitHub login and repositories belonging to each user. Workstreams 1 and 3 now provide optional OAuth sessions through `cybercheck/auth.py`, `github.py`, and owner-aware API/store/worker integration. `tests/test_github_login.py` covers controlled OAuth/GitHub responses, two-user isolation, migration, and execution authorization. Contract 0.3.0 adds cookie/CSRF authentication and installation selection. Live App activation and workstream 4 integration remain pending; frontend ownership is unchanged.
+
+After organizing the workstreams, the user resumed work on the GitHub connection and flow validation. The status below includes the later updates above; each participant should continue only within agreed files and contracts.
 
 ## Current status
 
 - An initial API, SQLite store, GitHub App integration, worker, and adapters for the three scanners exist in the working directory.
 - The commit containing this document shares the initial foundation with the team. Each workstream should start from that same commit and review contracts before modifying modules.
 - All 24 current tests passed on November 17, 2026. The three scanners were also run against controlled examples. The connection and real flow through the selected repository were verified, with a documented partial result; this does not validate the complete product. TestClient emits a deprecation warning about httpx usage, without test failures.
-- Frontend update: DAVI has built six standalone demo views in `static/demo/`, using in-memory simulated data only. Real API integration, multiuser login, and discontinuation-signal collection remain pending.
+- Frontend update: DAVI has built six standalone demo views in `static/demo/`, using in-memory simulated data only. Real API/login integration and discontinuation-signal collection remain pending; backend user login is implemented with mocked-provider validation.
 - The team's GitHub App was configured and real access validated on November 17, 2026: authentication, selected repository, commit resolution, temporary download, and API listing. Automated tests still use mocked responses; the queue and report flow was also validated with real code, with dependencies explicitly unassessed due to a missing supported file. An additional private repository and revocation still require real validation.
 - The site in `website/` presents the project; it is not the operational demo interface.
 
@@ -42,9 +44,9 @@ Each file should have one responsible workstream. Future directories below are s
 ### Remaining
 
 - Validate the published routes, response models, and error contract against workstream 4's actual frontend.
-- Expand concurrency validation and connect history/deletion to future per-user authorization; initial operations already have tests.
-- Define authentication's evolution: the initial code uses a single-operator token, rather than independent user accounts.
-- Ensure authorization evolves accordingly; do not present the current foundation as a ready multiuser service.
+- Expand concurrency validation as deployment needs evolve; history/deletion already enforce user ownership and have isolation tests.
+- Activate and validate the implemented GitHub user login with the real App and frontend; the operator mode remains available as an alternative configuration.
+- Complete deployment hardening before presenting the service as ready for public multiuser access.
 - Make minimal changes to serve templates and static files delivered by workstream 4, when needed.
 
 **Deliverable:** tested API and a stable contract for other workstreams, with clear persistence and access rules.
@@ -85,7 +87,7 @@ Each file should have one responsible workstream. Future directories below are s
 
 - Test real access to an authorized private repository owned by the team; the initial installation and selected-repository access already work.
 - Expand real pagination and revocation tests. Commit resolution and revision download have already been tested against real GitHub.
-- Support workstream 1's user authorization flow without editing the API or configuration in parallel.
+- Validate the implemented user-token authorization flow against real App installations and coordinate future API/configuration changes with workstream 1.
 - Correctly map each Python package to its upstream project.
 - Collect only the two approved signals: explicit maintainer notices and archived repositories, with source and date.
 - Check for successors or a new location and suggest alternatives only with evidence of suitability; otherwise report that no alternative was identified.
@@ -134,7 +136,7 @@ Existing initial routes:
 
 The initial request body contains `repository_id`, optional `reference`, `authorization_confirmed`, and `dependency_lookup`. The last option authorizes external dependency metadata queries. Data routes require a Bearer token in the current foundation.
 
-Use [API.md](API.md) and `/openapi.json` for exact requests, typed responses, polling, errors, authentication, and CORS. The additive web request contains `target_url` and a boolean `authorization_confirmed`; its response uses the same analysis envelope and report routes. Workstreams 1 and 4 must coordinate contract changes. Per-user GitHub login does not yet exist: do not build screens assuming this flow is ready.
+Use [API.md](API.md) and `/openapi.json` for exact requests, typed responses, polling, errors, authentication, and CORS. The additive web request contains `target_url` and a boolean `authorization_confirmed`; its response uses the same analysis envelope and report routes. Workstreams 1 and 4 must coordinate contract changes. Contract 0.3.0 provides optional GitHub login with cookie/CSRF authentication and installation selection; real App activation and frontend integration still need validation. Repository consent and dependency-lookup fields now require actual JSON booleans, matching web consent.
 
 ### Executor ↔ API and database
 

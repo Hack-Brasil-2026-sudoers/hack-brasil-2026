@@ -28,6 +28,7 @@ class Store:
             db.execute("""
                 CREATE TABLE IF NOT EXISTS analyses (
                     id TEXT PRIMARY KEY,
+                    owner TEXT NOT NULL DEFAULT 'operator',
                     kind TEXT NOT NULL DEFAULT 'repository' CHECK(kind IN ('repository', 'web')),
                     repository_id INTEGER,
                     repository TEXT,
@@ -55,14 +56,18 @@ class Store:
                     FROM analyses_legacy
                 """)
                 db.execute("DROP TABLE analyses_legacy")
+            if not any(row["name"] == "owner" for row in db.execute("PRAGMA table_info(analyses)")):
+                db.execute("ALTER TABLE analyses ADD COLUMN owner TEXT NOT NULL DEFAULT 'operator'")
+            db.execute("DROP INDEX IF EXISTS one_active_revision")
+            db.execute("DROP INDEX IF EXISTS one_active_website")
             db.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS one_active_revision
-                ON analyses(repository_id, commit_sha)
+                CREATE UNIQUE INDEX IF NOT EXISTS one_active_revision_per_owner
+                ON analyses(owner, repository_id, commit_sha)
                 WHERE kind='repository' AND status IN ('queued', 'running')
             """)
             db.execute("""
-                CREATE UNIQUE INDEX IF NOT EXISTS one_active_website
-                ON analyses(target_url)
+                CREATE UNIQUE INDEX IF NOT EXISTS one_active_website_per_owner
+                ON analyses(owner, target_url)
                 WHERE kind='web' AND status IN ('queued', 'running')
             """)
         self.path.chmod(0o600)
@@ -89,12 +94,12 @@ class Store:
         result["dependency_lookup"] = bool(result["dependency_lookup"])
         return result
 
-    def create(self, repository_id, repository, commit_sha, requested_ref, lookup):
+    def create(self, repository_id, repository, commit_sha, requested_ref, lookup, *, owner="operator"):
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             existing = db.execute(
-                "SELECT * FROM analyses WHERE repository_id=? AND commit_sha=? "
-                "AND status IN ('queued','running')", (repository_id, commit_sha)
+                "SELECT * FROM analyses WHERE owner=? AND repository_id=? AND commit_sha=? "
+                "AND status IN ('queued','running')", (owner, repository_id, commit_sha)
             ).fetchone()
             if existing:
                 return self.decode(existing), False
@@ -103,18 +108,18 @@ class Store:
             identity = str(uuid4())
             db.execute(
                 "INSERT INTO analyses(id,repository_id,repository,commit_sha,requested_ref,"
-                "created_at,dependency_lookup) VALUES(?,?,?,?,?,?,?)",
-                (identity, repository_id, repository, commit_sha, requested_ref, now(), lookup),
+                "created_at,dependency_lookup,owner) VALUES(?,?,?,?,?,?,?,?)",
+                (identity, repository_id, repository, commit_sha, requested_ref, now(), lookup, owner),
             )
             row = db.execute("SELECT * FROM analyses WHERE id=?", (identity,)).fetchone()
         return self.decode(row), True
 
-    def create_web(self, target_url):
+    def create_web(self, target_url, *, owner="operator"):
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             existing = db.execute(
-                "SELECT * FROM analyses WHERE kind='web' AND target_url=? "
-                "AND status IN ('queued','running')", (target_url,)
+                "SELECT * FROM analyses WHERE owner=? AND kind='web' AND target_url=? "
+                "AND status IN ('queued','running')", (owner, target_url)
             ).fetchone()
             if existing:
                 return self.decode(existing), False
@@ -122,20 +127,20 @@ class Store:
                 raise QueueFull
             identity = str(uuid4())
             db.execute(
-                "INSERT INTO analyses(id,kind,target_url,created_at,dependency_lookup) VALUES(?,'web',?,?,0)",
-                (identity, target_url, now()),
+                "INSERT INTO analyses(id,kind,target_url,created_at,dependency_lookup,owner) VALUES(?,'web',?,?,0,?)",
+                (identity, target_url, now(), owner),
             )
             row = db.execute("SELECT * FROM analyses WHERE id=?", (identity,)).fetchone()
         return self.decode(row), True
 
-    def get(self, identity):
+    def get(self, identity, *, owner="operator"):
         with self.connect() as db:
-            return self.decode(db.execute("SELECT * FROM analyses WHERE id=?", (identity,)).fetchone())
+            return self.decode(db.execute("SELECT * FROM analyses WHERE id=? AND owner=?", (identity, owner)).fetchone())
 
-    def list(self, limit=50, offset=0):
+    def list(self, limit=50, offset=0, *, owner="operator"):
         with self.connect() as db:
             return [self.decode(row) for row in db.execute(
-                "SELECT * FROM analyses ORDER BY created_at DESC LIMIT ? OFFSET ?", (limit, offset)
+                "SELECT * FROM analyses WHERE owner=? ORDER BY created_at DESC LIMIT ? OFFSET ?", (owner, limit, offset)
             )]
 
     def claim(self):
@@ -162,8 +167,8 @@ class Store:
                 (now(), "Worker interrupted. Request a new analysis."),
             )
 
-    def delete(self, identity):
+    def delete(self, identity, *, owner="operator"):
         with self.connect() as db:
             return db.execute(
-                "DELETE FROM analyses WHERE id=? AND status != 'running'", (identity,)
+                "DELETE FROM analyses WHERE id=? AND owner=? AND status != 'running'", (identity, owner)
             ).rowcount > 0

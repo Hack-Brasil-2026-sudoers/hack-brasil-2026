@@ -10,6 +10,15 @@ TOKEN = "test-operator-" + "x" * 40
 HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 
+def test_operational_frontend_is_served_without_exposing_backend_files(tmp_path):
+    with TestClient(create_app(Settings(api_token=TOKEN, data_dir=tmp_path))) as client:
+        assert client.get("/app/").status_code == 200
+        assert 'id="main"' in client.get("/app/").text
+        assert client.get("/app/api-service.js").status_code == 200
+        assert client.get("/app/.env").status_code == 404
+        assert client.get("/app/../.env").status_code == 404
+
+
 @pytest.fixture
 def client(tmp_path, monkeypatch):
     def no_network(*args, **kwargs):

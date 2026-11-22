@@ -1,5 +1,7 @@
 # CyberCheck next steps
 
+For a detailed snapshot of what still blocks the agreed MVP, including acceptance criteria and conditional/deferred scope, see [MVP-READINESS.md](MVP-READINESS.md). Keep implementation progress in this backlog and refresh that assessment when release scope changes.
+
 Before taking a task, read the [developer and LLM guide](IMPLEMENTACAO.md) for English-language requirements, code and security standards, verification, and handoff rules. Confirm your workstream and file ownership in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md), then select an agreed item below. Keep this file as the task checklist; maintain implementation standards in the guide.
 
 Implementation baseline updated on November 17, 2026; responsibility assignment updated on November 18, 2026. The initial foundation exists and the real GitHub flow has been validated. The complete MVP is not ready yet. Public hosting and the AI provider/model remain deferred. DAVI is responsible for the demo UI and a deliberately vulnerable test website/project for CyberCheck validation.
@@ -41,7 +43,7 @@ Repository-security changes add required PR tests/security checks, CodeQL, a def
 
 | Workstream | Completed | Remaining |
 | --- | --- | --- |
-| 1. Backend and data | Typed API contract, local Bearer token, SQLite, shared repository/web queue, history, deletion, migration, and concurrent web deduplication tests | Validate integration with the teammate's frontend and implement per-user authorization if required |
+| 1. Backend and data | Typed API contract, operator/GitHub session modes, SQLite, user-scoped shared repository/web queue/history/deletion, migration, and deduplication tests | Activate live OAuth and validate integration with the teammate's frontend |
 | 2. Analysis and worker | Three scanner adapters, worker, normalization, initial limits, and temporary cleanup | Expand coverage and dependency formats, calibrate false positives, and complete isolation/resource limits |
 | 3. GitHub and maintenance | Organization App installed read-only, selected repository, real commit resolution and download validated | Test private access/revocation, collect discontinuation/archival signals, and evaluate alternatives |
 | 4. Demo UI — DAVI | Six standalone frontend views in `static/demo/`, with simulated runs, filters, reports, history, and deletion | Complete real API/authentication integration and real-browser interaction/accessibility validation; build the separate vulnerable test project |
@@ -66,13 +68,16 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 - [x] Publish OpenAPI response documentation and integration examples.
 - [x] Expand concurrency, persistence, and deletion tests for web jobs and the repository-history migration.
 - [ ] Validate the actual frontend against the API and expand operational concurrency testing as deployment needs evolve.
-- [ ] Define per-user login and authorization with workstream 3; the current foundation is single-operator.
+- [x] Implement optional GitHub user login with PKCE, encrypted sessions, CSRF, and owner-scoped history/reports/deletion/deduplication. Keep old reports under the operator and reject operator-token bypass in user mode.
+- [ ] Configure OAuth client credentials and callback in the existing App, then validate actual browser login and user-owned repositories. The current machine has only the original installation credentials; mocked tests do not establish live OAuth activation.
 - [ ] Integrate templates/static files when delivered by workstream 4.
 
 **Done when:** the contract supports the UI and data access follows the user model actually implemented.
 
 ## Workstream 2 — Next tasks
 
+- [x] Validate eight selected Bandit patterns with real vulnerable/corrected examples: SQL construction, shell execution, eval, exec, pickle, YAML loading, Flask debug mode, and TLS verification. Assert repository suppression bypass, distinguish absent/failed/partial Python coverage, and preserve other tools' findings when one scanner returns malformed output. A fixed executable without a shell still produces B603; retain it as a potential issue requiring context. This does not complete dependency/secret coverage calibration.
+- [x] Extend real-tool validation to all 14 selected Bandit rules, including marshal, pandas/jsonpickle wrappers, import aliases, SQL formatting variants, shell wrappers, and partial executable paths. Verify safe controls and distinguish rule-specific command recommendations. Persist explicit code-analysis limits in repository reports and demonstrate the missed assignment-alias eval case. General framework and data-flow analysis remain outside the demonstrated coverage.
 - [ ] Validate all planned categories with vulnerable, corrected, and false-positive cases.
 - [ ] Document covered dependency formats and versions; add examples with resolved versions.
 - [ ] Expand invalid-output, network-failure, interruption, and resource-cleanup tests.
@@ -84,7 +89,7 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 ## Workstream 3 — Next tasks
 
 - [ ] Test an authorized private repository we own, pagination, and installation revocation.
-- [ ] Support per-user login/authorization without editing workstream 1 files concurrently.
+- [x] Integrate user authorization with workstream 1: list user-accessible installations/repositories, resolve revisions and download as the user, recheck access in the worker, and fail closed on logout/expiry/revocation without installation-token fallback. Controlled GitHub-response tests cover these scenarios; real access tests remain pending.
 - [ ] Associate each dependency with the correct repository and official channels.
 - [ ] Collect explicit maintainer notices and archival status, with sources and dates.
 - [ ] Check successors and repository moves before recommending replacements.

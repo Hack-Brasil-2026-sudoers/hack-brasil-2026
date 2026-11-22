@@ -13,16 +13,36 @@ PRIORITIES = {"critical": 0, "high": 1, "medium": 2, "low": 3, "review": 4}
 BANDIT_RULES = {
     "B102": ("unsafe_execution", "Use of exec", "Avoid executing text as code; use specific operations and validate input."),
     "B201": ("insecure_configuration", "Flask debug mode enabled", "Disable debug mode in production."),
-    "B301": ("unsafe_deserialization", "Deserialization with pickle", "Do not load untrusted objects; consider JSON with validation."),
-    "B302": ("unsafe_deserialization", "Deserialization with marshal", "Do not load untrusted objects."),
+    "B301": ("unsafe_deserialization", "Potentially unsafe object deserialization",
+             "Check whether serialized data can be changed by an untrusted party. Avoid pickle and object-restoring "
+             "wrappers for untrusted data; prefer plain JSON with schema validation."),
+    "B302": ("unsafe_deserialization", "Deserialization with marshal",
+             "Do not deserialize untrusted data with marshal. Use a data-only format and validate its structure."),
     "B307": ("unsafe_execution", "Use of eval", "Use a parser for the expected format without executing arbitrary code."),
     "B501": ("insecure_configuration", "Certificate validation disabled", "Enable certificate verification and configure a trusted certificate authority."),
     "B506": ("unsafe_deserialization", "Potentially unsafe YAML loading", "Use a safe loader for the library and validate the input structure."),
-    "B608": ("sql_injection", "Dynamically constructed SQL query", "Use database query parameters and check the source of the data."),
+    "B602": ("command_injection", "Subprocess started with a shell",
+             "Replace shell command construction with an argument list and shell=False. Use a fixed executable "
+             "and validate arguments, including options accepted by that executable."),
+    "B603": ("command_injection", "Subprocess arguments requiring review",
+             "This call does not use a shell. Review control of the executable, arguments, and executable-specific "
+             "options. A fixed executable with validated arguments may be acceptable; the call alone does not prove injection."),
+    "B604": ("command_injection", "Shell option on a function requiring review",
+             "Inspect the called function to confirm what shell=True does. If it invokes a shell, use separate "
+             "arguments without shell interpretation and validate untrusted inputs."),
+    "B605": ("command_injection", "Process started through a shell",
+             "Avoid passing constructed commands to shell-based APIs. Prefer an argument list without a shell, "
+             "a fixed executable, and validated arguments."),
+    "B606": ("command_injection", "Process execution without a shell requiring review",
+             "This API does not inherently invoke a shell. Review control of the executable path and arguments; "
+             "a trusted fixed executable with validated arguments may be acceptable."),
+    "B607": ("command_injection", "Executable resolved through a partial path",
+             "Use the trusted absolute path of the intended executable and review directory permissions. "
+             "A partial path can select another executable through the process search path."),
+    "B608": ("sql_injection", "Dynamically constructed SQL query",
+             "Check whether untrusted values reach the constructed SQL. Bind values with database query parameters. "
+             "For dynamic table or column names, use a fixed allowlist; value parameters do not bind identifiers."),
 }
-for _rule in ("B602", "B603", "B604", "B605", "B606", "B607"):
-    BANDIT_RULES[_rule] = ("command_injection", "Command execution requiring review",
-                           "Prefer separate arguments without a shell, a fixed executable, and validated inputs.")
 
 
 class ScannerError(Exception):
@@ -58,11 +78,13 @@ def parse_bandit(data, source):
         if rule not in BANDIT_RULES:
             continue
         category, title, recommendation = BANDIT_RULES[rule]
-        results.append(finding(
+        item = finding(
             "bandit", rule, category, title, safe_path(row["filename"], source),
             row.get("line_number"), row["issue_severity"].lower(), row["issue_confidence"].lower(),
             recommendation, {"rule": rule, "cwe": (row.get("issue_cwe") or {}).get("id")},
-        ))
+        )
+        item["priority_reason"] += " This pattern-based check does not track data flow or establish input trust."
+        results.append(item)
     return results
 
 
@@ -203,13 +225,25 @@ def run_scanners(source: Path, working: Path, settings: Settings, dependency_loo
                 report = working / "secrets.json"
                 raw = report.read_bytes()
             data = json.loads(raw)
-            findings.extend(parser(data, source))
+            parsed = parser(data, source)
             check["status"] = "completed"
-            if tool == "bandit" and data.get("errors"):
-                check.update(status="partial", error="Some Python files could not be analyzed.")
+            if tool == "bandit":
+                metrics, errors = data["metrics"], data["errors"]
+                if not isinstance(metrics, dict) or not isinstance(errors, list):
+                    raise ValueError("Invalid Bandit coverage metadata")
+                analyzed = set(metrics) - {"_totals"} - {row["filename"] for row in errors}
+                if errors:
+                    check.update(status="partial" if analyzed else "failed",
+                                 error="Some Python files could not be analyzed." if analyzed else
+                                 "No Python files could be analyzed.")
+                elif not analyzed:
+                    check.update(status="skipped", error="No Python files were found within the scanner scope; "
+                                 "Python code was not assessed.")
+            findings.extend(parsed)
         except ScannerError as exc:
             check["error"] = str(exc)
-        except (ValueError, TypeError, KeyError, OSError):
+        except (ValueError, TypeError, KeyError, AttributeError, OSError):
+            check["status"] = "failed"
             check["error"] = "Invalid or incomplete output; this tool did not provide a complete assessment."
         checks.append(check)
     findings.sort(key=lambda item: (PRIORITIES[item["priority"]], item["category"], item["path"] or ""))

@@ -53,7 +53,8 @@ def main():
     else:
         import uvicorn
         from .api import create_app
-        uvicorn.run(create_app(settings), host="127.0.0.1", port=8000)
+        # OAuth callbacks contain one-time credentials in their query string.
+        uvicorn.run(create_app(settings), host="127.0.0.1", port=8000, access_log=False)
 
 
 if __name__ == "__main__":
