@@ -1,4 +1,5 @@
 import secrets
+import re
 from pathlib import Path
 from typing import Annotated
 from uuid import UUID
@@ -145,6 +146,22 @@ def create_app(settings=None, github=None, auth_transport=None):
             return github_for(identity).installations(page)
         except (GitHubError, httpx.HTTPError) as exc:
             raise HTTPException(502, str(exc) if isinstance(exc, GitHubError) else "Failed to connect to GitHub.") from exc
+
+    @app.get("/api/auth/status")
+    def auth_status():
+        slug = settings.github_app_slug
+        install_url = f"https://github.com/apps/{slug}/installations/new" if re.fullmatch(r"[a-zA-Z0-9-]+", slug) else None
+        return {"github_enabled": auth.enabled, "installation_url": install_url}
+
+    @app.get("/auth/github/setup", response_class=RedirectResponse)
+    def installation_return():
+        # Navigation-only compatibility with the former setup URL. Never trust or
+        # persist a callback installation_id; selection is verified by GitHub APIs.
+        return RedirectResponse("/app/#integrations", status_code=303)
+
+    @app.get("/", response_class=RedirectResponse)
+    def frontend_root():
+        return RedirectResponse("/app/", status_code=307)
 
     @app.get("/health", response_model=Health)
     def health():

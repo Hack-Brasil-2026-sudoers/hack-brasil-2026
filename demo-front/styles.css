@@ -2430,3 +2430,17 @@ dialog p {
     scroll-behavior:auto!important;
   }
 }
+
+/* Connection uses the existing operational form components. */
+.connection-panel { max-width: 680px; }
+.connection-panel input { width: 100%; min-width: 0; }
+@media (max-width: 760px) {
+  .connection-panel input { font-size: 16px; }
+  #navigation { display: grid; grid-template-columns: minmax(60px, .9fr) minmax(78px, 1.25fr) minmax(60px, 1fr) minmax(49px, .8fr) minmax(73px, 1.1fr); gap: 2px; overflow-x: auto; }
+  #navigation .nav-link { flex-direction: column; min-width: 0; padding: 8px 1px; gap: 4px; font-size: 12px; }
+}
+/* Keep integration controls inside the existing panel on compact screens. */
+.connection-panel .analysis-form,
+.connection-panel .analysis-form > * { min-width: 0; }
+.connection-panel .form-actions { flex-wrap: wrap; }
+.connection-panel select { width: 100%; max-width: 100%; }

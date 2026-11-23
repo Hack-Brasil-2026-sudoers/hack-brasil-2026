@@ -275,3 +275,9 @@ Approved combination: Bandit + OSV-Scanner + Betterleaks. Scorecard remains a re
 Follow the division in [FRENTES-DE-TRABALHO.md](FRENTES-DE-TRABALHO.md). In workstream 3, activate and validate user OAuth/private repositories/revocation and implement approved maintenance signals; in workstream 2, complete coverage validation and isolation. Workstream 1 maintains the implemented user authorization and API schemas. Workstream 4 builds the interface using the agreed contract.
 
 AI provider/model and hosting selection do not block this work. Do not activate external AI or publish the single-operator backend as an open service.
+
+## Consolidated archive preparation
+
+`cybercheck/archives.py` validates the HTTP ZIP stream and bounded extraction before scanners run. Limits: 25 MiB downloaded, 100 MiB total uncompressed, 20 MiB per file, 5,000 entries, 120 seconds per preparation stage. The per-file cap accommodates the verified 17,096,584-byte tooling binary in Artigos Med; global limits remain unchanged. No downloaded executables are run. Errors identify download, format, CRC, path and resource-limit failures without exposing remote bodies or signed URLs. Worker stage logs include only analysis ID and public stage/error codes.
+
+The main branch's GitHub user-token workflow and Bandit coverage semantics are preserved. No Python files means a skipped code check; partial reports must remain visible even if dependency and secrets checks complete. The migration and live validation procedure is documented in [GITHUB-INTEGRATION.md](GITHUB-INTEGRATION.md).

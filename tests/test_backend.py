@@ -1,4 +1,5 @@
 import json
+import io
 import stat
 import zipfile
 from pathlib import Path
@@ -7,6 +8,7 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from cybercheck.archives import MAX_FILE_BYTES
 from cybercheck.api import create_app
 from cybercheck.config import Settings
 from cybercheck.github import GitHub, GitHubError
@@ -120,7 +122,7 @@ def test_archive_rejects_links_duplicates_and_oversized_files(tmp_path):
     with pytest.raises(ValueError):
         extract_archive(archive, target)
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as z:
-        z.writestr("root/big.txt", b"x" * (2 * 1024 * 1024 + 1))
+        z.writestr("root/big.txt", b"x" * (MAX_FILE_BYTES + 1))
     with pytest.raises(ValueError):
         extract_archive(archive, target)
 
@@ -210,6 +212,9 @@ def test_download_does_not_forward_token_or_follow_untrusted_redirect(settings, 
 
 
 def test_download_codeload_without_auth_header(settings, tmp_path, monkeypatch):
+    content = io.BytesIO()
+    with zipfile.ZipFile(content, "w") as archive:
+        archive.writestr("root/file.py", "pass\n")
     def respond(request):
         if request.url.path == "/repositories/10":
             return httpx.Response(200, json={"full_name": "team/project"})
@@ -217,9 +222,9 @@ def test_download_codeload_without_auth_header(settings, tmp_path, monkeypatch):
             assert request.headers["authorization"] == "Bearer test-only"
             return httpx.Response(302, headers={"location": "https://codeload.github.com/team/project/zip/" + SHA})
         assert "authorization" not in request.headers
-        return httpx.Response(200, content=b"archive")
+        return httpx.Response(200, content=content.getvalue(), headers={"Content-Type": "application/zip"})
     github = GitHub(settings, transport=httpx.MockTransport(respond))
     monkeypatch.setattr(github, "installation_token", lambda repository_id: "test-only")
     dest = tmp_path / "archive.zip"
     github.download({"repository_id": 10, "repository": "team/project", "commit_sha": SHA}, dest)
-    assert dest.read_bytes() == b"archive"
+    assert dest.read_bytes() == content.getvalue()

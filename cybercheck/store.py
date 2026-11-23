@@ -58,6 +58,9 @@ class Store:
                 db.execute("DROP TABLE analyses_legacy")
             if not any(row["name"] == "owner" for row in db.execute("PRAGMA table_info(analyses)")):
                 db.execute("ALTER TABLE analyses ADD COLUMN owner TEXT NOT NULL DEFAULT 'operator'")
+                # Preserve ownership from the earlier local GitHub integration.
+                if any(row["name"] == "owner_id" for row in db.execute("PRAGMA table_info(analyses)")):
+                    db.execute("UPDATE analyses SET owner='github:' || owner_id WHERE owner_id IS NOT NULL")
             db.execute("DROP INDEX IF EXISTS one_active_revision")
             db.execute("DROP INDEX IF EXISTS one_active_website")
             db.execute("""

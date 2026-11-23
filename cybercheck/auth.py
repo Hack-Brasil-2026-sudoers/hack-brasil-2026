@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import hmac
+import json
 import secrets
 import time
 from urllib.parse import urlencode
@@ -35,6 +36,36 @@ class Auth:
                     login TEXT NOT NULL, token TEXT NOT NULL, expires_at INTEGER NOT NULL
                 )""")
                 db.execute("CREATE INDEX IF NOT EXISTS sessions_by_owner ON user_sessions(owner, expires_at)")
+            self.migrate_local_sessions()
+
+    def migrate_local_sessions(self):
+        """One-time migration; retain IDs/cookies and never resurrect logged-out sessions."""
+        now = int(time.time())
+        with self.store.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            db.execute("CREATE TABLE IF NOT EXISTS schema_migrations (name TEXT PRIMARY KEY, applied_at INTEGER NOT NULL)")
+            name = "local_github_sessions_to_main_v1"
+            if db.execute("SELECT 1 FROM schema_migrations WHERE name=?", (name,)).fetchone():
+                return
+            tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if {"github_users", "sessions"} <= tables:
+                rows = db.execute("SELECT s.id_hash,s.user_id,s.expires,u.login,u.credentials FROM sessions s "
+                                  "JOIN github_users u ON u.id=s.user_id WHERE s.expires>?", (now,)).fetchall()
+                for row in rows:
+                    if not row["credentials"]:
+                        continue
+                    try:
+                        credentials = json.loads(self.cipher.decrypt(row["credentials"]))
+                        token = credentials["access_token"]
+                    except (InvalidToken, ValueError, KeyError, TypeError) as exc:
+                        raise GitHubError("Could not migrate local GitHub sessions. Preserve the original encryption key and retry.") from exc
+                    expiry = min(int(row["expires"]), int(credentials.get("expires") or now + 28800), now + 28800)
+                    if expiry > now and isinstance(token, str) and token:
+                        db.execute("INSERT OR IGNORE INTO user_sessions VALUES(?,?,?,?,?,?)", (
+                            row["id_hash"], f"github:{row['user_id']}", row["user_id"], row["login"],
+                            self.cipher.encrypt(token.encode()).decode(), expiry,
+                        ))
+            db.execute("INSERT INTO schema_migrations VALUES(?,?)", (name, now))
 
     def begin(self):
         state, verifier = secrets.token_urlsafe(32), secrets.token_urlsafe(64)

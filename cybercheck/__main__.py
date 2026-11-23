@@ -48,6 +48,9 @@ def main():
     except ValueError as exc:
         parser.error(str(exc))
     if args.command == "worker":
+        import logging
+        logging.basicConfig(level=logging.WARNING, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+        logging.getLogger("cybercheck.worker").setLevel(logging.INFO)
         from .worker import run
         run(settings, once=args.once)
     else:

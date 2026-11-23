@@ -51,7 +51,7 @@ Open `http://127.0.0.1:8000/docs`, select **Authorize**, and enter the local API
 
 Confirm authorization only for projects you own or have written permission to assess. Set `dependency_lookup` to `true` to authorize external dependency metadata queries. Use the returned analysis ID with `GET /api/analyses/{identity}` to check progress and retrieve the report.
 
-By default, the backend uses a single-operator token. Optional [GitHub user login](markdown/GITHUB.md#enable-user-login) adds browser sessions, installation selection, user-scoped repository access, and isolated history/deletion. In that mode, Bearer operator authentication is disabled; see the [frontend contract](markdown/API.md#github-user-login) for cookies and CSRF. The standalone frontend still uses simulated data and needs API integration. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
+By default, the backend uses a single-operator token. Optional [GitHub user login](markdown/GITHUB.md#enable-user-login) adds browser sessions, installation selection, user-scoped repository access, and isolated history/deletion. In that mode, Bearer operator authentication is disabled; see the [frontend contract](markdown/API.md#github-user-login) for cookies and CSRF. The frontend at `/app/` uses the API; `/app/?demo=1` and the standalone static server keep simulated mode available. See the [consolidation guide](markdown/GITHUB-INTEGRATION.md) for migration from the earlier local integration. Keep the backend local. A partial report indicates incomplete coverage; the absence of alerts does not guarantee security.
 
 Repository code checks use Bandit for selected SQL/shell construction, `eval`/`exec`, unsafe deserialization, Flask debug mode, and disabled TLS verification. Tests execute the installed Bandit against vulnerable and corrected examples without executing those examples. Findings remain potential issues: even a fixed executable invoked without a shell can produce a command-review alert that requires context.
 
@@ -106,13 +106,13 @@ Arbitrary authorized website targets, an egress-enforced scanner proxy, authenti
 
 ## Development
 
-The standalone [frontend demo](static/demo/README.md) runs with simulated data and does not need the backend:
+The standalone [frontend demo](demo-front/README.md) runs with simulated data and does not need the backend:
 
 ```bash
-python3 -m http.server 8081 --bind 127.0.0.1 --directory static
+python3 -m http.server 8081 --bind 127.0.0.1 --directory demo-front
 ```
 
-Open `http://127.0.0.1:8081/demo/`. All six views are available; API integration remains pending. The project presentation website is separate in `website/`.
+Open `http://127.0.0.1:8081/` for simulated mode. For the API-backed workspace, use `http://127.0.0.1:8000/app/#integrations`; `/app/?demo=1` also provides simulated mode. The project presentation website is separate in `website/`.
 
 Run tests with `.venv/bin/python -m pytest -q`. See the [developer and LLM guide](markdown/IMPLEMENTACAO.md), [workstreams](markdown/FRENTES-DE-TRABALHO.md), and [next steps](markdown/PROXIMOS-PASSOS.md). The complete proposal is in [PROJETO.md](markdown/PROJETO.md), and the presentation website is in [website/](website/).
 

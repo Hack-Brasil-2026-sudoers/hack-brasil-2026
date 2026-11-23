@@ -203,3 +203,9 @@ Do not call `response.json()` after a successful `204` deletion. Confirm deletio
 The store automatically migrates the original repository-only database transactionally, preserving IDs, revision identities, status, timestamps, findings, checks, and errors. Stop both processes before upgrading and take a private backup of valuable data. Upgrade API and worker together; do not run old workers against the new schema.
 
 Contract checks cover authentication, normalization, rejected inputs without raw-input disclosure, OpenAPI schemas, CORS, shared queue capacity, deduplication, migration, and deletion. OAuth tests use controlled GitHub responses for PKCE, state replay/expiry, encrypted sessions, two-user isolation, private access, logout/revocation, and worker authorization. Real loopback HTTP/TLS tests exercise API → queue → worker → persisted report → history → deletion. Their network overrides are test-only; public-site address restrictions remain enabled. Live OAuth activation and browser integration still require the App's client credentials and callback configuration. These tests do not establish production hosting or coverage of a real external website.
+
+## Frontend integration and local consolidation
+
+`GET /api/auth/status` exposes only login availability and the public installation link. `GET /auth/github/setup` is a navigation-only return to `/app/#integrations`, with no installation binding or query-parameter trust. The application is at `/app/`; `?demo=1` keeps the same UI in simulated mode. The root `/` redirects to `/app/` for compatibility with previous local links.
+
+The local schema migration maps `owner_id` to the canonical `owner="github:<id>"` and preserves report IDs and contents. See [the consolidation guide](GITHUB-INTEGRATION.md).

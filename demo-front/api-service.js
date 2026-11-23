@@ -3,7 +3,7 @@ export class ApiError extends Error {
   constructor(message, status) { super(message); this.status = status; }
 }
 
-export function createApiService({ fetcher = globalThis.fetch.bind(globalThis) } = {}) {
+export function createApiService({ fetcher = globalThis.fetch.bind(globalThis), timeoutMs = 45000 } = {}) {
   let identity;
   let installation;
 
@@ -15,11 +15,13 @@ export function createApiService({ fetcher = globalThis.fetch.bind(globalThis) }
       if (options.body) headers['Content-Type'] = 'application/json';
     }
     let response;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      response = await fetcher(path, { ...options, headers, credentials: 'include', cache: 'no-store' });
+      response = await fetcher(path, { ...options, headers, credentials: 'include', cache: 'no-store', redirect: 'error', signal: controller.signal });
     } catch {
-      throw new ApiError('Could not reach CyberCheck. Check the connection and try again.', 0);
-    }
+      throw new ApiError(controller.signal.aborted ? 'The request timed out. Check the backend and try again.' : 'Could not reach CyberCheck. Check the connection and try again.', 0);
+    } finally { clearTimeout(timer); }
     if (response.status === 204) return null;
     let data;
     try { data = await response.json(); }
@@ -52,6 +54,7 @@ export function createApiService({ fetcher = globalThis.fetch.bind(globalThis) }
   return {
     session,
     loginUrl: '/auth/github/start',
+    configuration() { return request('/api/auth/status'); },
     async logout() {
       await request('/auth/logout', { method: 'POST' });
       identity = undefined; installation = undefined;

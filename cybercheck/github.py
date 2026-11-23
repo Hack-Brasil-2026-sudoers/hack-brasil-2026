@@ -7,6 +7,7 @@ import httpx
 import jwt
 from pydantic import ValidationError
 
+from .archives import receive_archive
 from .config import Settings
 from .schemas import InstallationPage, RepositoryPage
 
@@ -147,13 +148,5 @@ class GitHub:
                     or port not in (None, 443) or parsed.username or parsed.password):
                 raise GitHubError("Unexpected download destination; analysis blocked.")
             # Do not persist the signed URL or forward the token to another host.
-            with client.stream("GET", location) as archive:
-                if archive.status_code != 200:
-                    raise GitHubError("Failed to download the selected commit.")
-                total = 0
-                with destination.open("wb") as output:
-                    for chunk in archive.iter_bytes():
-                        total += len(chunk)
-                        if total > 25 * 1024 * 1024:
-                            raise GitHubError("Repository exceeds the MVP download limit of 25 MiB.")
-                        output.write(chunk)
+            with client.stream("GET", location, headers={"Accept-Encoding": "identity"}) as archive:
+                receive_archive(archive, destination)

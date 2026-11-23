@@ -21,6 +21,7 @@ class Settings:
     github_client_secret: str = ""
     public_url: str = "http://127.0.0.1:8000"
     session_key: str = ""
+    github_app_slug: str = "cybercheck-sudoers"
 
     def __post_init__(self):
         if not self.github_client_id and len(self.api_token) < 32:
@@ -56,8 +57,9 @@ class Settings:
             cors_origins=tuple(filter(None, (v.strip() for v in os.getenv(
                 "CYBERCHECK_CORS_ORIGINS", ""
             ).split(",")))),
+            github_app_slug=os.getenv("GITHUB_APP_SLUG", "cybercheck-sudoers"),
             github_client_id=os.getenv("GITHUB_CLIENT_ID", ""),
             github_client_secret=os.getenv("GITHUB_CLIENT_SECRET", ""),
             public_url=os.getenv("CYBERCHECK_PUBLIC_URL", "http://127.0.0.1:8000").rstrip("/"),
-            session_key=os.getenv("CYBERCHECK_SESSION_KEY", ""),
+            session_key=os.getenv("CYBERCHECK_SESSION_KEY", "") or os.getenv("CYBERCHECK_AUTH_KEY", ""),
         )
