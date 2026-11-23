@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "demo-front/styles.css"
+        ],
+        "createdAt": "2026-11-22T20:45:08.469Z",
+        "reason": "User confirmed Inter for the operational interface; documented in demo-front/PRODUCT.md Brand Commitments and demo-front/DESIGN.md Typography."
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "demo-front/index.html"
+        ],
+        "createdAt": "2026-11-22T20:45:08.577Z",
+        "reason": "User confirmed Inter for the operational interface; this HTML preloads the approved self-hosted font, as documented in demo-front/PRODUCT.md and DESIGN.md."
+      }
+    ]
+  }
+}
