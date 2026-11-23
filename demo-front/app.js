@@ -1,7 +1,7 @@
 import { createDemoService, PRIORITIES, CATEGORY_LABELS, categoryGroup, toolLabel } from './demo-service.js';
 import { createApiService } from './api-service.js';
 
-const live = location.pathname.startsWith('/app/');
+const live = location.pathname.startsWith('/app/') && new URLSearchParams(location.search).get('demo') !== '1';
 const service = live ? createApiService() : createDemoService();
 const copy = (real, demo) => live ? real : demo;
 const main = document.querySelector('#main');
@@ -46,7 +46,10 @@ const reportLink = id => `#report/${encodeURIComponent(id)}`;
 const activeLink = analysis => ['queued', 'running'].includes(analysis.status) ? `#analyses/${encodeURIComponent(analysis.id)}` : reportLink(analysis.id);
 const date = iso => new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso));
 const timestamp = iso => `${date(iso)} · ${new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }).format(new Date(iso))} UTC`;
-const repositoryName = name => { const [owner, ...parts] = name.split('/'); return `<span class="owner">${e(owner)} / </span>${e(parts.join('/'))}`; };
+const targetName = a => a.repository || a.target_url || 'Unknown target';
+const shortSha = a => a.commit_sha?.slice(0, 7) || '—';
+const checkCount = a => a.kind === 'web' ? a.checks.length : 3;
+const repositoryName = name => { const [owner, ...parts] = String(name ?? '').split('/'); return `<span class="owner">${e(owner)} / </span>${e(parts.join('/'))}`; };
 const button = (label, href, type = '', symbol = '') => `<a class="button ${type}" href="${e(href)}">${symbol ? icon(symbol) : ''}${e(label)}</a>`;
 const heading = (title, subtitle, actions = '') => `<div class="page-heading"><div><h1>${e(title)}</h1><p>${e(subtitle)}</p></div>${actions ? `<div class="heading-actions">${actions}</div>` : ''}</div>`;
 const notice = (title, content, variant = '') => `<div class="notice ${variant}">${icon(variant === 'warning' || variant === 'error' ? 'warning' : 'info')}<div>${title ? `<strong>${e(title)}</strong>` : ''}${e(content)}</div></div>`;
@@ -77,7 +80,7 @@ function showToast(message) {
 }
 
 function navigation(active) {
-  const links = [['overview', 'Overview', 'overview'], ['repositories', 'Repositories', 'repository'], ['analyses', 'Analyses', 'analysis'], ['history', 'History', 'history']];
+  const links = [['overview', 'Overview', 'overview'], ['repositories', 'Repositories', 'repository'], ['analyses', 'Analyses', 'analysis'], ['history', 'History', 'history'], ['integrations', 'Integrações', 'lock']];
   document.querySelector('#navigation').innerHTML = links.map(([path, label, symbol]) => `<a class="nav-link" href="#${path}"${path === active ? ' aria-current="page"' : ''}>${icon(symbol)}<span>${label}</span></a>`).join('');
   const name = links.find(([path]) => path === active)?.[1] ?? 'Workspace';
   document.querySelector('#breadcrumb').innerHTML = `Workspace <span>/</span> ${name}`;
@@ -88,7 +91,7 @@ function priorityStrip(findings) {
 }
 
 function repositorySummary(a, action = false) {
-  return `<div class="repository-summary"><div class="repository-identity"><span class="repo-mark">${icon('repository')}</span><div><div class="repo-name">${repositoryName(a.repository)}</div><div class="repo-meta"><span>${icon('branch')}${e(a.requested_ref)}</span><span class="mono">${e(a.commit_sha.slice(0, 7))}</span><span>${icon('clock')}${e(timestamp(a.created_at))}</span></div></div></div><div class="summary-meta">${status(a.status)}${action ? button('View report', activeLink(a), 'secondary') : ''}</div></div>`;
+  return `<div class="repository-summary"><div class="repository-identity"><span class="repo-mark">${icon('repository')}</span><div><div class="repo-name">${a.kind === 'web' ? e(a.target_url) : repositoryName(targetName(a))}</div><div class="repo-meta"><span>${icon('branch')}${e(a.requested_ref || (a.kind === 'web' ? 'Website' : 'Default reference'))}</span><span class="mono">${e(shortSha(a))}</span><span>${icon('clock')}${e(timestamp(a.created_at))}</span></div></div></div><div class="summary-meta">${status(a.status)}${action ? button('View report', activeLink(a), 'secondary') : ''}</div></div>`;
 }
 
 function findingTable(a, rows, { compact = false } = {}) {
@@ -96,7 +99,7 @@ function findingTable(a, rows, { compact = false } = {}) {
   return `<div class="table-scroll"><table class="finding-table"><caption class="sr-only">Security findings</caption><thead><tr><th scope="col">Finding</th><th scope="col">Priority</th>${compact ? '' : '<th class="category-column" scope="col">Category</th><th class="confidence-column" scope="col">Confidence</th>'}<th class="table-action" scope="col"><span class="sr-only">Details</span></th></tr></thead><tbody>${rows.map(f => {
     const index = a.findings.indexOf(f);
     const href = `#finding/${encodeURIComponent(a.id)}/${index}`;
-    return `<tr><td><div class="finding-title"><a href="${href}">${e(f.title)}</a></div><div class="finding-meta"><span class="mono">${e(f.path)}</span>${f.line ? ` · Line ${f.line}` : ''} · ${e(toolLabel(f.tool))}</div><div class="finding-confidence${compact ? '' : ' responsive-confidence'}">Confidence: ${e(titleCase(f.confidence))}</div></td><td>${priority(f.priority)}</td>${compact ? '' : `<td class="category-column muted">${e(CATEGORY_LABELS[categoryGroup(f.category)])}</td><td class="confidence-column muted">${e(titleCase(f.confidence))}</td>`}<td class="table-action"><a class="icon-button" href="${href}" aria-label="View ${e(f.title)}">${icon('chevron')}</a></td></tr>`;
+    return `<tr><td><div class="finding-title"><a href="${href}">${e(f.title)}</a></div><div class="finding-meta"><span class="mono">${e(f.path || f.evidence.url || 'Not provided')}</span>${f.line ? ` · Line ${f.line}` : ''} · ${e(toolLabel(f.tool))}</div><div class="finding-confidence${compact ? '' : ' responsive-confidence'}">Confidence: ${e(titleCase(f.confidence))}</div></td><td>${priority(f.priority)}</td>${compact ? '' : `<td class="category-column muted">${e(CATEGORY_LABELS[categoryGroup(f.category)])}</td><td class="confidence-column muted">${e(titleCase(f.confidence))}</td>`}<td class="table-action"><a class="icon-button" href="${href}" aria-label="View ${e(f.title)}">${icon('chevron')}</a></td></tr>`;
   }).join('')}</tbody></table></div>`;
 }
 
@@ -109,7 +112,7 @@ function overview() {
   const completed = a.checks.filter(c => c.status === 'completed').length;
   return intro + `<div class="stack overview-stack">
     <section class="revision-surface" aria-label="Latest repository analysis">${repositorySummary(a, true)}</section>
-    ${a.status === 'partial' ? notice('Incomplete coverage', `${completed} of 3 checks completed. Some categories were not assessed; finding counts do not describe the full repository.`, 'warning') : ''}
+    ${a.status === 'partial' ? notice('Incomplete coverage', `${completed} of ${checkCount(a)} checks completed. Some categories were not assessed; finding counts do not describe the full repository.`, 'warning') : ''}
     ${priorityStrip(a.findings)}
     <div class="investigation-layout">
       <section class="findings-surface">
@@ -118,7 +121,7 @@ function overview() {
         <div class="list-footer"><a class="section-link" href="${reportLink(a.id)}">View all ${a.findings.length} findings</a></div>
       </section>
       <aside class="analysis-sidebar">
-        <section><h2>Analysis coverage<span class="section-count">${completed}/3</span></h2><ul class="coverage-summary">${a.checks.map(c => `<li><span>${e(toolLabel(c.tool))}</span>${status(c.status)}</li>`).join('')}</ul></section>
+        <section><h2>Analysis coverage<span class="section-count">${completed}/${checkCount(a)}</span></h2><ul class="coverage-summary">${a.checks.map(c => `<li><span>${e(toolLabel(c.tool || c.check || 'Website check'))}</span>${status(c.status)}</li>`).join('')}</ul></section>
         <section><h2>By category<span class="section-count">${a.findings.length} total</span></h2><dl class="category-counts">${Object.entries(CATEGORY_LABELS).map(([key,label]) => `<div><dt>${label}</dt><dd>${a.findings.filter(f => categoryGroup(f.category) === key).length}</dd></div>`).join('')}</dl></section>
         <p class="subtle-note">This report describes the revision above. It does not establish the repository’s current security.</p>
       </aside>
@@ -141,15 +144,16 @@ function repositoriesView() {
 
 const toolDescriptions = { bandit: ['Code analysis', 'Python source security', 'code'], 'osv-scanner': ['Dependency analysis', 'Known dependency vulnerabilities', 'package'], betterleaks: ['Secrets & configuration', 'Potentially exposed credentials', 'key'] };
 function checks(a) {
+  if (a.kind === 'web') return `<ul class="checks-list">${a.checks.map(c => `<li class="check-row"><span class="check-icon">${icon('info')}</span><div class="check-copy"><strong>${e(titleCase(c.check || c.tool || 'Website check'))}</strong><p>${e(c.error || c.note || c.url || '')}</p></div>${status(c.status)}</li>`).join('')}</ul>`;
   return `<ul class="checks-list">${Object.entries(toolDescriptions).map(([tool, [title, description, symbol]]) => {
-    const c = a.checks.find(c => c.tool === tool) ?? { tool, status: 'queued', version: null, error: null };
+    const c = a.checks.find(c => c.tool === tool) ?? { tool, status: ['queued', 'running'].includes(a.status) ? 'queued' : 'skipped', version: null, error: ['queued', 'running'].includes(a.status) ? null : 'This check was not reported by the worker.' };
     return `<li class="check-row"><span class="check-icon ${e(c.status)}">${icon(c.status === 'completed' ? 'check' : c.status === 'skipped' ? 'pause' : symbol)}</span><div class="check-copy"><strong>${title}</strong><p>${e(toolLabel(tool))}${c.version ? ` ${e(c.version)}` : ''} · ${e(c.error || description)}</p></div>${status(c.status)}</li>`;
   }).join('')}</ul>`;
 }
 
 function progressView(a) {
   const completed = a.checks.filter(c => c.status === 'completed').length;
-  return heading(a.status === 'queued' ? 'Analysis queued' : 'Analysis in progress', 'Follow the checks for the selected repository.', button('View history', '#history', 'secondary')) + `<div class="stack"><section class="panel"><div class="progress-intro"><div><div class="repo-name">${repositoryName(a.repository)}</div><div class="repo-meta"><span>${icon('branch')}${e(a.requested_ref)}</span><span class="mono">${e(a.commit_sha.slice(0, 7))}</span><span>Recorded revision</span></div></div>${status(a.status)}</div><div class="panel-header"><h2>Configured checks</h2><div class="progress-summary"><div class="progress-track" aria-hidden="true">${[0, 1, 2].map((_, i) => `<span class="${i < completed ? 'done' : ''}"></span>`).join('')}</div><span><strong>${completed}</strong> of 3 finished</span></div></div>${checks(a)}</section>${notice(copy('Worker execution', 'A simulated run'), copy('A stopped worker leaves requests queued. Per-tool results appear after the worker saves the report; no live percentage is inferred.', 'This sequence takes about nine seconds. No repository is accessed. The example report opens when the sequence finishes.'))}${notice('Coverage matters', 'Skipped or failed checks remain visible in the report. An analysis with incomplete coverage is marked partial.')}</div>`;
+  return heading(a.status === 'queued' ? 'Analysis queued' : 'Analysis in progress', 'Follow the checks for the selected repository.', button('View history', '#history', 'secondary')) + `<div class="stack"><section class="panel"><div class="progress-intro"><div><div class="repo-name">${a.kind === 'web' ? e(a.target_url) : repositoryName(targetName(a))}</div><div class="repo-meta"><span>${icon('branch')}${e(a.requested_ref || (a.kind === 'web' ? 'Website' : 'Default reference'))}</span><span class="mono">${e(shortSha(a))}</span><span>Recorded revision</span></div></div>${status(a.status)}</div><div class="panel-header"><h2>Configured checks</h2><div class="progress-summary"><div class="progress-track" aria-hidden="true">${Array.from({ length: checkCount(a) }, (_, i) => i).map((_, i) => `<span class="${i < completed ? 'done' : ''}"></span>`).join('')}</div><span><strong>${completed}</strong> of ${checkCount(a)} finished</span></div></div>${checks(a)}</section>${notice(copy('Worker execution', 'A simulated run'), copy('A stopped worker leaves requests queued. Per-tool results appear after the worker saves the report; no live percentage is inferred.', 'This sequence takes about nine seconds. No repository is accessed. The example report opens when the sequence finishes.'))}${notice('Coverage matters', 'Skipped or failed checks remain visible in the report. An analysis with incomplete coverage is marked partial.')}</div>`;
 }
 
 function analysisIndex() {
@@ -158,7 +162,7 @@ function analysisIndex() {
 }
 
 function revision(a) {
-  return `<section class="panel" aria-label="Analysis revision">${repositorySummary(a)}<div class="revision-details"><div class="metadata-item"><span>Full commit SHA · Recorded revision</span><div class="commit-line"><code>${e(a.commit_sha)}</code><button class="icon-button" type="button" data-copy="${e(a.commit_sha)}" aria-label="Copy full commit SHA">${icon('copy')}</button></div></div><div class="metadata-item"><span>Finished at</span><span class="text-primary">${a.finished_at ? e(timestamp(a.finished_at)) : 'Not finished'}</span></div></div><details class="coverage-details"><summary>Check coverage · ${a.checks.filter(c => c.status === 'completed').length} of 3 checks completed</summary>${checks(a)}</details></section>`;
+  return `<section class="panel" aria-label="Analysis revision">${repositorySummary(a)}<div class="revision-details"><div class="metadata-item"><span>Full commit SHA · Recorded revision</span><div class="commit-line"><code>${e(a.commit_sha || a.target_url)}</code><button class="icon-button" type="button" data-copy="${e(a.commit_sha || a.target_url)}" aria-label="Copy full commit SHA">${icon('copy')}</button></div></div><div class="metadata-item"><span>Finished at</span><span class="text-primary">${a.finished_at ? e(timestamp(a.finished_at)) : 'Not finished'}</span></div></div><details class="coverage-details"><summary>Check coverage · ${a.checks.filter(c => c.status === 'completed').length} of ${checkCount(a)} checks completed</summary>${checks(a)}</details></section>`;
 }
 
 function filteredFindings(a) {
@@ -188,10 +192,10 @@ function findingView(a, index) {
   };
   const [problem, impact] = details[f.category] ?? ['A potentially unsafe pattern was reported.', 'Investigate the evidence and deployment context before deciding the impact.'];
   const reference = `CC-${String(index + 14).padStart(3, '0')}`;
-  const evidence = f.evidence.secret
+  const evidence = a.kind === 'web' ? JSON.stringify(f.evidence, null, 2) : f.evidence.secret
     ? 'Credential value: [REDACTED]. It has not been validated against a provider.'
     : f.evidence.package
-      ? `Package: ${f.evidence.package} ${f.evidence.version}. Advisory: ${f.evidence.advisory}. Fixed versions: ${f.evidence.fixed_versions.length ? f.evidence.fixed_versions.join(', ') : 'none provided'}.`
+      ? `Package: ${f.evidence.package} ${f.evidence.version}. Advisory: ${f.evidence.advisory}. Fixed versions: ${(f.evidence.fixed_versions || []).length ? f.evidence.fixed_versions.join(', ') : 'none provided'}.`
       : `Rule ${f.rule_id}${f.evidence.cwe ? ` · CWE-${f.evidence.cwe}` : ''}. Review the file and input context; exposure has not been confirmed.`;
   return `<a class="back-link" href="${reportLink(a.id)}">${icon('back')}Back to analysis report</a>`
     + heading(f.title, `${CATEGORY_LABELS[categoryGroup(f.category)]} · Potential issue`)
@@ -199,7 +203,7 @@ function findingView(a, index) {
       <section class="panel detail-content trace-detail">
         <div class="detail-status"><span class="finding-reference">${reference}</span>${priority(f.priority)}</div>
         <dl class="trace-context">
-          <div><dt>Source</dt><dd class="mono">${e(f.path)}${f.line ? `:${f.line}` : ''}</dd></div>
+          <div><dt>Source</dt><dd class="mono">${e(f.path || f.evidence.url || 'Not provided')}${f.line ? `:${f.line}` : ''}</dd></div>
           <div><dt>Rule</dt><dd class="mono">${e(toolLabel(f.tool))} · ${e(f.rule_id)}</dd></div>
           <div><dt>Confidence</dt><dd>${e(titleCase(f.confidence))}</dd></div>
         </dl>
@@ -212,14 +216,14 @@ function findingView(a, index) {
         ${isSql ? `<details class="trace-correction"><summary class="button">Compare correction</summary><div class="code-example"><header>Illustrative correction · Python</header><pre><code><span class="code-comment"># Keep user input separate from SQL</span>\ncursor.execute(\n    <span class="code-string">"SELECT * FROM users WHERE id = ?"</span>,\n    (user_id,),\n)</code></pre></div></details>` : ''}
         <section class="detail-section trace-priority"><h2>Why this priority?</h2><p>${e(f.priority_reason)}</p></section>
       </section>
-      <aside class="detail-aside stack-small"><section class="panel panel-body"><h2>Finding context</h2><dl class="evidence-list"><div><dt>Location</dt><dd class="mono">${e(f.path)}${f.line ? `:${f.line}` : ''}</dd></div><div><dt>Tool</dt><dd>${e(toolLabel(f.tool))}</dd></div><div><dt>Rule</dt><dd class="mono">${e(f.rule_id)}</dd></div><div><dt>Repository</dt><dd>${e(a.repository)}</dd></div><div><dt>Commit SHA</dt><dd class="mono">${e(a.commit_sha)}</dd></div><div><dt>Analyzed at</dt><dd>${e(timestamp(a.created_at))}</dd></div></dl>${button('View full report', reportLink(a.id), 'secondary')}</section>${notice(copy('Rule-based guidance', 'Simulated finding'), copy('Review scanner evidence and context. No exploit has been confirmed. No external AI service is used.', 'This explanation is illustrative. No exploit has been confirmed, and no external AI service is connected.'))}</aside>
+      <aside class="detail-aside stack-small"><section class="panel panel-body"><h2>Finding context</h2><dl class="evidence-list"><div><dt>Location</dt><dd class="mono">${e(f.path || f.evidence.url || 'Not provided')}${f.line ? `:${f.line}` : ''}</dd></div><div><dt>Tool</dt><dd>${e(toolLabel(f.tool))}</dd></div><div><dt>Rule</dt><dd class="mono">${e(f.rule_id)}</dd></div><div><dt>Repository</dt><dd>${e(targetName(a))}</dd></div><div><dt>Commit SHA</dt><dd class="mono">${e(a.commit_sha)}</dd></div><div><dt>Analyzed at</dt><dd>${e(timestamp(a.created_at))}</dd></div></dl>${button('View full report', reportLink(a.id), 'secondary')}</section>${notice(copy('Rule-based guidance', 'Simulated finding'), copy('Review scanner evidence and context. No exploit has been confirmed. No external AI service is used.', 'This explanation is illustrative. No exploit has been confirmed, and no external AI service is connected.'))}</aside>
     </div>`;
 }
 
 function historyRows() {
-  const rows = state.analyses.filter(a => (state.historyStatus === 'all' || a.status === state.historyStatus) && a.repository.toLowerCase().includes(state.search.toLowerCase()));
+  const rows = state.analyses.filter(a => (state.historyStatus === 'all' || a.status === state.historyStatus) && targetName(a).toLowerCase().includes(state.search.toLowerCase()));
   if (!rows.length) return empty('No analyses to show', state.analyses.length ? 'Try a different status or repository search.' : 'Start a simulated run or reset demo data to restore sample reports.', button('New analysis', '#repositories'), 'history');
-  return `<div class="table-scroll"><table class="history-table"><caption class="sr-only">Analysis history</caption><thead><tr><th scope="col">Repository</th><th scope="col" class="hide-compact">Revision</th><th scope="col">Status</th><th scope="col" class="hide-mobile">Findings</th><th scope="col" class="hide-mobile">Created at · UTC</th><th scope="col" class="table-action">Actions</th></tr></thead><tbody>${rows.map(a => `<tr><td><div class="repository-identity"><span class="repo-mark">${icon('repository')}</span><div><a class="repo-name" href="${activeLink(a)}">${repositoryName(a.repository)}</a><div class="repo-meta">${icon('branch')}${e(a.requested_ref)}</div></div></div></td><td class="hide-compact mono muted">${e(a.commit_sha.slice(0, 7))}</td><td>${status(a.status)}</td><td class="hide-mobile muted">${['queued', 'running', 'failed'].includes(a.status) ? '—' : a.findings.length}</td><td class="history-date hide-mobile muted">${e(timestamp(a.created_at))}</td><td><div class="row-actions"><a class="section-link" href="${activeLink(a)}">${['queued', 'running'].includes(a.status) ? 'View run' : 'View report'}</a><button class="icon-button destructive" type="button" data-delete="${e(a.id)}" aria-label="Delete analysis for ${e(a.repository)} from ${e(timestamp(a.created_at))}"${a.status === 'running' ? ' disabled title="Wait for the running analysis to finish"' : ''}>${icon('trash')}</button></div></td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-scroll"><table class="history-table"><caption class="sr-only">Analysis history</caption><thead><tr><th scope="col">Repository</th><th scope="col" class="hide-compact">Revision</th><th scope="col">Status</th><th scope="col" class="hide-mobile">Findings</th><th scope="col" class="hide-mobile">Created at · UTC</th><th scope="col" class="table-action">Actions</th></tr></thead><tbody>${rows.map(a => `<tr><td><div class="repository-identity"><span class="repo-mark">${icon('repository')}</span><div><a class="repo-name" href="${activeLink(a)}">${a.kind === 'web' ? e(a.target_url) : repositoryName(targetName(a))}</a><div class="repo-meta">${icon('branch')}${e(a.requested_ref || (a.kind === 'web' ? 'Website' : 'Default reference'))}</div></div></div></td><td class="hide-compact mono muted">${e(shortSha(a))}</td><td>${status(a.status)}</td><td class="hide-mobile muted">${['queued', 'running', 'failed'].includes(a.status) ? '—' : a.findings.length}</td><td class="history-date hide-mobile muted">${e(timestamp(a.created_at))}</td><td><div class="row-actions"><a class="section-link" href="${activeLink(a)}">${['queued', 'running'].includes(a.status) ? 'View run' : 'View report'}</a><button class="icon-button destructive" type="button" data-delete="${e(a.id)}" aria-label="Delete analysis for ${e(targetName(a))} from ${e(timestamp(a.created_at))}"${['queued', 'running'].includes(a.status) ? ' disabled title="Wait for the running analysis to finish"' : ''}>${icon('trash')}</button></div></td></tr>`).join('')}</tbody></table></div>`;
 }
 function historyView() {
   return heading('Analysis history', 'Revisit the evidence. Every report belongs to a specific revision.', button('New analysis', '#repositories', '', 'plus')) + `<div class="stack"><section class="panel"><div class="panel-header"><div><h2>Past analyses<span class="section-count">${state.analyses.length}</span></h2><p>${copy("Reports stay in your history until you delete them.", "Example reports stay in memory until deleted or the page is reloaded.")}</p></div>${live ? '' : '<button class="button secondary" type="button" data-action="reset">Reset examples</button>'}</div><div class="report-toolbar"><label class="search-field">${icon('search')}<input id="history-search" type="search" value="${e(state.search)}" placeholder="Search repositories…" aria-label="Search analysis history"></label><label class="filter-label" for="status-filter">Status<select id="status-filter"><option value="all">All statuses</option>${['completed', 'partial', 'failed', 'queued', 'running'].map(s => `<option value="${s}"${state.historyStatus === s ? ' selected' : ''}>${titleCase(s)}</option>`).join('')}</select></label></div><div id="history-results" aria-live="polite">${historyRows()}</div></section>${notice('Partial is not complete', 'A partial report contains findings from the checks that finished. Review skipped and failed checks before interpreting the results.', 'warning')}</div>`;
@@ -229,13 +233,19 @@ async function render({ focus = true } = {}) {
   const epoch = ++routeEpoch;
   clearTimeout(pollTimer);
   const [page, id, detail] = route();
-  const active = ['report', 'finding'].includes(page) ? 'analyses' : page;
+  const active = ['report', 'finding'].includes(page) ? 'analyses' : page === 'connection' ? 'integrations' : page;
   navigation(active);
   main.setAttribute('aria-busy', 'true');
   main.innerHTML = '<div class="loading-state" role="status">Loading workspace…<div class="skeleton short"></div><div class="skeleton"></div></div>';
   try {
     if (live) {
-      const session = await service.session(); if (epoch !== routeEpoch) return;
+      let session;
+      try { session = await service.session(); } catch (error) {
+        if (!['integrations', 'connection'].includes(page) || error.status !== 401) throw error;
+        state.user = null;
+      }
+      if (epoch !== routeEpoch) return;
+      if (session) {
       if (state.user?.id !== session.user.id) {
         state.installation = null; state.selectedRepository = null;
         state.repositories = []; state.analyses = [];
@@ -243,10 +253,22 @@ async function render({ focus = true } = {}) {
       state.user = session.user;
       document.querySelector('.workspace-label').textContent = session.user.login;
       document.querySelector('#reset-demo').hidden = false;
+      }
     }
     let html;
     let analysis;
-    if (page === 'repositories') {
+    if (['integrations', 'connection'].includes(page)) {
+      let configuration = { github_enabled: false }, integrationError = '';
+      if (live) {
+        configuration = await service.configuration(); if (epoch !== routeEpoch) return;
+        if (state.user) {
+          try { ({ installations: state.installations } = await service.installations()); }
+          catch (error) { integrationError = error.message; state.installations = []; }
+          if (epoch !== routeEpoch) return;
+        }
+      }
+      html = integrationsView(configuration, integrationError);
+    } else if (page === 'repositories') {
       if (live) {
         const result = await service.installations(); if (epoch !== routeEpoch) return;
         state.installations = result.installations;
@@ -256,16 +278,19 @@ async function render({ focus = true } = {}) {
         service.selectInstallation(state.installation);
       }
       const result = await service.repositories(); if (epoch !== routeEpoch) return;
-      state.repositories = result.repositories; html = repositoriesView();
+      state.repositories = result.repositories;
+      if (!state.repositories.some(r => r.id === state.selectedRepository)) state.selectedRepository = state.repositories[0]?.id ?? null;
+      html = repositoriesView();
     } else if (['report', 'finding', 'analyses'].includes(page) && id) {
       ({ analysis } = await service.report(id)); if (epoch !== routeEpoch) return;
-      if (live && analysis.kind !== 'repository') throw new Error('This workspace displays repository reports. Website reports remain available through the API.');
+
       if (page === 'finding') html = findingView(analysis, Number(detail));
       else if (['queued', 'running'].includes(analysis.status)) html = progressView(analysis);
       else html = reportView(analysis);
     } else if (['overview', 'history', 'analyses'].includes(page)) {
-      ({ analyses: state.analyses } = await service.history()); if (epoch !== routeEpoch) return;
-      if (live) state.analyses = state.analyses.filter(item => item.kind === 'repository');
+      const result = await service.history(); if (epoch !== routeEpoch) return;
+      state.analyses = result.analyses;
+
       html = page === 'overview' ? overview() : page === 'history' ? historyView() : analysisIndex();
     } else html = heading('Page not found', 'This view is unavailable.') + `<div class="panel">${empty('Let’s get you back', 'Open the overview to continue.', button('Open overview', '#overview'))}</div>`;
     if (epoch !== routeEpoch) return;
@@ -316,9 +341,9 @@ function bindView(analysis) {
   });
   const refreshResults = () => { const el = document.querySelector('#report-results'); if (el) el.innerHTML = reportResults(analysis); };
   document.querySelector('#repository-search')?.addEventListener('input', event => { state.search = event.target.value; document.querySelector('#repository-options').innerHTML = repoOptions(); });
-  document.querySelector('#authorization')?.addEventListener('change', event => { document.querySelector('#start-analysis').disabled = !event.target.checked; });
+  document.querySelector('#authorization')?.addEventListener('change', event => { document.querySelector('#start-analysis').disabled = !event.target.checked || !state.selectedRepository; });
   document.querySelector('#analysis-form')?.addEventListener('submit', async event => {
-    event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity()) return;
+    event.preventDefault(); const form = event.currentTarget; if (!form.reportValidity() || document.querySelector('#start-analysis').disabled) return;
     const start = document.querySelector('#start-analysis'); const error = document.querySelector('#form-error');
     start.disabled = true; start.textContent = 'Queuing analysis…'; error.textContent = '';
     const epoch = routeEpoch;
@@ -379,7 +404,7 @@ document.addEventListener('click', async event => {
   }
   if (target.dataset.delete) {
     const a = state.analyses.find(a => a.id === target.dataset.delete); if (!a) return;
-    confirmAction(copy('Delete this analysis?', 'Delete this example analysis?'), copy(`Permanently remove the report for ${a.repository} (${timestamp(a.created_at)}) and its associated evidence from your history?`, `Remove the sample report for ${a.repository} (${timestamp(a.created_at)}) and its evidence? This affects demo data in this tab only.`), async () => { await service.delete(a.id); await render(); showToast(copy('Analysis deleted.', 'Example analysis deleted. Reset demo data to restore it.')); });
+    confirmAction(copy('Delete this analysis?', 'Delete this example analysis?'), copy(`Permanently remove the report for ${targetName(a)} (${timestamp(a.created_at)}) and its associated evidence from your history?`, `Remove the sample report for ${targetName(a)} (${timestamp(a.created_at)}) and its evidence? This affects demo data in this tab only.`), async () => { await service.delete(a.id); await render(); showToast(copy('Analysis deleted.', 'Example analysis deleted. Reset demo data to restore it.')); });
   }
   if (target.dataset.copy) {
     try { await navigator.clipboard.writeText(target.dataset.copy); showToast('Commit SHA copied.'); }
@@ -389,7 +414,8 @@ document.addEventListener('click', async event => {
   if (target.dataset.action === 'retry') render();
   if (target.dataset.action === 'clear-filters') {
     state.category = 'all'; state.priority = 'all'; state.search = '';
-    const { analysis } = await service.report(route()[1]);
+    let analysis;
+    try { ({ analysis } = await service.report(route()[1])); } catch (error) { showToast(error.message); return; }
     if (route()[0] !== 'report' || route()[1] !== analysis.id) return;
     document.querySelector('#category-filter').value = 'all'; document.querySelector('#priority-filter').value = 'all'; document.querySelector('#finding-search').value = '';
     document.querySelector('#report-results').innerHTML = reportResults(analysis); document.querySelector('#finding-search').focus();
@@ -400,5 +426,39 @@ window.addEventListener('hashchange', () => {
   render();
 });
 window.addEventListener('pagehide', () => { clearTimeout(pollTimer); clearTimeout(toastTimer); });
+function integrationsView(configuration, error = '') {
+  const authorized = state.installations.filter(item => !item.suspended);
+  const installUrl = configuration.installation_url;
+  const backend = ['localhost', '127.0.0.1'].includes(location.hostname) ? `${location.protocol}//${location.hostname}:8000/app/#integrations` : '';
+  return heading('Integrações', 'Conecte o GitHub e escolha os repositórios autorizados para análise.')
+    + `<section class="panel connection-panel"><div class="panel-body analysis-form"><h2>GitHub</h2>
+      ${error ? notice('Não foi possível verificar o acesso', error, 'error') : ''}
+      ${!live ? `<p>O modo demo usa exemplos simulados. Para conectar sua conta, abra o CyberCheck servido pela API.</p>${backend ? button('Abrir integração real', backend) : ''}`
+        : state.user ? `<p>Conta conectada: <strong>${e(state.user.login)}</strong></p>
+          ${authorized.length ? `<form id="integration-selection" class="analysis-form"><label class="field" for="integration-installation">Conta ou organização<select id="integration-installation" name="installation_id">${authorized.map(item => `<option value="${item.id}"${item.id === state.installation ? ' selected' : ''}>${e(item.account)}</option>`).join('')}</select></label><button class="button" type="submit">Escolher repositório</button></form>` : notice('Nenhuma instalação disponível', 'Autorize a App no GitHub e selecione os repositórios que deseja analisar. Organizações podem exigir aprovação de um administrador.')}
+          <div class="form-actions">${installUrl ? button('Autorizar repositórios', installUrl, 'secondary') : ''}<a class="button secondary" href="${service.loginUrl}">Reconectar GitHub</a><button class="button secondary" type="button" id="disconnect-github">Desconectar</button></div>
+          <p class="subtle-note">Desconectar encerra esta sessão do CyberCheck e mantém seu histórico. Para revogar a instalação, use as configurações do GitHub.</p>`
+        : configuration.github_enabled ? `<p>Entre com sua conta e autorize apenas os repositórios que deseja analisar. As credenciais permanecem no servidor.</p>${button('Conectar GitHub', service.loginUrl)}`
+        : notice('Configuração do servidor pendente', 'O responsável pelo CyberCheck precisa configurar as credenciais da GitHub App.')}
+      ${live ? `<div class="form-actions"><button class="text-button" type="button" data-action="retry">Atualizar conexão</button>${button('Use demo mode', '/app/?demo=1#overview', 'secondary')}</div>` : ''}
+      <p id="integration-action-error" class="form-error" role="alert"></p>
+    </div></section>`;
+}
+document.addEventListener('submit', event => {
+  if (event.target.id !== 'integration-selection') return;
+  event.preventDefault();
+  state.installation = Number(event.target.elements.installation_id.value);
+  service.selectInstallation(state.installation);
+  state.selectedRepository = null;
+  location.hash = '#repositories';
+});
+document.addEventListener('click', async event => {
+  const target = event.target.closest('#disconnect-github');
+  if (!target || target.disabled) return;
+  target.disabled = true;
+  try { await service.logout(); state.user = null; state.installations = []; state.installation = null; await render(); }
+  catch (error) { const node = document.querySelector('#integration-action-error'); if (node) node.textContent = error.message; }
+  finally { target.disabled = false; }
+});
 state.priority = route()[2] === 'urgent' ? 'urgent' : 'all';
 render();

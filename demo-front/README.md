@@ -47,9 +47,9 @@ The fixed fixtures can also be opened directly:
 - `#report/demo-failed`
 - `#finding/demo-completed/0`
 
-## Future integration
+## API integration
 
-`demo-service.js` is the data boundary. Its `repositories`, `history`, `report`, `start`, and `delete` methods resemble the current backend routes, but perform no network requests. Replace the adapter only after response schemas, error handling, and frontend authentication have been agreed with workstream 1. Do not put real API tokens or GitHub keys in these files.
+`demo-service.js` provides in-memory examples. `api-service.js` uses main's same-origin session/CSRF API at `/app/`, including installation and repository pagination, analysis creation, polling, history, reports and deletion. No GitHub or operator token is embedded in frontend source. Integrações provides the connection UI; `/app/?demo=1` explicitly uses examples without API calls.
 
 The browser hash router and rendering helpers live in `app.js`. `styles.css` provides shared tokens, components, responsive layouts, keyboard focus, and reduced-motion support. Inter and JetBrains Mono are self-hosted; their original licenses are in `assets/fonts/`. Font sources: [Inter](https://github.com/rsms/inter) and [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono).
 
@@ -66,3 +66,9 @@ node --test demo-front/tests/demo-service.test.mjs
 ```
 
 These tests verify simulated lifecycle, authorization validation, coverage, fixture consistency, and deletion/reset behavior. They do not test the real backend, GitHub, or scanner accuracy. Rendering and DOM-emulated interaction checks are separate evidence; they are not full real-browser keyboard or assistive-technology validation.
+
+## Consolidated integration
+
+Open `http://127.0.0.1:8000/app/#integrations` for GitHub login, installation selection and sign-out. The frontend uses the main API contracts (`/auth/me`, `/api/github/installations`, repository pagination by installation and CSRF-protected writes). The previous local bearer-token form is not an alternate login path when OAuth is enabled.
+
+Demo mode remains available at `/app/?demo=1#overview` and through the standalone static server. Historical website reports are rendered with null repository/commit fields. The global visual design and brand assets are preserved. See [the consolidation guide](../markdown/GITHUB-INTEGRATION.md) for configuration, migration and live validation.

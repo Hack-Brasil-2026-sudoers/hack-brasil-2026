@@ -91,3 +91,21 @@ test('connection failures and unreadable responses do not produce simulated succ
   const unreadable = createApiService({ fetcher: async () => new Response('<html>unavailable</html>', { status: 502 }) });
   await assert.rejects(unreadable.history(), error => error.status === 502);
 });
+
+test('configuration is public and requests refuse redirects', async () => {
+  const calls=[];
+  const service=createApiService({fetcher:async (path,options)=>{
+    calls.push(path);
+    assert.equal(options.redirect,'error');
+    return response({github_enabled:true,installation_url:'https://github.com/apps/example/installations/new'});
+  }});
+  assert.equal((await service.configuration()).github_enabled,true);
+  assert.deepEqual(calls,['/api/auth/status']);
+});
+
+test('requests time out without returning simulated results', async () => {
+  const service=createApiService({timeoutMs:5,fetcher:(path,{signal})=>new Promise((resolve,reject)=>{
+    signal.addEventListener('abort',()=>reject(signal.reason));
+  })});
+  await assert.rejects(service.history(),error=>error.status===0 && /timed out/.test(error.message));
+});

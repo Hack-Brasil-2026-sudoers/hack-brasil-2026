@@ -1,13 +1,13 @@
 import fcntl
 import shutil
-import stat
 import tempfile
 import time
-import zipfile
-from pathlib import Path, PurePosixPath
+import logging
+from pathlib import Path
 
 import httpx
 
+from .archives import ArchiveError, extract_archive
 from .config import Settings
 from .auth import Auth
 from .github import GitHub, GitHubError
@@ -16,46 +16,17 @@ from .store import Store
 from .web import WebError, analyze_web
 
 
-def extract_archive(archive: Path, target: Path):
-    total = 0
-    names = set()
-    with zipfile.ZipFile(archive) as package:
-        entries = package.infolist()
-        if not entries or len(entries) > 5000:
-            raise ValueError("Archive is empty or contains more than 5,000 entries.")
-        root = None
-        for entry in entries:
-            path = PurePosixPath(entry.filename)
-            if path.is_absolute() or ".." in path.parts or "\\" in entry.filename:
-                raise ValueError("Archive contains an unsafe path.")
-            if not path.parts:
-                raise ValueError("Archive contains an empty path.")
-            root = root or path.parts[0]
-            if path.parts[0] != root:
-                raise ValueError("Archive must contain a single root directory.")
-            relative = Path(*path.parts[1:])
-            mode = entry.external_attr >> 16
-            if stat.S_ISLNK(mode) or (stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR)):
-                raise ValueError("Links and special files are not allowed.")
-            if entry.is_dir():
-                continue
-            if not relative.parts or relative in names:
-                raise ValueError("Invalid or duplicate archive entry.")
-            names.add(relative)
-            if entry.file_size > 2 * 1024 * 1024:
-                raise ValueError("Individual file exceeds 2 MiB.")
-            total += entry.file_size
-            if total > 100 * 1024 * 1024:
-                raise ValueError("Uncompressed content exceeds 100 MiB.")
-            output = target / relative
-            output.parent.mkdir(parents=True, exist_ok=True)
-            with package.open(entry) as src, output.open("xb") as dst:
-                shutil.copyfileobj(src, dst, 65536)
-            output.chmod(0o600)
+logger = logging.getLogger(__name__)
 
 
 def process(analysis, store: Store, github: GitHub, settings: Settings):
+    stage = "authorization"
+    def progress(value):
+        nonlocal stage
+        stage = value
+        logger.info("analysis=%s stage=%s", analysis["id"], stage)
     try:
+        progress("authorization")
         if analysis["kind"] == "web":
             report = analyze_web(analysis["target_url"], authorization_confirmed=True)
             error = next((check["error"] for check in report["checks"] if check.get("error")), None)
@@ -71,9 +42,12 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
             if analysis.get("owner", "operator") != "operator":
                 token = Auth(settings, store).token_for_owner(analysis["owner"])
                 repository_github = GitHub(settings, user_token=token)
+            progress("download")
             repository_github.download(analysis, archive)
+            progress("extraction")
             extract_archive(archive, source)
             archive.unlink()
+            progress("scanners")
             findings, checks = run_scanners(source, working, settings, analysis["dependency_lookup"])
             statuses = [c["status"] for c in checks]
             status = "completed" if all(s == "completed" for s in statuses) else (
@@ -84,14 +58,25 @@ def process(analysis, store: Store, github: GitHub, settings: Settings):
             "Assignment aliases and dynamically selected calls may be missed. "
             "Findings require input-trust and deployment-context review; no findings does not establish safety.",
         ])
+        progress(status)
+    except ArchiveError as exc:
+        logger.warning("analysis=%s stage=%s error=%s", analysis["id"], stage, exc.code)
+        store.finish(analysis["id"], "failed", error=f"{stage.capitalize()} failed [{exc.code}]: {exc}",
+                     limitations=[f"Preparation stopped during {stage}; no security scanners ran."])
+    except httpx.RemoteProtocolError:
+        store.finish(analysis["id"], "failed", error="Archive download was interrupted or incomplete. Retry the analysis.")
+    except httpx.TimeoutException:
+        store.finish(analysis["id"], "failed", error=f"Network timeout during {stage}. Retry the analysis.")
     except GitHubError as exc:
         store.finish(analysis["id"], "failed", error=str(exc))
     except WebError as exc:
         store.finish(analysis["id"], "failed", error=str(exc))
-    except (ValueError, zipfile.BadZipFile):
-        store.finish(analysis["id"], "failed", error="Archive is invalid or exceeds the MVP limits.")
-    except (OSError, httpx.HTTPError):
-        store.finish(analysis["id"], "failed", error="Network or storage failure during analysis.")
+    except ValueError:
+        store.finish(analysis["id"], "failed", error=f"Invalid data during {stage}. No complete assessment is available.")
+    except OSError:
+        store.finish(analysis["id"], "failed", error=f"Local storage or file access failed during {stage}. Check available disk space and permissions.")
+    except httpx.HTTPError:
+        store.finish(analysis["id"], "failed", error=f"GitHub connection failed during {stage}. Retry when the connection is available.")
     except Exception:
         # Unexpected errors must not persist content or tokens from exceptions.
         store.finish(analysis["id"], "failed", error="Unexpected worker failure. Request a new analysis.")

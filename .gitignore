@@ -4,6 +4,7 @@
 .venv/
 .data/
 .tools/
+.secrets/
 __pycache__/
 *.py[cod]
 *.egg-info/

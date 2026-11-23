@@ -1,7 +1,7 @@
 /** In-memory fixtures only. This module never calls GitHub, scanners, or an API. */
 export const PRIORITIES = ['critical', 'high', 'medium', 'low', 'review'];
-export const CATEGORY_LABELS = { code: 'Code issues', dependencies: 'Dependencies', secrets: 'Secrets & configuration' };
-export const categoryGroup = category => category === 'vulnerable_dependency' ? 'dependencies' : ['exposed_secret', 'insecure_configuration'].includes(category) ? 'secrets' : 'code';
+export const CATEGORY_LABELS = { code: 'Code issues', dependencies: 'Dependencies', secrets: 'Secrets & configuration', web: 'Website configuration' };
+export const categoryGroup = category => category.startsWith('web_') ? 'web' : category === 'vulnerable_dependency' ? 'dependencies' : ['exposed_secret', 'insecure_configuration'].includes(category) ? 'secrets' : 'code';
 
 const makeFinding = (title, category, priority, path, line, rule, recommendation, evidence = {}) => ({
   title, category, priority, path, line, rule_id: rule,

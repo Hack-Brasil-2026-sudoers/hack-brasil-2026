@@ -16,15 +16,15 @@ Help developers identify potential security issues, understand the evidence, and
 
 ## Operating Context
 
-The current task is a local frontend demo in `demo-front/`, separate from the presentation site in `website/`. Its six views are overview, repositories, analysis progress, report, finding details, and history. A future API adapter will connect the frontend to the separately developed backend.
+The current task is a local frontend demo in `demo-front/`, separate from the presentation site in `website/`. Its six views are overview, repositories, analysis progress, report, finding details, and history. The application at /app/ uses the main GitHub OAuth/session API. Integrações provides connection and installation selection; ?demo=1 keeps simulated mode available.
 
 ## Capabilities and Constraints
 
-- Use demonstration data only; no API, GitHub, scanner, or external AI connection in this frontend stage.
+- Preserve explicit real and simulated modes; repository access and scanners run on the backend.
 - Keep repository, full commit SHA, explicit time zones, evidence, uncertainty, and incomplete coverage visible.
 - Keep confidence separate from priority. Do not assign a security score.
-- Keep the backend modules unchanged in this task. Use HTML/CSS and browser JavaScript without a new framework or build system.
-- Keep all interface and repository text in English. Run locally; public hosting remains deferred.
+- Follow the consolidated main backend contracts. Use HTML/CSS and browser JavaScript without a new framework or build system.
+- Preserve existing English app text and the user-requested Portuguese Integrações labels. Run locally; public hosting remains deferred.
 
 ## Brand Commitments
 
