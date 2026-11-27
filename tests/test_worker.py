@@ -12,6 +12,34 @@ from cybercheck.store import Store
 from cybercheck.worker import process, run
 
 
+def test_worker_restart_fails_interrupted_job_and_processes_queued_job(tmp_path, monkeypatch):
+    settings = Settings(api_token="x" * 40, data_dir=tmp_path)
+    store = Store(tmp_path)
+    interrupted, _ = store.create(123, "team/project", "a" * 40, "main", False)
+    assert store.claim()["id"] == interrupted["id"]
+    queued, _ = store.create_web("https://example.com/")
+
+    stale_directory = tmp_path / "analysis-interrupted"
+    stale_directory.mkdir()
+    (stale_directory / "stdout").write_text("synthetic scanner output")
+
+    def analyze(url, *, authorization_confirmed):
+        assert url == queued["target_url"]
+        assert authorization_confirmed
+        assert not stale_directory.exists()
+        return {"status": "completed", "findings": [], "checks": [], "requests": [], "limitations": []}
+
+    monkeypatch.setattr("cybercheck.worker.analyze_web", analyze)
+    run(settings, once=True)
+
+    report = store.get(interrupted["id"])
+    assert report["status"] == "failed"
+    assert report["finished_at"]
+    assert report["error"] == "Worker interrupted. Request a new analysis."
+    assert store.get(queued["id"])["status"] == "completed"
+    assert not stale_directory.exists()
+
+
 def test_worker_revalidates_web_destination_without_github_access(tmp_path, monkeypatch):
     settings = Settings(api_token="x" * 40, data_dir=tmp_path)
     store = Store(tmp_path)
