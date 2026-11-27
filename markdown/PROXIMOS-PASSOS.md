@@ -80,7 +80,9 @@ These tests do not guarantee the absence of vulnerabilities or validate every ve
 - [x] Extend real-tool validation to all 14 selected Bandit rules, including marshal, pandas/jsonpickle wrappers, import aliases, SQL formatting variants, shell wrappers, and partial executable paths. Verify safe controls and distinguish rule-specific command recommendations. Persist explicit code-analysis limits in repository reports and demonstrate the missed assignment-alias eval case. General framework and data-flow analysis remain outside the demonstrated coverage.
 - [ ] Validate all planned categories with vulnerable, corrected, and false-positive cases.
 - [ ] Document covered dependency formats and versions; add examples with resolved versions.
-- [ ] Expand invalid-output, network-failure, interruption, and resource-cleanup tests.
+- [x] Verify that invalid OSV-Scanner output or a scanner timeout produces a partial report that preserves Bandit findings, records the failure reason, and removes temporary files.
+- [x] Verify that a worker restart removes temporary files left by an interrupted job, marks that job as failed, and processes the next queued job.
+- [ ] Expand coverage for network failures and additional interruption and cleanup scenarios.
 - [ ] Complete isolation and resource limits. Separate processes, timeouts, and size limits are not a complete sandbox.
 - [ ] Integrate maintenance signals supplied by workstream 3.
 

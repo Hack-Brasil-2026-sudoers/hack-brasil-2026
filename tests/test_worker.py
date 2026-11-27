@@ -1,12 +1,43 @@
 import json
 import socket
+import sys
 import zipfile
 from pathlib import Path
+
+import pytest
 
 from cybercheck.config import Settings
 from cybercheck.scanners import run_command
 from cybercheck.store import Store
 from cybercheck.worker import process, run
+
+
+def test_worker_restart_fails_interrupted_job_and_processes_queued_job(tmp_path, monkeypatch):
+    settings = Settings(api_token="x" * 40, data_dir=tmp_path)
+    store = Store(tmp_path)
+    interrupted, _ = store.create(123, "team/project", "a" * 40, "main", False)
+    assert store.claim()["id"] == interrupted["id"]
+    queued, _ = store.create_web("https://example.com/")
+
+    stale_directory = tmp_path / "analysis-interrupted"
+    stale_directory.mkdir()
+    (stale_directory / "stdout").write_text("synthetic scanner output")
+
+    def analyze(url, *, authorization_confirmed):
+        assert url == queued["target_url"]
+        assert authorization_confirmed
+        assert not stale_directory.exists()
+        return {"status": "completed", "findings": [], "checks": [], "requests": [], "limitations": []}
+
+    monkeypatch.setattr("cybercheck.worker.analyze_web", analyze)
+    run(settings, once=True)
+
+    report = store.get(interrupted["id"])
+    assert report["status"] == "failed"
+    assert report["finished_at"]
+    assert report["error"] == "Worker interrupted. Request a new analysis."
+    assert store.get(queued["id"])["status"] == "completed"
+    assert not stale_directory.exists()
 
 
 def test_worker_revalidates_web_destination_without_github_access(tmp_path, monkeypatch):
@@ -46,7 +77,13 @@ def test_unexpected_web_failure_does_not_leak_exception_or_stop_next_job(tmp_pat
     assert store.get(second["id"])["status"] == "completed"
 
 
-def test_repository_worker_keeps_code_findings_when_dependency_output_is_invalid(tmp_path, monkeypatch):
+@pytest.mark.parametrize("failure, expected_error", [
+    ("invalid_output", "Invalid or incomplete output; this tool did not provide a complete assessment."),
+    ("timeout", "Time limit exceeded; check incomplete."),
+])
+def test_repository_worker_preserves_other_checks_when_dependency_scan_fails(
+    tmp_path, monkeypatch, failure, expected_error,
+):
     class Repository:
         def download(self, analysis, destination):
             assert analysis["commit_sha"] == "a" * 40
@@ -62,6 +99,9 @@ def test_repository_worker_keeps_code_findings_when_dependency_output_is_invalid
         if tool == "betterleaks":
             (cwd / "secrets.json").write_text("[]")
             return 0, b""
+        assert tool == "osv-scanner"
+        if failure == "timeout":
+            return run_command([sys.executable, "-c", "import time; time.sleep(30)"], cwd, 0.05)
         return 0, b'{"results": [null]}'
 
     monkeypatch.setattr("cybercheck.scanners.run_command", command)
@@ -77,6 +117,8 @@ def test_repository_worker_keeps_code_findings_when_dependency_output_is_invalid
     assert {check["tool"]: check["status"] for check in report["checks"]} == {
         "bandit": "completed", "osv-scanner": "failed", "betterleaks": "completed",
     }
+    dependency_check = next(check for check in report["checks"] if check["tool"] == "osv-scanner")
+    assert dependency_check["error"] == expected_error
     assert "synthetic-private-source" not in json.dumps(report)
     assert any("without full data-flow analysis" in item for item in report["limitations"])
     assert any("Assignment aliases" in item for item in report["limitations"])
